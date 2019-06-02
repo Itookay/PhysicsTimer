@@ -7,7 +7,7 @@ JBox2D内での演算に使用する長さ単位はメートルです。した�
 青いタイルで残りの「分：秒」が表示されている部分をコード中では「タイマー」と呼んでいます。タイマーのデザイン・残り分と秒などは`Dial`クラスが管理しています(Dialは文字盤という意味で、「時計の文字盤」のつもりで名前つけました。名称の変更検討中)。  
 `Dial`クラスは`DialPanel`クラスのインスタンスを保持しています。`DialPanel`クラスは「分」もしくは「秒」にあたる2桁の数字、もしくはコロン「：」を管理しています。`DialPanel`のコンストラクタにフォーマットを渡していますが、これはこの`DialPanel`インスタンスが「分」を表すものなら`DialPanel.MINUTE`を、コロンならば`DialPanel.COLOGNE`といった風に指定します。  
 `DialPanel`はまた、両側のスペースの大きさも保持しています。スペースサイズは`Dial.setTimerSizeScale()`で設定され、これは`PhysicsTimer.init()`で呼ばれています。`Dial.setTimerSizeScale()`ではスペースサイズの算出に「セクション」という概念を使っていますが、これはあまりいい考えではないです。  
-`DialPanel`は`TileBase`クラスのインスタンスを保持しています。`DialPanel`は`TileBase`は
+`DialPanel`は`TileBase`クラスのインスタンスを保持しています。`DialPanel`は`DialPanel.mFormat`および`DialPanel.mFont`に従い`TileBase`を並べます。1つの`TileBase`は1つの`Tile`と
 
 ## MainActivity
 このアプリ唯一のActivityクラスです。ボタン類の宣言と初期化を行う`BackgroundActivity`クラスを継承しています。  
