@@ -43,7 +43,7 @@ class MainActivity : BackgroundActivity(), View.OnTouchListener, View.OnClickLis
     //選択された2桁目
     private var SelectedNumber2 : Int = -1
     //2つ目のボタンまでにドラッグされたか
-    private var IsDraged = false
+    private var IsDragged = false
     //最初にタップされたポイント
     private var ActionDownPoint : PointF = PointF()
     //最初にタップされたボタン
@@ -180,7 +180,7 @@ class MainActivity : BackgroundActivity(), View.OnTouchListener, View.OnClickLis
             MotionEvent.ACTION_UP -> {
                 SelectedNumber2 = getSelectedButtonNumber(button)
 
-                val time = getInputedTime()
+                val time = getInputTime()
                 /* 数字をブロックで表示 */
                 mPhysicsTimer.setInitialTime(0, time, 0)
                 mPhysicsTimer.startTimer()
@@ -194,12 +194,12 @@ class MainActivity : BackgroundActivity(), View.OnTouchListener, View.OnClickLis
                 button.isPressed = true
             }
             MotionEvent.ACTION_MOVE -> {
-                IsDraged = isDragging(event.rawX, event.rawY)
-                if(IsDraged) {
+                IsDragged = isDragging(event.rawX, event.rawY)
+                if(IsDragged) {
                     button.isPressed = true
                     if(DraggingButton != button && FirstTappedButton != button) {
                         /* スライド中の数字を表示 */
-                        val time = getInputedTime()
+                        val time = getInputTime()
                         mPhysicsTimer.setInitialTime(0, time, 0)
 
                         DraggingButton?.isPressed = false
@@ -259,7 +259,7 @@ class MainActivity : BackgroundActivity(), View.OnTouchListener, View.OnClickLis
     private fun invalidButtonInput() {
         SelectedNumber1 = 0
         SelectedNumber2 = 0
-        IsDraged = false
+        IsDragged = false
         ActionDownPoint = PointF()
         FirstTappedButton = null
 
@@ -272,11 +272,11 @@ class MainActivity : BackgroundActivity(), View.OnTouchListener, View.OnClickLis
     /*
      *      入力された数字(分)を取得
      */
-    private fun getInputedTime() : Int {
+    private fun getInputTime() : Int {
         if(SelectedNumber1 == SelectedNumber2) {
-            if(IsDraged == false) {
+            if(IsDragged == false) {
                 SelectedNumber1 = 0
-                IsDraged = false
+                IsDragged = false
             }
         }
 

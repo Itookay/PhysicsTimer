@@ -43,6 +43,9 @@ open class BackgroundActivity : Activity() {
         llControlButton.addView(btBack)
     }
 
+    /**
+     *
+     */
     fun initButtonWidth(scale: Scale, widthScale:Double, buttonPaddingScale:Double) {
         val numpadWidth = scale.displayWidthPixel * widthScale
         ButtonWidth = (numpadWidth / 3.0).roundToInt()
