@@ -35,7 +35,7 @@ JBox2D内での演算に使用する長さ単位はメートルです。した�
 `FontBaseB`  
 　↑  
  `NormalB`, `NormalRoundB`  
- `FontBaseB`と`FontBaseS`の違いはタイルを並べるサイズの違いで、`FontBaseB`が5x4、`FontBaseS`が10x9です。`FontBaseS`は現在使用していません。
+ `FontBaseB`と`FontBaseS`の違いはタイルを並べるサイズの違いで、`FontBaseB`が5x4、`FontBaseS`が10x9です。`FontBaseS`はでかすぎるため現在使用していません。コード上で使用するのは`NormalB`と `NormalRoundB`です。ほかにも`FontBaseB`を継承することでいろんなデザインのフォントを定義できるはずです。
 ### Tileクラス
 タイルの画像と、タイル自身を拘束するためのジョイントアンカーの座標を保持しています。このジョイントアンカーの座標原点はタイルサイズの中心です。このジョイントアンカー座標と`TileBase`のジョイントアンカー座標を用いてジョイントを生成します。
 
