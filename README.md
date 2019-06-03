@@ -70,4 +70,4 @@ JBox2D内での演算に使用する長さ単位はメートルです。した�
   - getSelectedButtonNumber()で2つ目のボタンを取得
   - getInputTime()で`IsDragged=false`なら1桁の入力、`true`で2桁の入力とみなす
 - ACTION_MOVE
-  - `isDragged`でキー間のスライド距離が`DRAGABLE_DISTANCE`以上なら「スライドした」と判定する
+  - `isDragged`でActionDownPointからの距離が`DRAGABLE_DISTANCE`以上なら「スライドした」と判定する
