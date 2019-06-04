@@ -71,3 +71,13 @@ JBox2D内での演算に使用する長さ単位はメートルです。した�
   - getInputTime()で`IsDragged=false`なら1桁の入力、`true`で2桁の入力とみなす
 - ACTION_MOVE
   - `isDragged`でActionDownPointからの距離が`DRAGABLE_DISTANCE`以上なら「スライドした」と判定する
+
+
+## 時間管理
+タイマースタートから1秒ごとに通知を発行し、ついで現在の残り「(時)分秒」を教えてくれる機構です(このアプリでは「時」は通知されません)。GoFパターンで言うところのObserverパターンを利用しています。Observer抽象クラスは`TimeChangedListener`インターフェイス、Observer具象クラスは`PhysicsTimer`、Subject抽象クラスは存在せず、Subject(具象)クラス`TimeChanged`で直接処理しています。
+### TimeChangedListenerインターフェイス
+`PhysicsTimer`クラスは`TimeChangedListener`インターフェイスを実装し、`onTimeChanged(int hour, int minute, int second)`メソッドをオーバーライドしています。この状態で`PhysicsTimer.StartTimer()`から`setOnTimeChangedListener(this)`呼ぶことで、1秒ごとに`onTimeChanged(int hour, int minute, int second)`がコールバックされ、残りの「時分秒」を取得できます。
+### TimeChangedクラス
+`setOnTimeChangedListener()`で`TimeChangedListener`インターフェイスを実装した`PhysicsTimer`インスタンスを渡しておきます。`startTimer()`が呼ばれると`Runnable.run()`され、`DELAY_TIME = 1000`ミリ秒ごとに`forword()`が呼ばれます。`Forword()`では呼ばれるごとに`mActualSeconds`をカウントダウンしていきます。`mActualSeconds`は残りの分秒を秒に計算しなおしたもので、残り1分30秒なら`mActualSeconds = 90`です。これが"<0"となれば`false`を返してタイマー終了です。`mMinute`と`mSecond`も同時にカウントダウンされていきますが、これはコールバック用です。
+
+
