@@ -81,6 +81,10 @@ public class ControlWorld {
         mPositionIterations = positionIterations;
     }
 
+    public float getStep() {
+        return mStep;
+    }
+
     /**
      * 			文字盤をセット
      */
@@ -94,6 +98,10 @@ public class ControlWorld {
      * @param y 画面中心原点、上向き正
      */
     public void setGravity(float x, float y) {
+        //強さを調整
+        x *= 2f;
+        y *= 2f;
+
         ArrayList   list = mTileList.getList();
         for(Object body : list) {
             ((Body)body).setAwake(true);
@@ -109,10 +117,7 @@ public class ControlWorld {
         createGround();
 
         //作成するタイルの数
-        //数字1文字あたりの平均タイル数
-        int target = mDial.getFont().getAverageTileCount();
-        //パネル1枚につき数字2文字だから2倍する <-少ないから3倍に変更
-        target *= mDial.getDialPanelList().size() * 3;
+        int target = mDial.getFont().getArrayLength() * 6;
         for( int i = 0; i < target; i++ ) {
             createTile();
         }
@@ -314,14 +319,14 @@ public class ControlWorld {
      * 			ジョイント(タイルをワールドに拘束する)を生成
      * @param
      */
-    private void createJoint( DistanceJointDef jointDef, Body body, TileBase tileBase ) {
+    private void createJoint(DistanceJointDef jointDef, Body body, TileBase tileBase) {
         //ジョイント１　左側
         jointDef.bodyA = mGround;
         jointDef.bodyB = body;
         jointDef.localAnchorA.set(tileBase.getWorldJointPos1());
         jointDef.localAnchorB.set(Tile.getJointAnchorPosition1());
         jointDef.length = 0f;
-        mWorld.createJoint( jointDef );
+        mWorld.createJoint(jointDef);
 
         //ジョイント２　右側
         jointDef.bodyA = mGround;
@@ -329,7 +334,7 @@ public class ControlWorld {
         jointDef.localAnchorA.set(tileBase.getWorldJointPos2());
         jointDef.localAnchorB.set(Tile.getJointAnchorPosition2());
         jointDef.length = 0f;
-        mWorld.createJoint( jointDef );
+        mWorld.createJoint(jointDef);
     }
 
     /**
@@ -439,16 +444,16 @@ public class ControlWorld {
      * 			ディスタンス・ジョイントを全消去
      */
     public void destroyAllDistanceJoint() {
-
-        for( Joint joint = mWorld.getJointList(); joint != null; joint = joint.getNext() ) {
-            mWorld.destroyJoint( joint );
+        for(Joint joint = mWorld.getJointList(); joint != null; joint = joint.getNext()) {
+            mWorld.destroyJoint(joint);
         }
 
-        Iterator<Body>	it = mTileList.iterator();
+        ArrayList<Body>       bodyList = mTileList.getList();
         Tile	tile = null;
-        while(it.hasNext()) {
-            tile = (Tile)it.next().getUserData();
+        for(Body body : bodyList) {
+            tile = (Tile)body.getUserData();
             tile.setUniqueId(TileBase.INVALID_ID, TileBase.INVALID_ID);
+            setFreeTileFilter(body);
         }
     }
 }

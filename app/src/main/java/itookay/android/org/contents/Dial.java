@@ -153,15 +153,29 @@ public class Dial {
      * 			次の時間をセット
      * @param time
      */
-    public void setTime( Time time ) {
+    public void setTime(Time time) {
         mNextTime = time;
-        if( mTime == null ) {
-            mTime = new Time( -1, -1, -1 );
+        if(mTime == null) {
+            mTime = new Time(-1, -1, -1);
         }
         setDialPanel();
 
-        mTime.set( mNextTime );
+        mTime.set(mNextTime);
         mSeparator = mNextSeparator;
+    }
+
+    /**
+     *      時間をクリア
+     */
+    public void clearTime() {
+        mTime = null;
+        mNextTime = null;
+        mSeparator = DialPanel.BLANK;
+
+        for(DialPanel panel : mDialPanelList) {
+            panel.getDestroyTileList().clear();
+            panel.getJointTileList().clear();
+        }
     }
 
     public ArrayList<DialPanel> getDialPanelList() {

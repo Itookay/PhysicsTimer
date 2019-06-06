@@ -21,6 +21,8 @@ public class TimeChanged extends Service {
     protected final int			_59_SECONDS = 59;
     /** 59分 */
     protected final int			_59_MINUTE = 59;
+    /** タイマー終了通知 */
+    public static final int            TIMER_FINISHED = -1;
 
     /** 通知する対象 */
     protected TimeChangedListener		mObserver = null;
@@ -109,6 +111,8 @@ public class TimeChanged extends Service {
             if( mObserver != null ) {
                 if(forward() == false) {
                     removeCallback();
+                    //secondに-1を渡して終了を通知
+                    mObserver.onTimeChanged(0, 0, TIMER_FINISHED);
                 }
                 else {
                     mObserver.onTimeChanged( 0, mMinute, mSecond );

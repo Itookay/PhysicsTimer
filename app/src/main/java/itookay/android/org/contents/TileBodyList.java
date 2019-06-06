@@ -17,32 +17,26 @@ class TileBodyList {
 	private ArrayList<Body>		mTileBodyList = new ArrayList<Body>();
 
 	public ArrayList<Body> getList() {
-
 		return mTileBodyList;
 	}
 
 	public void add( Body body ) {
-
 		mTileBodyList.add( body );
 	}
 
 	public void remove( Body body ) {
-
 		mTileBodyList.remove( body );
 	}
 
 	public int size() {
-
 		return mTileBodyList.size();
 	}
 
 	public Iterator<Body> iterator() {
-
 		return mTileBodyList.iterator();
 	}
 
 	public Body get( int index ) {
-
 		return mTileBodyList.get( index );
 	}
 
@@ -51,9 +45,6 @@ class TileBodyList {
 	 * @return		今までに拘束された回数が一番少ないボディを返す。アウェイクもする
 	 */
 	public Body getNext() {
-
-//		Log.d( "phc", "TileBodyList#getNext" );
-
 		int		count = Integer.MAX_VALUE;
 		Body	minCountBody = null;
 
@@ -86,7 +77,6 @@ class TileBodyList {
 	 * 			パネルに拘束されていないタイルの数を取得
 	 */
 	public int getFreeTileCount() {
-
 		int		count = 0;
 		Iterator<Body>		it = mTileBodyList.iterator();
 		Tile	tile = null;

@@ -177,6 +177,8 @@ public class PhysicsTimer implements TimeChangedListener {
      */
     public void stopTimer() {
         mTimeChagedService.removeCallback();
+        mWorld.destroyAllDistanceJoint();
+        mDial.clearTime();
     }
 
 
@@ -184,10 +186,15 @@ public class PhysicsTimer implements TimeChangedListener {
      * 			時間の更新
      */
     @Override
-    public void onTimeChanged( int hour, int minute, int second ) {
+    public void onTimeChanged(int hour, int minute, int second) {
         try {
-            mDial.setTime(new Time(hour, minute, second));
-            mWorld.redrawWorld();
+            if(second == TimeChanged.TIMER_FINISHED) {
+                mWorld.destroyAllDistanceJoint();
+            }
+            else {
+                mDial.setTime(new Time(hour, minute, second));
+                mWorld.redrawWorld();
+            }
         }
         catch (Exception ex) {
         }
