@@ -20,11 +20,19 @@ PhysicsTimerの各クラスの機能を説明します。`MainActivity`と`Backg
 `PhysicsTimer\app\libs\Docs\`  
 に入っています。  
 JBox2D内での演算に使用する長さ単位はメートルです。したがって物理演算はメートル座標で行い、その結果をピクセル座標に変換してディスプレイ表示する必要があります。このアプリではディスプレイ高さを`PhysicsTimer.DEFAULT_DISPLAY_HEIGHT_IN_METER = 8`メートルとしてJBox2Dのメートル座標と関連付けています。メートル座標とピクセル座標の橋渡しをしているのは`Scale`クラスです。このクラスにはディスプレイのサイズ(縦x横)がメートル、ピクセルで保持され、メートル->ピクセル、ピクセル->メートルの任意の値の変換も行います。
-
-## タイル描画部分の概略
+## 座標系
+### Canvas座標系
+タイルの描画には`Canvas`クラスを使用します。`Canvas`のデフォルト座標原点はディスプレイ左上、x軸：右が正、y軸：下が正、単位はピクセルです。
+### World座標系
+JBox2D内での計算に使用するワールド座標のデフォルト原点は左下で、x軸：右が正、y軸：上が正、単位はメートルです。
+### Canvas座標系からWorld座標系への変換
+`Canvas`へのタイル描画の際、`Canvas`側の座標系を変換してWorld座標系と一致させています。変換している場所は`MainSurfaceView`クラスの内部クラス`DrawCanvas.draw()`内です。具体的な手順は`Matrix`クラスを使用して以下の通りです。
+- setScale()でx軸を対称に反転
+- postTraslate()でディスプレイ高さ分をオフセット
+## タイル描画
 画面上を動き回る青い四角を「タイル」と呼びます。タイルで残りの「分：秒」が表示されている部分を「タイマー」と呼んでいます。
 ### クラス概略
-タイルの描画に必要なクラスを説明します。タイルは`SurfaceView`上で直接描画していますが、タイルの位置、並び方、ジョイントの生成、「分：秒」などの時間情報の保持のため、下記のような仮想的な階層のクラス構造をしています。  
+タイルの描画に必要なクラスを説明します。タイルは`SurfaceView`上で直接描画していますが、タイルの位置、並び方、ジョイントの生成、「分：秒」などの時間情報の保持のため、下記のような仮想的な階層構造をしています。  
 
 |階層|クラス名|概要|
 |:---|:---|:---|
@@ -71,3 +79,13 @@ JBox2D内での演算に使用する長さ単位はメートルです。した�
   - getInputTime()で`IsDragged=false`なら1桁の入力、`true`で2桁の入力とみなす
 - ACTION_MOVE
   - `isDragged`でActionDownPointからの距離が`DRAGABLE_DISTANCE`以上なら「スライドした」と判定する
+
+
+## 時間管理
+タイマースタートから1秒ごとに通知を発行し、ついで現在の残り「(時)分秒」を教えてくれる機構です(このアプリでは「時」は通知されません)。GoFパターンで言うところのObserverパターンを利用しています。Observer抽象クラスは`TimeChangedListener`インターフェイス、Observer具象クラスは`PhysicsTimer`、Subject抽象クラスは存在せず、Subject(具象)クラス`TimeChanged`で直接処理しています。
+### TimeChangedListenerインターフェイス
+`PhysicsTimer`クラスは`TimeChangedListener`インターフェイスを実装し、`onTimeChanged(int hour, int minute, int second)`メソッドをオーバーライドしています。この状態で`PhysicsTimer.StartTimer()`から`setOnTimeChangedListener(this)`呼ぶことで、1秒ごとに`onTimeChanged(int hour, int minute, int second)`がコールバックされ、残りの「時分秒」を取得できます。
+### TimeChangedクラス
+`setOnTimeChangedListener()`で`TimeChangedListener`インターフェイスを実装した`PhysicsTimer`インスタンスを渡しておきます。`startTimer()`が呼ばれると`Runnable.run()`され、`DELAY_TIME = 1000`ミリ秒ごとに`forword()`が呼ばれます。`Forword()`では呼ばれるごとに`mActualSeconds`をカウントダウンしていきます。`mActualSeconds`は残りの分秒を秒に計算しなおしたもので、残り1分30秒なら`mActualSeconds = 90`です。これが"<0"となれば`false`を返してタイマー終了です。`mMinute`と`mSecond`も同時にカウントダウンされていきますが、これはコールバック用です。
+
+
