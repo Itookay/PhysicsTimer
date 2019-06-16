@@ -132,10 +132,6 @@ public class Dial {
         Vec2	pos = new Vec2();
         int		id = 0;
 
-        //時
-//		DialPanel	hour = new DialPanel( DialPanel.HOUR, 1, id++, pos );
-//		mDialPanelList.add( hour );
-
         //分
         DialPanel	minute = new DialPanel(DialPanel.MINUTE, 1, id++);
         mDialPanelList.add( minute );

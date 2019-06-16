@@ -16,13 +16,14 @@ import android.view.SurfaceView;
 import android.view.WindowManager;
 import itookay.android.org.font.FontBase;
 import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.World;
 
 import java.util.ArrayList;
 
 public class PhysicsTimer implements TimeChangedListener {
 
-    /** デフォルト画面高さ(メートル) */
-    private final int       DEFAULT_DISPLAY_HEIGHT_IN_METER = 8;
+    /** 画面高さ(メートル) */
+    private final int       DISPLAY_HEIGHT_IN_METER = 10;
 
     /** アプリケーションコンテキスト */
     private Context			mAppContext = null;
@@ -85,7 +86,7 @@ public class PhysicsTimer implements TimeChangedListener {
         Display         disp = windowManager.getDefaultDisplay();
         Point           size = new Point();
         disp.getSize(size);
-        mScale.setDisplayScale(size.x, size.y, DEFAULT_DISPLAY_HEIGHT_IN_METER);
+        mScale.setDisplay(size.x, size.y, DISPLAY_HEIGHT_IN_METER);
 
         mDial = new Dial();
         mDial.setFont(mFont);
@@ -136,7 +137,7 @@ public class PhysicsTimer implements TimeChangedListener {
     private void setDialPosition() {
         PointF      pos = new PointF();
         pos.x = (mScale.getDisplayWidthMeter() - mDial.getTimerWidth()) / 2;
-        pos.y = mScale.getDisplayHeightMeter() - 1f;  //ひとまずここ
+        pos.y = mScale.getDisplayHeightMeter() * 0.8f;  //ひとまずここ
 
         //書き出し位置
         mDial.OffsetPosition(pos.x, pos.y);
@@ -157,7 +158,7 @@ public class PhysicsTimer implements TimeChangedListener {
         try {
             mDial.setTime(new Time(hour, minute, second));
             mTimeChagedService.setInitialTime(hour, minute, second);
-            mWorld.redrawWorld();
+            mWorld.invalidate();
         }
         catch (Exception ex) {
         }
@@ -193,7 +194,7 @@ public class PhysicsTimer implements TimeChangedListener {
             }
             else {
                 mDial.setTime(new Time(hour, minute, second));
-                mWorld.redrawWorld();
+                mWorld.invalidate();
             }
         }
         catch (Exception ex) {
@@ -224,5 +225,9 @@ public class PhysicsTimer implements TimeChangedListener {
 
     public void setGravity(float x, float y) {
         mWorld.setGravity(x, y);
+    }
+
+    public ControlWorld getWorld() {
+        return mWorld;
     }
 }

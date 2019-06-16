@@ -11,13 +11,11 @@ public class Scale {
     /** 画面縦幅ピクセル */
     private float		mDisplayHeightPixel = 0f;
     /** 画面横長さメートル */
-    private float	mDisplayWidthMeter = 0f;
+    private float	    mDisplayWidthMeter = 0f;
     /** 画面縦長さメートル */
-    private float	mDisplayHeightMeter = 0f;
-    /** メートル画面高さ */
-    private int		mHeightMeter = 0;
+    private float	    mDisplayHeightMeter = 0f;
     /** メートルからピクセルへの変換比 */
-    private static float	mRatio = 1f;
+    private static float        mRatio = 1f;
 
     /**
      * 			メートルからピクセルへの変換
@@ -64,22 +62,15 @@ public class Scale {
      * @param displayHeightPixel    画面高さ
      * @param heightInMeter         画面高さのメートル値
      */
-    public void setDisplayScale( int displayWidthPixel, int displayHeightPixel, int heightInMeter ) {
+    public void setDisplay(int displayWidthPixel, int displayHeightPixel, int heightInMeter) {
         mDisplayWidthPixel = displayWidthPixel;
         mDisplayHeightPixel = displayHeightPixel;
-        mHeightMeter = heightInMeter;
-        initWorldRatio();
-    }
 
-    /**
-     * 			ワールド座標とスクリーン座標の変換比を算出
-     */
-    private void initWorldRatio() {
         float		ratio = mDisplayWidthPixel / mDisplayHeightPixel;
-        mDisplayWidthMeter = mHeightMeter * ratio;
-        mDisplayHeightMeter = mHeightMeter;
+        mDisplayWidthMeter = heightInMeter * ratio;
+        mDisplayHeightMeter = heightInMeter;
 
-        mRatio = mDisplayHeightPixel / mHeightMeter;
+        mRatio = mDisplayHeightPixel / mDisplayHeightMeter;
     }
 
     /**

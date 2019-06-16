@@ -1,36 +1,27 @@
 package itookay.android.org
 
-import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.graphics.*
-import android.graphics.drawable.Drawable
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.support.constraint.ConstraintLayout
 import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TableLayout
-import android.widget.TableRow
 
-import itookay.android.org.BackgroundActivity
-import itookay.android.org.contents.MainSurfaceView
 import itookay.android.org.contents.PhysicsTimer
-import itookay.android.org.contents.Scale
 import itookay.android.org.font.FontBase
 import itookay.android.org.font.FontList
-
-import kotlin.math.*
 
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : BackgroundActivity(), View.OnTouchListener, View.OnClickListener, SensorEventListener {
 
-    //ドラッグしたと判定する距離
+    /** ドラッグしたと判定する距離 */
     private val DRAGABLE_DISTANCE = 20f
+    /** 無効な時間 */
+    private val INVALID_TIME = 0
 
     private lateinit var mPhysicsTimer : PhysicsTimer
     //フォント
@@ -38,20 +29,18 @@ class MainActivity : BackgroundActivity(), View.OnTouchListener, View.OnClickLis
     //スタイル
     private var mStyle : Int = -1
 
-    //選択された1桁目
-    private var SelectedNumber1 : Int = -1
-    //選択された2桁目
-    private var SelectedNumber2 : Int = -1
-    //2つ目のボタンまでにドラッグされたか
+    /** 直前にドラッグしていた番号 */
+    private var PreviousDraggingNumber : Int = INVALID_TIME
+    /** 最初に選択された番号 */
+    private var FirstSelectedNumber : Int = INVALID_TIME
+    /** 現在ドラッグしているボタン */
+    private var CurrentDraggingButton : ImageButton? = null
+    /** 2つ目のボタンまでにドラッグされたか */
     private var IsDragged = false
-    //最初にタップされたポイント
+    /** 最初にタップされたポイント */
     private var ActionDownPoint : PointF = PointF()
-    //最初にタップされたボタン
-    private var FirstTappedButton : ImageButton? = null
-    //指が移動中に触れているボタン
-    private var DraggingButton : ImageButton? = null
 
-    //センサーマネージャ
+    /** センサーマネージャ */
     private lateinit var SensorMgr : SensorManager
 
     /*
@@ -92,7 +81,6 @@ class MainActivity : BackgroundActivity(), View.OnTouchListener, View.OnClickLis
         super.onPause()
 
         SensorMgr.unregisterListener(this)
-        FirstTappedButton?.isPressed = false
         mPhysicsTimer.Destroy()
     }
 
@@ -123,7 +111,6 @@ class MainActivity : BackgroundActivity(), View.OnTouchListener, View.OnClickLis
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
     }
-
 
     override fun onDestroy() {
         super.onDestroy()
@@ -164,25 +151,21 @@ class MainActivity : BackgroundActivity(), View.OnTouchListener, View.OnClickLis
     override fun onTouch(view: View?, event: MotionEvent?): Boolean {
         val button = getTouchPointButton(event?.rawX!!, event.rawY)
         if(button == null) {
-            invalidButtonInput()
+            clearButtonState()
             return false
         }
 
         when(event.action) {
             MotionEvent.ACTION_DOWN -> {
-                SelectedNumber1 = getSelectedButtonNumber(button)
+                FirstSelectedNumber = getSelectedButtonNumber(button)
                 ActionDownPoint = PointF(event.rawX, event.rawY)
-                FirstTappedButton = button
+
+                mPhysicsTimer.setInitialTime(0, FirstSelectedNumber, 0)
 
                 button.performClick()
                 button.isPressed = true
             }
             MotionEvent.ACTION_UP -> {
-                SelectedNumber2 = getSelectedButtonNumber(button)
-
-                val time = getInputTime()
-                /* 数字をブロックで表示 */
-                mPhysicsTimer.setInitialTime(0, time, 0)
                 mPhysicsTimer.startTimer()
 
                 //Numpadを非表示
@@ -191,19 +174,37 @@ class MainActivity : BackgroundActivity(), View.OnTouchListener, View.OnClickLis
                 showReturnButton()
 
                 button.performClick()
-                button.isPressed = true
+                clearButtonState()
             }
             MotionEvent.ACTION_MOVE -> {
                 IsDragged = isDragging(event.rawX, event.rawY)
-                if(IsDragged) {
-                    button.isPressed = true
-                    if(DraggingButton != button && FirstTappedButton != button) {
-                        /* スライド中の数字を表示 */
-                        val time = getInputTime()
-                        mPhysicsTimer.setInitialTime(0, time, 0)
+                if(IsDragged == false) {
+                    return true
+                }
 
-                        DraggingButton?.isPressed = false
-                        DraggingButton = button
+                var time = ""
+                button.isPressed = true
+                val currentDraggingNumber = getSelectedButtonNumber(button)
+                //1桁目と同じボタンをドラッグ
+                if(currentDraggingNumber == FirstSelectedNumber) {
+                    time = FirstSelectedNumber.toString() + FirstSelectedNumber.toString()
+                    PreviousDraggingNumber = currentDraggingNumber
+                    mPhysicsTimer.setInitialTime(0, time.toInt(), 0)
+                }
+                //2桁目以降をドラッグ
+                else {
+                    if(currentDraggingNumber != PreviousDraggingNumber) {
+                        time = FirstSelectedNumber.toString() + currentDraggingNumber.toString()
+                        PreviousDraggingNumber = currentDraggingNumber
+                        mPhysicsTimer.setInitialTime(0, time.toInt(), 0)
+
+                        if(CurrentDraggingButton == null) {
+                            CurrentDraggingButton = button
+                        }
+                        else {
+                            CurrentDraggingButton!!.isPressed = false
+                            CurrentDraggingButton = button
+                        }
                     }
                 }
             }
@@ -254,34 +255,20 @@ class MainActivity : BackgroundActivity(), View.OnTouchListener, View.OnClickLis
     }
 
     /*
-     *      ボタン入力が無効
+     *      ボタンの選択状態を初期化
      */
-    private fun invalidButtonInput() {
-        SelectedNumber1 = 0
-        SelectedNumber2 = 0
+    private fun clearButtonState() {
+        FirstSelectedNumber = INVALID_TIME
         IsDragged = false
         ActionDownPoint = PointF()
-        FirstTappedButton = null
 
         //全ての選択状態を解除
         for(button in NumpadButtonList) {
             button.isPressed = false
         }
-    }
 
-    /*
-     *      入力された数字(分)を取得
-     */
-    private fun getInputTime() : Int {
-        if(SelectedNumber1 == SelectedNumber2) {
-            if(IsDragged == false) {
-                SelectedNumber1 = 0
-                IsDragged = false
-            }
-        }
-
-        val timeString = SelectedNumber1.toString() + SelectedNumber2.toString()
-        return timeString.toInt()
+        //タイルのジョイントを破棄
+        mPhysicsTimer.world.destroyAllDistanceJoint()
     }
 
     /*
@@ -291,7 +278,7 @@ class MainActivity : BackgroundActivity(), View.OnTouchListener, View.OnClickLis
         val distanceX = (ActionDownPoint.x - x).toDouble()
         val distanceY = (ActionDownPoint.y - y).toDouble()
 
-        val distance = Math.sqrt(Math.pow(distanceX.toDouble(), 2.0) + Math.pow(distanceY, 2.0))
+        val distance = Math.sqrt(Math.pow(distanceX, 2.0) + Math.pow(distanceY, 2.0))
         return (distance >= DRAGABLE_DISTANCE)
     }
 

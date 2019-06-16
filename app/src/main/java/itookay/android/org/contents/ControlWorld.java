@@ -117,7 +117,7 @@ public class ControlWorld {
         createGround();
 
         //作成するタイルの数
-        int target = mDial.getFont().getArrayLength() * 6;
+        int target = mDial.getFont().getArrayLength() * 4;
         for( int i = 0; i < target; i++ ) {
             createTile();
         }
@@ -145,9 +145,6 @@ public class ControlWorld {
         PolygonShape	boxShape = new PolygonShape();
         //setAsBoxにはサイズの半分の値を渡す
         boxShape.setAsBox(Tile.getSize() / 2f, Tile.getSize() / 2f);
-
-        //
-        float   sizePixel = Scale.toPixel(Tile.getSize());
 
         FixtureDef		boxFixture = new FixtureDef();
         boxFixture.shape = boxShape;
@@ -228,9 +225,9 @@ public class ControlWorld {
     }
 
     /**
-     * 			ワールド上のボディを再描画
+     * 			不必要なタイルをリリースし、必要なタイルをジョイントする
      */
-    public void redrawWorld() {
+    public void invalidate() {
         Iterator<DialPanel>		it = mDial.getDialPanelList().iterator();
         Iterator<Integer>		it2 = null;
         DialPanel	panel = null;
@@ -407,8 +404,7 @@ public class ControlWorld {
     /**
      * 			ジョイントを描画(デバッグ用)
      */
-    public void drawJoints( Canvas canvas ) {
-
+    public void drawJoints(Canvas canvas) {
         Vec2	start = new Vec2();
         Vec2	end = new Vec2();
         Paint	paint = new Paint();
@@ -430,6 +426,7 @@ public class ControlWorld {
             }
         }
 
+        /*
         //上横ライン
         canvas.drawLine(0, Scale.toPixel(mScale.getDisplayHeightMeter()-1f), mScale.getDisplayWidthPixel(), Scale.toPixel(mScale.getDisplayHeightMeter()-1f), paint);
         //左縦ライン
@@ -438,6 +435,15 @@ public class ControlWorld {
         //右縦ライン
         float   endX = startX + Scale.toPixel(mDial.getTimerWidth());
         canvas.drawLine(endX, 0, endX, mScale.getDisplayHeightPixel(), paint);
+        */
+
+        //Bitmapタイルサイズを表示
+        //float pos = Scale.toPixel(Tile.getSize()) * 1f/4f;
+        float pos = 0;
+        //canvas.drawRect(pos, pos, Scale.toPixel(Tile.getSize()) + pos, Scale.toPixel(Tile.getSize()) + pos, paint);
+
+        canvas.drawCircle(0, 0, 20, paint);
+        canvas.drawCircle(mScale.getDisplayWidthPixel()/2f, mScale.getDisplayHeightPixel(), 20, paint);
     }
 
     /**
