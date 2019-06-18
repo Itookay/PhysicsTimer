@@ -95,7 +95,7 @@ public class TimeChanged extends Service {
      * @param minute
      * @param second
      */
-    public void setInitialTime(int hour, int minute, int second) {
+    public void setTime(int hour, int minute, int second) {
         mMinute = minute;
         mSecond = second;
 

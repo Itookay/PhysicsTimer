@@ -154,10 +154,10 @@ public class PhysicsTimer implements TimeChangedListener {
     /*
      *      スタート時間をセット
      */
-    public void setInitialTime(int hour, int minute, int second) {
+    public void setTime(int hour, int minute, int second) {
         try {
             mDial.setTime(new Time(hour, minute, second));
-            mTimeChagedService.setInitialTime(hour, minute, second);
+            mTimeChagedService.setTime(hour, minute, second);
             mWorld.invalidate();
         }
         catch (Exception ex) {
@@ -180,6 +180,7 @@ public class PhysicsTimer implements TimeChangedListener {
         mTimeChagedService.removeCallback();
         mWorld.destroyAllDistanceJoint();
         mDial.clearTime();
+        mWorld.clearTileId();
     }
 
 

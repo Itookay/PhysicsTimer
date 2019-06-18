@@ -90,4 +90,13 @@ class TileBodyList {
 		return count;
 	}
 
+	/**
+	 * 		タイルのユニークIDをクリア
+	 */
+	public void clearTileId() {
+		for(Body body : mTileBodyList) {
+			Tile	tile = (Tile)body.getUserData();
+			tile.setUniqueId(TileBase.INVALID_ID, TileBase.INVALID_ID);
+		}
+	}
 }

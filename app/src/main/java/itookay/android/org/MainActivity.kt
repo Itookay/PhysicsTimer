@@ -160,7 +160,7 @@ class MainActivity : BackgroundActivity(), View.OnTouchListener, View.OnClickLis
                 FirstSelectedNumber = getSelectedButtonNumber(button)
                 ActionDownPoint = PointF(event.rawX, event.rawY)
 
-                mPhysicsTimer.setInitialTime(0, FirstSelectedNumber, 0)
+                mPhysicsTimer.setTime(0, FirstSelectedNumber, 0)
 
                 button.performClick()
                 button.isPressed = true
@@ -189,14 +189,14 @@ class MainActivity : BackgroundActivity(), View.OnTouchListener, View.OnClickLis
                 if(currentDraggingNumber == FirstSelectedNumber) {
                     time = FirstSelectedNumber.toString() + FirstSelectedNumber.toString()
                     PreviousDraggingNumber = currentDraggingNumber
-                    mPhysicsTimer.setInitialTime(0, time.toInt(), 0)
+                    mPhysicsTimer.setTime(0, time.toInt(), 0)
                 }
                 //2桁目以降をドラッグ
                 else {
                     if(currentDraggingNumber != PreviousDraggingNumber) {
                         time = FirstSelectedNumber.toString() + currentDraggingNumber.toString()
                         PreviousDraggingNumber = currentDraggingNumber
-                        mPhysicsTimer.setInitialTime(0, time.toInt(), 0)
+                        mPhysicsTimer.setTime(0, time.toInt(), 0)
 
                         if(CurrentDraggingButton == null) {
                             CurrentDraggingButton = button
@@ -266,9 +266,6 @@ class MainActivity : BackgroundActivity(), View.OnTouchListener, View.OnClickLis
         for(button in NumpadButtonList) {
             button.isPressed = false
         }
-
-        //タイルのジョイントを破棄
-        mPhysicsTimer.world.destroyAllDistanceJoint()
     }
 
     /*

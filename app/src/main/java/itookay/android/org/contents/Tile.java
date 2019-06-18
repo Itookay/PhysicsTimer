@@ -42,7 +42,7 @@ public class Tile implements DrawableBody {
     /** タイルのBitmap */
     private Bitmap		mBitmap = null;
     /** 密度 */
-    private float		mDensity = 50f;
+    private float		mDensity = 100f;
     /** 摩擦係数 */
     private float		mFriction = 0.4f;
     /** 反発係数 */

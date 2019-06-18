@@ -402,6 +402,33 @@ public class ControlWorld {
     }
 
     /**
+     * 			ディスタンス・ジョイントを全消去
+     */
+    public void destroyAllDistanceJoint() {
+        for(Joint joint = mWorld.getJointList(); joint != null; joint = joint.getNext()) {
+            mWorld.destroyJoint(joint);
+        }
+
+        ArrayList<Body>       bodyList = mTileList.getList();
+        Tile	tile = null;
+        for(Body body : bodyList) {
+            tile = (Tile)body.getUserData();
+            tile.setUniqueId(TileBase.INVALID_ID, TileBase.INVALID_ID);
+            setFreeTileFilter(body);
+        }
+    }
+
+    /**
+     *      タイルのIDをクリア
+     */
+    public void clearTileId() {
+        for(Body body : mTileList.getList()) {
+            Tile    tile = (Tile)body.getUserData();
+            tile.setUniqueId(Tile.INVALID_ID, Tile.INVALID_ID);
+        }
+    }
+
+    /**
      * 			ジョイントを描画(デバッグ用)
      */
     public void drawJoints(Canvas canvas) {
@@ -444,23 +471,6 @@ public class ControlWorld {
 
         canvas.drawCircle(0, 0, 20, paint);
         canvas.drawCircle(mScale.getDisplayWidthPixel()/2f, mScale.getDisplayHeightPixel(), 20, paint);
-    }
-
-    /**
-     * 			ディスタンス・ジョイントを全消去
-     */
-    public void destroyAllDistanceJoint() {
-        for(Joint joint = mWorld.getJointList(); joint != null; joint = joint.getNext()) {
-            mWorld.destroyJoint(joint);
-        }
-
-        ArrayList<Body>       bodyList = mTileList.getList();
-        Tile	tile = null;
-        for(Body body : bodyList) {
-            tile = (Tile)body.getUserData();
-            tile.setUniqueId(TileBase.INVALID_ID, TileBase.INVALID_ID);
-            setFreeTileFilter(body);
-        }
     }
 }
 

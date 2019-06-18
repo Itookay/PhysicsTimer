@@ -262,4 +262,12 @@ public class DialPanel {
     public int getId() {
         return mId;
     }
+
+    /**
+     *      TileBaseリストを取得
+     * @return
+     */
+    public ArrayList<TileBase> getTileBaseList() {
+        return mTileBaseList;
+    }
 }
