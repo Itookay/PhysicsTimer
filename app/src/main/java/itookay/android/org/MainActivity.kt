@@ -9,6 +9,9 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.widget.ImageButton
+import itookay.android.org.Style.SingleRow
+import itookay.android.org.Style.StyleBase
+import itookay.android.org.Style.TwoRowsBigSecond
 
 import itookay.android.org.contents.PhysicsTimer
 import itookay.android.org.font.FontBase
@@ -54,9 +57,12 @@ class MainActivity : BackgroundActivity(), View.OnTouchListener, View.OnClickLis
         setContentView(R.layout.activity_main)
         loadPreference()
 
+        //スタイル
+        //val style:StyleBase = SingleRow(mFont)
+        val style:StyleBase = TwoRowsBigSecond(mFont)
+
         mPhysicsTimer = PhysicsTimer(applicationContext)
-        mPhysicsTimer.setFont(mFont)
-        mPhysicsTimer.setStyle(mStyle)
+        mPhysicsTimer.setStyle(style)
         val surfaceView = findViewById<SurfaceView>(R.id.svMain)
         mPhysicsTimer.setSurfaceView(surfaceView)
         mPhysicsTimer.init()

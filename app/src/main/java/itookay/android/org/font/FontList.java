@@ -1,7 +1,7 @@
 package itookay.android.org.font;
 
-import itookay.android.org.font.NormalB;
-import itookay.android.org.font.NormalRoundB;
+import itookay.android.org.font.NormalA;
+import itookay.android.org.font.NormalRoundA;
 
 /**
  *
@@ -12,8 +12,8 @@ import itookay.android.org.font.NormalRoundB;
 public class FontList {
 
 	private static FontBase[]		mFontListEntry = {
-		new NormalB(),
-		new NormalRoundB(),
+		new NormalA(),
+		new NormalRoundA(),
 	};
 
 	/** かなフォント名 */

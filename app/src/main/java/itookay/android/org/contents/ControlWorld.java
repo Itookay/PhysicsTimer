@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import android.graphics.*;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.*;
@@ -13,9 +14,6 @@ import org.jbox2d.dynamics.joints.Joint;
 import org.jbox2d.dynamics.joints.JointEdge;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.util.Log;
 
 /**
@@ -36,7 +34,7 @@ public class ControlWorld {
     private int			mPositionIterations = 0;
 
     /** 時間管理 */
-    private Dial		mDial = null;
+//    private Dial		mDial = null;
     /** 画面スケール */
     private Scale		mScale = null;
 
@@ -44,6 +42,8 @@ public class ControlWorld {
     private Body		mGround = null;
     /** タイルのリスト */
     private TileBodyList	mTileList = new TileBodyList();
+    /** 生成するタイルサイズのリスト */
+    private int[]       mCreateTileSizeList;
 
     /** 拘束タイル衝突カテゴリbit */
     private final int   STRAIN_TILE_CAT = 0x0001;
@@ -63,33 +63,26 @@ public class ControlWorld {
     /**
      * 			コンストラクタ
      */
-    public ControlWorld(Context appContext, Vec2 gravity, boolean doSleep) {
+    ControlWorld(Context appContext, Vec2 gravity, boolean doSleep) {
         mWorld = new World(gravity, doSleep);
         mAppContext = appContext;
     }
 
-    public World getWorld() {
+    World getWorld() {
         return mWorld;
     }
 
     /**
      * 			stepの引数をセット
      */
-    public void setStep( float step, int velocityIterations, int positionIterations ) {
+    void setStep( float step, int velocityIterations, int positionIterations ) {
         mStep = step;
         mVelocityIterations = velocityIterations;
         mPositionIterations = positionIterations;
     }
 
-    public float getStep() {
+    float getStep() {
         return mStep;
-    }
-
-    /**
-     * 			文字盤をセット
-     */
-    public void setDial(Dial dial) {
-        mDial = dial;
     }
 
     /**
@@ -97,7 +90,7 @@ public class ControlWorld {
      * @param x 画面中心原点、右向き正
      * @param y 画面中心原点、上向き正
      */
-    public void setGravity(float x, float y) {
+    void setGravity(float x, float y) {
         //強さを調整
         x *= 2f;
         y *= 2f;
@@ -113,20 +106,24 @@ public class ControlWorld {
      * 			ワールド上にグラウンドとボディを生成<br>
      * 			ボディの配置はsetTime()の引数，グラウンドの大きさはsetScale()による<br>
      */
-    public void createWorld() {
+    void createWorld(int smallTileCount, int normalTileCount) {
         createGround();
 
-        //作成するタイルの数
-        int target = mDial.getFont().getArrayLength() * 4;
-        for( int i = 0; i < target; i++ ) {
-            createTile();
+        //ちいさいの
+        for (int i = 0; i < smallTileCount; i++) {
+            createTile(Tile.SIZE_SMALL);
+        }
+        //ふつうの
+        for (int i = 0; i < normalTileCount; i++) {
+            createTile(Tile.SIZE_NORMAL);
         }
     }
 
     /**
      * 			タイルを作成
+     * @param sizeFormat タイルサイズ
      */
-    private Body createTile() {
+    private void createTile(int sizeFormat) {
         BodyDef		bodyDef = new BodyDef();
         Vec2		pos = new Vec2();
 
@@ -134,7 +131,8 @@ public class ControlWorld {
         pos.x = (float)(mScale.getDisplayWidthMeter() * Math.random());
         pos.y = (float)(mScale.getDisplayHeightMeter() * Math.random());
 
-        Tile	tile = getUserData(pos, TileBase.INVALID_ID, TileBase.INVALID_ID);
+        Tile	tile = createUserData(pos);
+        tile.setSizeFormat(sizeFormat);
 
         bodyDef.type = BodyType.DYNAMIC;
         bodyDef.position.set(tile.getPosition());
@@ -144,7 +142,7 @@ public class ControlWorld {
 
         PolygonShape	boxShape = new PolygonShape();
         //setAsBoxにはサイズの半分の値を渡す
-        boxShape.setAsBox(Tile.getSize() / 2f, Tile.getSize() / 2f);
+        boxShape.setAsBox(tile.getSize() / 2f, tile.getSize() / 2f);
 
         FixtureDef		boxFixture = new FixtureDef();
         boxFixture.shape = boxShape;
@@ -157,18 +155,16 @@ public class ControlWorld {
 
         body.createFixture( boxFixture );
         mTileList.add( body );
-
-        return body;
     }
 
     /**
-     * 			タイルのユーザーデータを取得
+     * 			タイルのユーザーデータを生成
      */
-    private Tile getUserData( Vec2 pos, int id, int index ) {
+    private Tile createUserData(Vec2 pos) {
         Tile	tile = new Tile();
-        tile.setPosition( pos );
-        tile.setUniqueId( id, index );
-        tile.createTileBitmap( mAppContext.getResources(), Tile.COLOR_BLUE );
+        tile.setPosition(pos);
+        tile.setUniqueId(TileBase.INVALID_ID, TileBase.INVALID_ID);
+        tile.createTileBitmap(mAppContext.getResources(), Tile.COLOR_BLUE);
 
         return tile;
     }
@@ -227,33 +223,16 @@ public class ControlWorld {
     /**
      * 			不必要なタイルをリリースし、必要なタイルをジョイントする
      */
-    public void invalidate() {
-        Iterator<DialPanel>		it = mDial.getDialPanelList().iterator();
-        Iterator<Integer>		it2 = null;
-        DialPanel	panel = null;
-        int			index = 0;
-
-        //タイルを開放
-        while(it.hasNext()) {
-            panel = it.next();
-
-            it2 = panel.getDestroyTileList().iterator();
-            index = 0;
-            while(it2.hasNext()) {
-                index = it2.next();
+    void invalidate(Dial dial) {
+        for(DialPanel panel : dial.getDialPanelList()) {
+            //タイルを開放
+            for(int index : panel.getDestroyTileList()) {
                 releaseTile(panel.getId(), index);
             }
             panel.getDestroyTileList().clear();
-        }
 
-        //タイルを拘束
-        it = mDial.getDialPanelList().iterator();
-        while(it.hasNext()) {
-            panel = it.next();
-
-            it2 = panel.getJointTileList().iterator();
-            while(it2.hasNext()) {
-                index = it2.next();
+            //タイルを拘束
+            for(int index : panel.getJointTileList()) {
                 restrainTile(panel, index);
             }
             panel.getJointTileList().clear();
@@ -274,7 +253,7 @@ public class ControlWorld {
         body = mTileList.getNext();
         //タイルが足りない
         if(body == null) {
-            body = createTile();
+//            body = createTile();
         }
 
         //接触条件フィルタを変更
@@ -282,21 +261,32 @@ public class ControlWorld {
 
         tile = (Tile)body.getUserData();
         tile.setUniqueId(panel.getId(), index);
-        createJoint(jointDef, body, tileBase);
+
+        //ジョイント１　左側
+        jointDef.bodyA = mGround;
+        jointDef.bodyB = body;
+        jointDef.localAnchorA.set(tileBase.getWorldJointPos1());
+        jointDef.localAnchorB.set(tile.getJointAnchorPosition1());
+        jointDef.length = 0f;
+        mWorld.createJoint(jointDef);
+
+        //ジョイント２　右側
+        jointDef.bodyA = mGround;
+        jointDef.bodyB = body;
+        jointDef.localAnchorA.set(tileBase.getWorldJointPos2());
+        jointDef.localAnchorB.set(tile.getJointAnchorPosition2());
+        jointDef.length = 0f;
+        mWorld.createJoint(jointDef);
     }
 
     /**
      * 			ボディを文字盤から開放
      */
     private void releaseTile(int panelId, int index) {
-
         if(mWorld == null) return;
 
-        Iterator<Body>		it = mTileList.iterator();
-        Body	body = null;
         Tile	tile = null;
-        while(it.hasNext()) {
-            body = it.next();
+        for(Body body : mTileList.getList()) {
             tile = (Tile)body.getUserData();
             if( tile.getPanelId() == panelId && tile.getIndex() == index ) {
                 //ジョイントを削除
@@ -310,28 +300,6 @@ public class ControlWorld {
                 setFreeTileFilter(body);
             }
         }
-    }
-
-    /**
-     * 			ジョイント(タイルをワールドに拘束する)を生成
-     * @param
-     */
-    private void createJoint(DistanceJointDef jointDef, Body body, TileBase tileBase) {
-        //ジョイント１　左側
-        jointDef.bodyA = mGround;
-        jointDef.bodyB = body;
-        jointDef.localAnchorA.set(tileBase.getWorldJointPos1());
-        jointDef.localAnchorB.set(Tile.getJointAnchorPosition1());
-        jointDef.length = 0f;
-        mWorld.createJoint(jointDef);
-
-        //ジョイント２　右側
-        jointDef.bodyA = mGround;
-        jointDef.bodyB = body;
-        jointDef.localAnchorA.set(tileBase.getWorldJointPos2());
-        jointDef.localAnchorB.set(Tile.getJointAnchorPosition2());
-        jointDef.length = 0f;
-        mWorld.createJoint(jointDef);
     }
 
     /**
@@ -357,8 +325,7 @@ public class ControlWorld {
     /**
      * 			ワールドを進める
      */
-    public void step() {
-
+    void step() {
         if( mStep != 0 && mWorld != null ) {
             mWorld.step( mStep, mVelocityIterations, mPositionIterations );
             mWorld.clearForces();
@@ -368,15 +335,34 @@ public class ControlWorld {
     /**
      * 			ボディを描画
      */
-    public void drawBodies(Canvas canvas) {
+    void drawBodies(Canvas canvas) {
+//        Tile	tile = null;
+//        Iterator<Body>	it = mTileList.iterator();
+//        Body	body = null;
+//        while(it.hasNext()){
+//            body = it.next();
+//            tile = (Tile)body.m_userData;
+//            tile.drawBody(canvas, body);
+//        }
 
-        Tile	tile = null;
-        Iterator<Body>	it = mTileList.iterator();
-        Body	body = null;
-        while(it.hasNext()){
-            body = it.next();
-            tile = (Tile)body.m_userData;
-            tile.drawBody(canvas, body);
+        for(Body body : mTileList.getList()) {
+            Vec2	pos = body.getPosition();
+            Tile    tile = (Tile)body.m_userData;
+            float   size = tile.getSize();
+            Bitmap  bitmap = tile.getBitmap();
+
+            float	scale = Scale.toPixel(size) / bitmap.getWidth();
+            Matrix matrix = new Matrix();
+            matrix.setScale(scale, scale);
+
+            float	x = Scale.toPixel(pos.x - size / 2f);
+            float	y = Scale.toPixel(pos.y - size / 2f);
+            matrix.postTranslate(x, y);
+
+            float	deg = (float)Math.toDegrees(body.getAngle());
+            matrix.preRotate(deg, bitmap.getWidth() / 2.0f, bitmap.getHeight() / 2.0f);
+
+            canvas.drawBitmap(bitmap, matrix, null);
         }
     }
 
@@ -391,7 +377,7 @@ public class ControlWorld {
      * 			ワールドが使用可能である
      * @return
      */
-    public boolean isAlive() {
+    boolean isAlive() {
 
         if( mWorld != null ) {
             return true;
@@ -404,7 +390,7 @@ public class ControlWorld {
     /**
      * 			ディスタンス・ジョイントを全消去
      */
-    public void destroyAllDistanceJoint() {
+    void destroyAllDistanceJoint() {
         for(Joint joint = mWorld.getJointList(); joint != null; joint = joint.getNext()) {
             mWorld.destroyJoint(joint);
         }
@@ -421,7 +407,7 @@ public class ControlWorld {
     /**
      *      タイルのIDをクリア
      */
-    public void clearTileId() {
+    void clearTileId() {
         for(Body body : mTileList.getList()) {
             Tile    tile = (Tile)body.getUserData();
             tile.setUniqueId(Tile.INVALID_ID, Tile.INVALID_ID);

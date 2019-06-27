@@ -14,6 +14,8 @@ import android.util.Log;
 import android.view.Display;
 import android.view.SurfaceView;
 import android.view.WindowManager;
+import itookay.android.org.Style.StyleBase;
+import itookay.android.org.Style.TwoRowsBigSecond;
 import itookay.android.org.font.FontBase;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.World;
@@ -53,24 +55,18 @@ public class PhysicsTimer implements TimeChangedListener {
     /** フォント */
     private FontBase		mFont = null;
     /** 表示スタイル */
-    private int				mStyle = -1;
+    private StyleBase       mStyle = null;
 
     /**
      * 			コンストラクタ
      */
-    public PhysicsTimer( Context appContext ) {
+    public PhysicsTimer(Context appContext) {
         mAppContext = appContext;
     }
 
-    public void setFont( FontBase font ) {
-        if( font != null ) {
-            mFont = font;
-            DialPanel.setFont( mFont );
-
-            if( mDial != null ) {
-                mDial.setFont( mFont );
-            }
-        }
+    public void setStyle(StyleBase style) {
+        mStyle = style;
+        mFont = style.getFont();
     }
 
     /**
@@ -89,20 +85,18 @@ public class PhysicsTimer implements TimeChangedListener {
         mScale.setDisplay(size.x, size.y, DISPLAY_HEIGHT_IN_METER);
 
         mDial = new Dial();
-        mDial.setFont(mFont);
         mDial.setScale(mScale);
         mDial.setStyle(mStyle);
-        mDial.setTimerSizeScale(TIMER_SCALE_IN_PORTRATE, 0.1f, 0.1f);
-        mDial.createDials(-1);
+        setTimerSizeScale(TIMER_SCALE_IN_PORTRATE, 0.1f, 0.1f);
+        mDial.createDials();
         mDial.arrangeDials();
         setDialPosition();
 
         Vec2	gravity = new Vec2(0f, -10f);
         mWorld = new ControlWorld(mAppContext, gravity, true);
         mWorld.setStep(1f/60f, 10, 8);
-        mWorld.setDial(mDial);
         mWorld.setScale(mScale);
-        mWorld.createWorld();
+        mWorld.createWorld(mStyle.getSmallTileCount(), mStyle.getNomalTileCount());
 
         mBgAttr = new BackgroundAttribution();
         mBgAttr.setColor(Color.WHITE);
@@ -132,6 +126,40 @@ public class PhysicsTimer implements TimeChangedListener {
     };
 
     /**
+     *          タイマーのサイズスケールをセットしてタイマーとタイルのサイズを計算<br>
+     *          TileとDialPanelのサイズも代入。
+     * @param timerSizeScale 画面幅を1とした時のタイマーのスケール
+     * @param dialSpaceScale DialPanelサイズを1とした時のDialPanel間すきまの割合
+     * @param tileSpaceScale Tileサイズを1とした時のTile間すきまの割合
+     */
+    public void setTimerSizeScale(float timerSizeScale, float dialSpaceScale, float tileSpaceScale) {
+        /* DialPanel一枚(数字2文字)が4セクションとしてセクションのサイズを計算 */
+        float   timerWidth = mScale.getDisplayWidthMeter() * timerSizeScale;
+        float   sectionSize = timerWidth / mStyle.getSection();
+        float   dialPanelSize = sectionSize * 4;
+
+        /* 時・分のスペースサイズ */
+        float   dialPanelSpace = dialPanelSize * dialSpaceScale;
+        float   scale = 0.5f;
+        float   left = dialPanelSpace / 4f;
+        float   center = dialPanelSpace / 2f;
+        float   right = dialPanelSpace /4f;
+        DialPanel.setStaticSpace(left, center, right, left*scale, center*scale, right*scale);
+
+        //DialPanelスペースサイズからスペースサイズを除く
+        float       dialPanelSizeWithoutSpace = dialPanelSize - dialPanelSpace;
+        //タイル一枚のサイズ
+        float       normalTileSize = dialPanelSizeWithoutSpace / mFont.get2NumbersColumnsCount();
+        scale = 0.5f;
+        Tile.setStaticSize(normalTileSize, normalTileSize*scale, tileSpaceScale);
+        TileBase.setStaticSize(normalTileSize, normalTileSize*scale, tileSpaceScale);
+
+        /* コロンの前後スペースサイズ */
+        float   cologneSpace = (sectionSize - normalTileSize) / 2f;
+        DialPanel.setStaticCologneSpace(cologneSpace, cologneSpace);
+    }
+
+    /**
      *          タイマーの位置をセット
      */
     private void setDialPosition() {
@@ -141,10 +169,6 @@ public class PhysicsTimer implements TimeChangedListener {
 
         //書き出し位置
         mDial.OffsetPosition(pos.x, pos.y);
-    }
-
-    public void setStyle( int style ) {
-        mStyle = style;
     }
 
     public void setSurfaceView(SurfaceView surfaceView) {
@@ -158,7 +182,7 @@ public class PhysicsTimer implements TimeChangedListener {
         try {
             mDial.setTime(new Time(hour, minute, second));
             mTimeChagedService.setTime(hour, minute, second);
-            mWorld.invalidate();
+            mWorld.invalidate(mDial);
         }
         catch (Exception ex) {
         }
@@ -195,7 +219,7 @@ public class PhysicsTimer implements TimeChangedListener {
             }
             else {
                 mDial.setTime(new Time(hour, minute, second));
-                mWorld.invalidate();
+                mWorld.invalidate(mDial);
             }
         }
         catch (Exception ex) {

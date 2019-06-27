@@ -45,6 +45,10 @@ public abstract class FontBase implements Serializable {
 	public abstract int getSeparateColumnCount();
 	/** 数字一個分の配列サイズを取得 */
 	public abstract int getArrayLength();
+	/** DialPanel 1枚に必要なタイルのカラム数を取得<br>数字・コロンで適切な数を取得。DialPanel.MINUTE, SECOND, COLOGNE */
+	public abstract int getDialPanelColumnCount(int format);
+	/** DialPanel 1枚に必要なタイルの数を取得<br>数字・コロンで適切な数を取得。DialPanel.MINUTE, SECOND, COLOGNE */
+	public abstract int getDialPanelArrayCount(int format);
 
 	public FontBase() {
 

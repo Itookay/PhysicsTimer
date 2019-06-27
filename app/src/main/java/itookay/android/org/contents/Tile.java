@@ -13,20 +13,32 @@ import org.jbox2d.dynamics.Fixture;
 /**
  * 			タイル１枚の情報を保持
  */
-public class Tile implements DrawableBody {
+public class Tile {
 
     /** 無効なIDもしくはIndex */
     public static final int		INVALID_ID = -1;
+    /** タイルのサイズ ふつうの */
+    public static final int     SIZE_NORMAL = 10;
+    /** タイルのサイズ ちいさいの */
+    public static final int     SIZE_SMALL = 20;
 
-    /** タイルサイズ */
-    public static float         mSize = 0f;
-    /** タイル左側の空白 */
-    private static float        mLeftSpace = 0f;
-    /** タイル右側の空白 */
-    private static float        mRightSpace = 0f;
+    /** ふつうタイルサイズ */
+    private static float        NORMAL_SIZE = 0;
+    /** ちいさいタイルサイズ */
+    private static float        SMALL_SIZE = 0;
+    /** ふつうタイルの空白 */
+    private static float        NORMAL_SPACE = 0f;
+    /** ちいさいタイルの空白 */
+    private static float        SMALL_SPACE = 0f;
+    /** ふつうジョイントアンカーの幅 */
+    private static float 	    NORMAL_ANCHOR_WIDTH = 0f;
+    /** ちいさいジョイントアンカーの幅 */
+    private static float 	    SMALL_ANCHOR_WIDTH = 0f;
 
-    /** ジョイントアンカーの幅 */
-    public static float 	mAnchorWidth = 0f;
+    /** Tileサイズ */
+    private float       mSize = 0;
+    /** ジョイントアンカー幅 */
+    private float       mJointAnchorWidth = 0;
     /** パネルID */
     private int			mPanelId = -1;
     /** パネル内の配列インデックス */
@@ -52,67 +64,60 @@ public class Tile implements DrawableBody {
      * 			タイルの中心ワールド座標をセット
      */
     public void setPosition(Vec2 pos) {
-
         mPosition.set(pos);
     }
 
     /**
-     *          タイルのサイズをセット
-     * @param size タイルサイズ
+     *          タイルのサイズをセット<br>
+     *          サイズからジョイントアンカー幅も計算される
+     * @param normalTileSize ふつうのタイルサイズ
+     * @param smallTileSize ちいさいタイルサイズ
      * @param spaceScale タイルサイズの内、どれだけをスペースにするか。スペースは左右均等になる
      */
-    public static void setSize(float size, float spaceScale) {
-        mSize = size;
-        mLeftSpace = mRightSpace = size * spaceScale / 2f;
-        mAnchorWidth = mSize / 2f;
+    public static void setStaticSize(float normalTileSize, float smallTileSize, float spaceScale) {
+        NORMAL_SIZE = normalTileSize;
+        NORMAL_SPACE = NORMAL_SIZE * spaceScale / 2f;
+        NORMAL_ANCHOR_WIDTH = NORMAL_SIZE / 2f;
+
+        SMALL_SIZE = smallTileSize;
+        SMALL_SPACE = SMALL_SIZE * spaceScale / 2f;
+        SMALL_ANCHOR_WIDTH = SMALL_SIZE / 2f;
     }
 
     /**
-     *          タイル左右のスペースをセット
-     * @param left タイル左側スペース
-     * @param right タイル右側スペース
+     *      タイル・インスタンスのサイズフォーマットをセット<br>
+     *      getSize系のメソッドでは、ここで指定したフォーマットに対応するサイズを返す。
      */
-    public static void setSpace(float left, float right) {
-        mLeftSpace = left;
-        mRightSpace = right;
+    public Tile setSizeFormat(int sizeFormat) {
+        switch(sizeFormat) {
+            case SIZE_NORMAL:
+                mSize = NORMAL_SIZE;
+                mJointAnchorWidth = NORMAL_ANCHOR_WIDTH;
+                break;
+            case SIZE_SMALL:
+                mSize = SMALL_SIZE;
+                mJointAnchorWidth = SMALL_ANCHOR_WIDTH;
+                break;
+            default:
+                break;
+        }
+        return this;
     }
 
     /**
-     *          タイルのサイズ(スペースを除く)を取得
+     *      タイルのサイズ(スペースを除く)を取得
      */
-    public static float getSize() {
+    public float getSize() {
         return mSize;
-    }
-
-    /**
-     *          タイルのサイズ(スペースを含む)を取得
-     */
-    public static float getSizeWithSpace() {
-        return mLeftSpace + mSize + mRightSpace;
-    }
-
-    public static float getLeftSpace() {
-        return mLeftSpace;
-    }
-
-    public static float getRightSpace() {
-        return mRightSpace;
-    }
-
-    /**
-     * 			ジョイントアンカー1と2の幅を取得
-     */
-    public static float getJointAnchorWidth() {
-        return mAnchorWidth;
     }
 
     /**
      *			ジョイントアンカー1(左)位置取得
      * @return タイル中心を原点としたジョイントアンカー1位置
      */
-    public static Vec2 getJointAnchorPosition1() {
+    public Vec2 getJointAnchorPosition1() {
         Vec2		pos = new Vec2();
-        pos.x = -mAnchorWidth / 2f;
+        pos.x = -mJointAnchorWidth / 2f;
         pos.y = 0f;
         return pos;
     }
@@ -121,15 +126,19 @@ public class Tile implements DrawableBody {
      *			ジョイントアンカー2(右)位置取得
      * @return タイル中心を原点としたジョイントアンカー2位置
      */
-    public static Vec2 getJointAnchorPosition2() {
+    public Vec2 getJointAnchorPosition2() {
         Vec2		pos = new Vec2();
-        pos.x = mAnchorWidth / 2f;
+        pos.x = mJointAnchorWidth / 2f;
         pos.y = 0f;
         return pos;
     }
 
     public void setBitmap(Bitmap bitmap) {
         mBitmap = bitmap;
+    }
+
+    public Bitmap getBitmap() {
+        return mBitmap;
     }
 
     public float getDensity() {
@@ -142,27 +151,6 @@ public class Tile implements DrawableBody {
 
     public float getRestitution() {
         return mRestitution;
-    }
-
-    /**
-     * 			タイル描画
-     */
-    @Override
-    public void drawBody(Canvas canvas, Body body) {
-        Vec2	pos = body.getPosition();
-
-        float	scale = Scale.toPixel(mSize) / mBitmap.getWidth();
-        Matrix	matrix = new Matrix();
-        matrix.setScale(scale, scale);
-
-        float	x = Scale.toPixel(pos.x - mSize / 2f);
-        float	y = Scale.toPixel(pos.y - mSize / 2f);
-        matrix.postTranslate(x, y);
-
-        float	deg = (float)Math.toDegrees(body.getAngle());
-        matrix.preRotate(deg, mBitmap.getWidth() / 2.0f, mBitmap.getHeight() / 2.0f);
-
-        canvas.drawBitmap(mBitmap, matrix, null);
     }
 
     /**

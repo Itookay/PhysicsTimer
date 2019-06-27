@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import android.graphics.PointF;
+import itookay.android.org.Style.StyleBase;
 import itookay.android.org.font.FontBase;
 import org.jbox2d.common.Vec2;
 import android.util.Log;
@@ -11,46 +12,50 @@ import android.util.Log;
 public class DialPanel {
 
     /* static定数 */
-    /** 時 */
-    public static final int		HOUR = 100;
     /** 分 */
     public static final int		MINUTE = 110;
     /** 秒 */
     public static final int		SECOND = 120;
     /** コロン */
     public static final int		COLOGNE = 130;
-    /** ドット */
-    public static final int		DOT = 140;
     /** 空白 */
-    public static final int		BLANK = 150;
+    public static final int		BLANK = 140;
 
-    /** フォント */
-    private static FontBase		mFont = null;
+    /** ふつうの数字1桁目左側の空白 */
+    private static float        NORMAL_LEFT_SPACE = 0f;
+    /** ふつうの数字1桁目と2桁目の間の空白 */
+    private static float        NORMAL_CENTER_SPACE = 0f;
+    /** ふつうの数字2桁目右側の空白 */
+    private static float        NORMAL_RIGHT_SPACE = 0f;
+    /** ちいさい数字1桁目左側の空白 */
+    private static float        SMALL_LEFT_SPACE = 0f;
+    /** ちいさい数字1桁目と2桁目の間の空白 */
+    private static float        SMALL_CENTER_SPACE = 0f;
+    /** ちいさい数字2桁目右側の空白 */
+    private static float        SMALL_RIGHT_SPACE = 0f;
+    /** コロン左側スペース */
+    private static float        COLOGNE_LEFT_SPACE = 0;
+    /** コロン右側スペース */
+    private static float        COLOGNE_RIGHT_SPACE = 0;
 
-    /** 数字1桁目左側の空白 */
-    private static float        mNumberLeftSpace = 0f;
-    /** 数字1桁目と2桁目の間の空白 */
-    private static float        mNumberCenterSpace = 0f;
-    /** 数字2桁目右側の空白 */
-    private static float        mNumberRightSpace = 0f;
+    /** タイルサイズフォーマット */
+    private int         mSizeFormat = 0;
+    /** パネル左側の空白 */
+    private float       mLeftSpace = 0;
+    /** パネルの数字1桁目と2桁目の間の空白 */
+    private float       mCenterSpace = 0;
+    /** パネル右側の空白 */
+    private float       mRightSpace = 0;
 
-    /** コロン左側の空白 */
-    private static float        mCologneLeftSpace = 0f;;
-    /** コロン右側の空白 */
-    private static float        mCologneRightSpace = 0f;
+    /** ToleBaseのカラム数 */
+    private int         mTileBaseColumnCount = 0;
+    /** TileBaseの配列数 */
+    private int         mTileBaseArrayCount = 0;
 
     /** TileBaseリスト */
     private ArrayList<TileBase>		mTileBaseList = new ArrayList<TileBase>();
     /** このパネルが保持する時間の属性。時・分・秒・コロン・ドッドのどれか */
     private int			mFormat = -1;
-    /** タイルの配列 */
-    private int[]		mArray = null;
-    /** タイル配列のカラム数 */
-    private int			mArrayColumnCount = 0;
-    /** タイル配列長さ */
-    private int			mArrayLength = 0;
-    /** 行 */
-    private int			mRow = -1;
     /** パネルの描画開始位置．デフォルトで原点．必要に応じてオフセット */
     private Vec2		mPosition = new Vec2( 0, 0 );
 
@@ -63,69 +68,89 @@ public class DialPanel {
 
     /**
      * 			コンストラクタ
-     * @param format	パネルのフォーマット
-     * @param row		このパネルの行．ほかのパネルと同じ行なら横一列に並ぶ
+     * @param format	パネルのフォーマット(時or分orコロン)
+     * @param id		パネルのID
      */
-    public DialPanel(int format, int row, int id) {
+    DialPanel(int format, int id) {
         mFormat = format;
-        mRow = row;
         mId = id;
     }
 
     /**
-     *          DialPanel数字のスペースをセット
-     * @param left 1桁目の左側スペース
-     * @param center 1桁目と2桁目の中間スペース
-     * @param right 2桁目の右側スペース
+     *      DialPanel数字のスペースをセット
      */
-    public static void setNumberSpaceSize(float left, float center, float right) {
-        mNumberLeftSpace = left;
-        mNumberCenterSpace = center;
-        mNumberRightSpace = right;
+    public static void setStaticSpace(float normalLeft, float normalCenter, float normalRight, float smallLeft, float smallCenter, float smallRight) {
+        NORMAL_LEFT_SPACE = normalLeft;
+        NORMAL_CENTER_SPACE = normalCenter;
+        NORMAL_RIGHT_SPACE = normalRight;
+        SMALL_LEFT_SPACE = smallLeft;
+        SMALL_CENTER_SPACE = smallCenter;
+        SMALL_RIGHT_SPACE = smallRight;
     }
 
     /**
-     *          DialPanelコロンのスペースをセット
-     * @param left 左側スペース
-     * @param right 右側スペース
+     *      DialPanelコロンのスペースをセット<br>
+     *      サイズはふつうのみ
      */
-    public static void setCologneSpaceSize(float left, float right) {
-        mCologneLeftSpace = left;
-        mCologneRightSpace = right;
+    public static void setStaticCologneSpace(float left, float right) {
+        COLOGNE_LEFT_SPACE = left;
+        COLOGNE_RIGHT_SPACE = right;
     }
 
-    public static float getNumberLeftSpace() {
-        return mNumberLeftSpace;
+    public void setTileBaseArray(int columnCount, int arrayCount) {
+        mTileBaseColumnCount = columnCount;
+        mTileBaseArrayCount = arrayCount;
     }
 
-    public static float getNumberCenterSpace() {
-        return mNumberCenterSpace;
+    /**
+     *      このパネルのサイズフォーマットをセット<br>
+     *      このフォーマットに従ったサイズでパネルと隙間のサイズを決定
+     */
+    public void setSizeFormat(int format) {
+        mSizeFormat = format;
+
+        switch(mSizeFormat) {
+            case Tile.SIZE_NORMAL:
+                if(mFormat == COLOGNE) {
+                    mLeftSpace = COLOGNE_LEFT_SPACE;
+                    mRightSpace = COLOGNE_RIGHT_SPACE;
+                    //コロンの場合は中心のスペースがない
+                    mCenterSpace = 0;
+                }
+                else {
+                    mLeftSpace = NORMAL_LEFT_SPACE;
+                    mRightSpace = NORMAL_RIGHT_SPACE;
+                    mCenterSpace = NORMAL_CENTER_SPACE;
+                }
+                break;
+
+            case Tile.SIZE_SMALL:
+                mLeftSpace = SMALL_LEFT_SPACE;
+                mRightSpace = SMALL_RIGHT_SPACE;
+                mCenterSpace = SMALL_CENTER_SPACE;
+                break;
+        }
+
     }
 
-    public static float getNumberRightSpace() {
-        return mNumberRightSpace;
+    public float getLeftSpace() {
+        return mLeftSpace;
     }
 
-    public static float getCologneLeftSpace() {
-        return mCologneLeftSpace;
+    public float getCenterSpace() {
+        return mCenterSpace;
     }
 
-    public static float getCologneRightSpace() {
-        return mCologneRightSpace;
+    public float getRightSpace() {
+        return mRightSpace;
     }
 
     /**
      *          DialPanelの幅(左右スペース有り)を取得
      */
     public float getWidthWithSpace() {
-        if(mFormat == MINUTE || mFormat == SECOND) {
-            return mNumberLeftSpace + mArrayColumnCount * Tile.getSizeWithSpace() + mNumberRightSpace;
-        }
-        else if(mFormat == COLOGNE) {
-            return mCologneLeftSpace + Tile.getSizeWithSpace() + mCologneRightSpace;
-        }
-
-        return 0f;
+        float   tileSize = new TileBase().setSizeFormat(mSizeFormat).getSizeWithSpace();
+        return  mRightSpace + mTileBaseColumnCount * tileSize + mCenterSpace + mRightSpace;
     }
 
     /**
@@ -148,7 +173,6 @@ public class DialPanel {
      *          DialPanel生成
      */
     public void createDialPanel() {
-        getTimeArrayColumnCount();
         createTileBase();
     }
 
@@ -158,33 +182,36 @@ public class DialPanel {
      *          TileBaseとTileはTileの中心が原点。Tileから取得できるアンカー位置もTile中心が原点
      */
     private void createTileBase() {
-        TileBase tileBase = null;
-        int currentColumn = 0;
-        /* 現在のTileBase中心座標(DialPanel左上原点) */
-        Vec2 currentTileBaseCenterPos = new Vec2(mPosition);
-        currentTileBaseCenterPos.x = mPosition.x + Tile.getSize() / 2f;
-        currentTileBaseCenterPos.y = mPosition.y - Tile.getSize() / 2f;
+        int     currentColumn = 0;
+        float   tileSize = new TileBase().setSizeFormat(mSizeFormat).getSize();
+        float   tileSizeWithSpace = new TileBase().setSizeFormat(mSizeFormat).getSizeWithSpace();
 
-        for (int index = 0; index < mArrayLength; index++) {
+        /* 現在のTileBase中心座標(DialPanel左上原点) */
+        Vec2 currentTileBaseCenterPos = new Vec2(0, 0);
+        currentTileBaseCenterPos.x = mPosition.x + tileSize / 2f;
+        currentTileBaseCenterPos.y = mPosition.y - tileSize / 2f;
+
+        for (int index = 0; index <mTileBaseArrayCount ; index++) {
             /* コロンの場合：左すきまを追加 */
             if(mFormat == COLOGNE) {
-                currentTileBaseCenterPos.addLocal(mCologneLeftSpace, 0f);
+                currentTileBaseCenterPos.addLocal(mLeftSpace, 0f);
             }
 
-            tileBase = new TileBase(mId, index);
+            TileBase    tileBase = new TileBase(mId, index);
+            tileBase.setSizeFormat(mSizeFormat);
             //TileBaseのアンカー位置(DialPanel左上原点)
             Vec2 tileBaseAnchorPos = new Vec2();
             //Tileのアンカー位置(Tile左上原点)
             Vec2 tileAnchorPos = null;
 
             //左側アンカーポイント
-            tileAnchorPos = Tile.getJointAnchorPosition1();
+            tileAnchorPos = tileBase.getLocalJointPos1();
             tileBaseAnchorPos.x = currentTileBaseCenterPos.x + tileAnchorPos.x;
             tileBaseAnchorPos.y = currentTileBaseCenterPos.y + tileAnchorPos.y;
             tileBase.setWorldJointPos1(tileBaseAnchorPos);
 
             //右側アンカーポイント
-            tileAnchorPos = Tile.getJointAnchorPosition2();
+            tileAnchorPos = tileBase.getLocalJointPos2();
             tileBaseAnchorPos.x = currentTileBaseCenterPos.x + tileAnchorPos.x;
             tileBaseAnchorPos.y = currentTileBaseCenterPos.y + tileAnchorPos.y;
             tileBase.setWorldJointPos2(tileBaseAnchorPos);
@@ -193,19 +220,19 @@ public class DialPanel {
 
             /* 分・秒の場合：1桁目と2桁目の数字の間にすきま追加 */
             if(mFormat == MINUTE || mFormat == SECOND) {
-                if(currentColumn + 1 == mFont.getColumnCount()) {
-                    currentTileBaseCenterPos.addLocal(DialPanel.getNumberCenterSpace(), 0);
+                if(currentColumn + 1 == mTileBaseColumnCount) { //mFont.getColumnCount();
+                    currentTileBaseCenterPos.addLocal(mCenterSpace, 0);
                 }
             }
 
             currentColumn++;
             //次のタイルに座標を移動
-            currentTileBaseCenterPos.addLocal(Tile.getSizeWithSpace(), 0);
+            currentTileBaseCenterPos.addLocal(tileSizeWithSpace, 0);
 
             //タイルを改行
-            if (currentColumn == mArrayColumnCount) {
-                currentTileBaseCenterPos.x = mPosition.x + Tile.getSize() / 2f;
-                currentTileBaseCenterPos.y -= Tile.getSizeWithSpace();
+            if (currentColumn == mTileBaseColumnCount) {  //mFont.getDialPanelColumnCount(mFormat)
+                currentTileBaseCenterPos.x = mPosition.x + tileSize / 2f;
+                currentTileBaseCenterPos.y -= tileSizeWithSpace;
                 currentColumn = 0;
             }
         }
@@ -217,10 +244,6 @@ public class DialPanel {
 
     public ArrayList<Integer> getJointTileList() {
         return mJointTileIndexList;
-    }
-
-    public static void setFont(FontBase font) {
-        mFont = font;
     }
 
     /**
@@ -237,22 +260,6 @@ public class DialPanel {
         }
 
         return null;
-    }
-
-    /**
-     * 			setTimeFormatで指定した引数で取得できる配列のカラム数を取得
-     */
-    private void getTimeArrayColumnCount() {
-        if( mFormat == -1 ) return;
-
-        if(mFormat == MINUTE  || mFormat == SECOND) {
-            mArrayColumnCount = mFont.get2NumbersColumnsCount();
-            mArrayLength = mFont.getArrayLength() * 2;
-        }
-        else if(mFormat == COLOGNE) {
-            mArrayColumnCount = mFont.getSeparateColumnCount();
-            mArrayLength = mFont.getArrayLength();
-        }
     }
 
     public int getFormat() {
