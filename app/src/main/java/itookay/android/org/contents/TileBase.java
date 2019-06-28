@@ -27,6 +27,8 @@ class TileBase {
 
     /** TileBaseサイズ */
     private float       mSize = 0;
+    /** サイズフォーマット */
+    private int         mSizeFormat = 0;
     /** タイルの片側スペース */
     private float       mSpace = 0;
     /** ジョイントアンカー幅 */
@@ -75,13 +77,14 @@ class TileBase {
      * @param sizeFormat サイズフォーマット
      */
     public TileBase setSizeFormat(int sizeFormat) {
-        switch (sizeFormat) {
-            case Tile.SIZE_NORMAL:
+        mSizeFormat = sizeFormat;
+        switch (mSizeFormat) {
+            case Tile.NORMAL:
                 mSize = NORMAL_SIZE;
                 mSpace = NORMAL_SPACE;
                 mJointAnchorWidth = NORMAL_ANCHOR_WIDTH;
                 break;
-            case Tile.SIZE_SMALL:
+            case Tile.SMALL:
                 mSize = SMALL_SIZE;
                 mSpace = SMALL_SPACE;
                 mJointAnchorWidth = SMALL_ANCHOR_WIDTH;

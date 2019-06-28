@@ -1,20 +1,16 @@
 package itookay.android.org.contents;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import android.graphics.*;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.*;
-import org.jbox2d.dynamics.joints.DistanceJoint;
 import org.jbox2d.dynamics.joints.DistanceJointDef;
 import org.jbox2d.dynamics.joints.Joint;
 import org.jbox2d.dynamics.joints.JointEdge;
 
 import android.content.Context;
-import android.util.Log;
 
 /**
  *
@@ -41,7 +37,7 @@ public class ControlWorld {
     /** ボディとジョイントするグラウンド */
     private Body		mGround = null;
     /** タイルのリスト */
-    private TileBodyList	mTileList = new TileBodyList();
+    private BodyList    mBodyList = new BodyList();
     /** 生成するタイルサイズのリスト */
     private int[]       mCreateTileSizeList;
 
@@ -95,7 +91,7 @@ public class ControlWorld {
         x *= 2f;
         y *= 2f;
 
-        ArrayList   list = mTileList.getList();
+        ArrayList   list = mBodyList.getList();
         for(Object body : list) {
             ((Body)body).setAwake(true);
         }
@@ -111,11 +107,11 @@ public class ControlWorld {
 
         //ちいさいの
         for (int i = 0; i < smallTileCount; i++) {
-            createTile(Tile.SIZE_SMALL);
+            createTile(Tile.SMALL);
         }
         //ふつうの
         for (int i = 0; i < normalTileCount; i++) {
-            createTile(Tile.SIZE_NORMAL);
+            createTile(Tile.NORMAL);
         }
     }
 
@@ -154,7 +150,7 @@ public class ControlWorld {
         boxFixture.filter.groupIndex = FREE_TILE_GROUPINDEX;
 
         body.createFixture( boxFixture );
-        mTileList.add( body );
+        mBodyList.add( body );
     }
 
     /**
@@ -249,13 +245,8 @@ public class ControlWorld {
         Body	body = null;
         Tile	tile = null;
 
-        //空いてるタイル
-        body = mTileList.getNext();
-        //タイルが足りない
-        if(body == null) {
-//            body = createTile();
-        }
-
+        //空いてるタイルを取得
+        body = mBodyList.getNext(panel.getSizeFormat());
         //接触条件フィルタを変更
         setRestrainTileFilter(body);
 
@@ -286,7 +277,7 @@ public class ControlWorld {
         if(mWorld == null) return;
 
         Tile	tile = null;
-        for(Body body : mTileList.getList()) {
+        for(Body body : mBodyList.getList()) {
             tile = (Tile)body.getUserData();
             if( tile.getPanelId() == panelId && tile.getIndex() == index ) {
                 //ジョイントを削除
@@ -336,16 +327,7 @@ public class ControlWorld {
      * 			ボディを描画
      */
     void drawBodies(Canvas canvas) {
-//        Tile	tile = null;
-//        Iterator<Body>	it = mTileList.iterator();
-//        Body	body = null;
-//        while(it.hasNext()){
-//            body = it.next();
-//            tile = (Tile)body.m_userData;
-//            tile.drawBody(canvas, body);
-//        }
-
-        for(Body body : mTileList.getList()) {
+        for(Body body : mBodyList.getList()) {
             Vec2	pos = body.getPosition();
             Tile    tile = (Tile)body.m_userData;
             float   size = tile.getSize();
@@ -395,7 +377,7 @@ public class ControlWorld {
             mWorld.destroyJoint(joint);
         }
 
-        ArrayList<Body>       bodyList = mTileList.getList();
+        ArrayList<Body>       bodyList = mBodyList.getList();
         Tile	tile = null;
         for(Body body : bodyList) {
             tile = (Tile)body.getUserData();
@@ -408,10 +390,7 @@ public class ControlWorld {
      *      タイルのIDをクリア
      */
     void clearTileId() {
-        for(Body body : mTileList.getList()) {
-            Tile    tile = (Tile)body.getUserData();
-            tile.setUniqueId(Tile.INVALID_ID, Tile.INVALID_ID);
-        }
+        mBodyList.clearTileId();
     }
 
     /**
@@ -423,6 +402,7 @@ public class ControlWorld {
         Paint	paint = new Paint();
         paint.setColor( Color.BLACK );
         paint.setStrokeWidth( 1 );
+        /*
         for( Joint joint = mWorld.getJointList(); joint != null; joint = joint.getNext() ) {
             if( joint instanceof DistanceJoint ) {
                 joint.getAnchorA( start );
@@ -436,6 +416,19 @@ public class ControlWorld {
                 Paint   paint2 = new Paint();
                 paint2.setColor(Color.RED);
                 canvas.drawCircle(end.x, end.y, 10, paint2);
+            }
+        }
+        */
+
+        /* TileBaseのジョイントアンカーを表示 */
+        Paint   paint2 = new Paint();
+        for(DialPanel panel : mDebugDial.getDialPanelList()) {
+            for(TileBase tileBase : panel.getTileBaseList()) {
+                paint2.setColor(Color.RED);
+                Vec2    pos1 = Scale.toPixel(tileBase.getWorldJointPos1());
+                Vec2    pos2 = Scale.toPixel(tileBase.getWorldJointPos2());
+                canvas.drawCircle(pos1.x, pos1.y, 10, paint2);
+                canvas.drawCircle(pos2.x, pos2.y, 10, paint2);
             }
         }
 
@@ -457,6 +450,11 @@ public class ControlWorld {
 
         canvas.drawCircle(0, 0, 20, paint);
         canvas.drawCircle(mScale.getDisplayWidthPixel()/2f, mScale.getDisplayHeightPixel(), 20, paint);
+    }
+
+    private Dial        mDebugDial = null;
+    void setDebugDial(Dial dial) {
+        mDebugDial = dial;
     }
 }
 

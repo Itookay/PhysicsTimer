@@ -14,6 +14,7 @@ import itookay.android.org.Style.StyleBase
 import itookay.android.org.Style.TwoRowsBigSecond
 
 import itookay.android.org.contents.PhysicsTimer
+import itookay.android.org.contents.Scale
 import itookay.android.org.font.FontBase
 import itookay.android.org.font.FontList
 
@@ -56,13 +57,15 @@ class MainActivity : BackgroundActivity(), View.OnTouchListener, View.OnClickLis
 
         setContentView(R.layout.activity_main)
         loadPreference()
+        val scale = getDisplayScale()
 
         //スタイル
         //val style:StyleBase = SingleRow(mFont)
-        val style:StyleBase = TwoRowsBigSecond(mFont)
+        val style:StyleBase = TwoRowsBigSecond(mFont, scale)
 
         mPhysicsTimer = PhysicsTimer(applicationContext)
         mPhysicsTimer.setStyle(style)
+        mPhysicsTimer.scale = scale
         val surfaceView = findViewById<SurfaceView>(R.id.svMain)
         mPhysicsTimer.setSurfaceView(surfaceView)
         mPhysicsTimer.init()
@@ -73,6 +76,17 @@ class MainActivity : BackgroundActivity(), View.OnTouchListener, View.OnClickLis
         setListener()
 
         SensorMgr = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+    }
+
+    fun getDisplayScale() : Scale {
+        val windowManager = applicationContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val disp = windowManager.defaultDisplay
+        val size = Point()
+        disp.getSize(size)
+
+        val scale = Scale()
+        scale.setDisplay(size.x, size.y, Scale.DISPLAY_HEIGHT_IN_METER)
+        return scale
     }
 
     fun loadPreference() {

@@ -3,11 +3,7 @@ package itookay.android.org.contents;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import android.graphics.PointF;
-import itookay.android.org.Style.StyleBase;
-import itookay.android.org.font.FontBase;
 import org.jbox2d.common.Vec2;
-import android.util.Log;
 
 public class DialPanel {
 
@@ -110,7 +106,7 @@ public class DialPanel {
         mSizeFormat = format;
 
         switch(mSizeFormat) {
-            case Tile.SIZE_NORMAL:
+            case Tile.NORMAL:
                 if(mFormat == COLOGNE) {
                     mLeftSpace = COLOGNE_LEFT_SPACE;
                     mRightSpace = COLOGNE_RIGHT_SPACE;
@@ -124,13 +120,16 @@ public class DialPanel {
                 }
                 break;
 
-            case Tile.SIZE_SMALL:
+            case Tile.SMALL:
                 mLeftSpace = SMALL_LEFT_SPACE;
                 mRightSpace = SMALL_RIGHT_SPACE;
                 mCenterSpace = SMALL_CENTER_SPACE;
                 break;
         }
+    }
 
+    int getSizeFormat() {
+        return mSizeFormat;
     }
 
     public float getLeftSpace() {

@@ -6,6 +6,9 @@ import android.util.Log;
 
 public class Scale {
 
+    /** 画面高さ(メートル) */
+    public static final int       DISPLAY_HEIGHT_IN_METER = 10;
+
     /** 画面横幅ピクセル */
     private float		mDisplayWidthPixel = 0f;
     /** 画面縦幅ピクセル */

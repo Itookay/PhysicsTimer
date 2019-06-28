@@ -1,13 +1,10 @@
 package itookay.android.org.contents;
 
 import android.graphics.*;
-import org.jbox2d.collision.shapes.Shape;
 import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.Body;
 
 import android.content.res.Resources;
 import itookay.android.org.R;
-import org.jbox2d.dynamics.Fixture;
 
 
 /**
@@ -18,9 +15,9 @@ public class Tile {
     /** 無効なIDもしくはIndex */
     public static final int		INVALID_ID = -1;
     /** タイルのサイズ ふつうの */
-    public static final int     SIZE_NORMAL = 10;
+    public static final int     NORMAL = 10;
     /** タイルのサイズ ちいさいの */
-    public static final int     SIZE_SMALL = 20;
+    public static final int     SMALL = 20;
 
     /** ふつうタイルサイズ */
     private static float        NORMAL_SIZE = 0;
@@ -37,6 +34,8 @@ public class Tile {
 
     /** Tileサイズ */
     private float       mSize = 0;
+    /** サイズフォーマット */
+    private int         mSizeFormat = 0;
     /** ジョイントアンカー幅 */
     private float       mJointAnchorWidth = 0;
     /** パネルID */
@@ -49,7 +48,7 @@ public class Tile {
     /** ワールド上の中心位置 */
     private Vec2		mPosition = new Vec2();
     /** 青色 */
-    public static final int		COLOR_BLUE = 100;
+    static final int		COLOR_BLUE = 100;
 
     /** タイルのBitmap */
     private Bitmap		mBitmap = null;
@@ -63,7 +62,7 @@ public class Tile {
     /**
      * 			タイルの中心ワールド座標をセット
      */
-    public void setPosition(Vec2 pos) {
+    void setPosition(Vec2 pos) {
         mPosition.set(pos);
     }
 
@@ -74,7 +73,7 @@ public class Tile {
      * @param smallTileSize ちいさいタイルサイズ
      * @param spaceScale タイルサイズの内、どれだけをスペースにするか。スペースは左右均等になる
      */
-    public static void setStaticSize(float normalTileSize, float smallTileSize, float spaceScale) {
+    static void setStaticSize(float normalTileSize, float smallTileSize, float spaceScale) {
         NORMAL_SIZE = normalTileSize;
         NORMAL_SPACE = NORMAL_SIZE * spaceScale / 2f;
         NORMAL_ANCHOR_WIDTH = NORMAL_SIZE / 2f;
@@ -88,13 +87,14 @@ public class Tile {
      *      タイル・インスタンスのサイズフォーマットをセット<br>
      *      getSize系のメソッドでは、ここで指定したフォーマットに対応するサイズを返す。
      */
-    public Tile setSizeFormat(int sizeFormat) {
-        switch(sizeFormat) {
-            case SIZE_NORMAL:
+    Tile setSizeFormat(int sizeFormat) {
+        mSizeFormat = sizeFormat;
+        switch(mSizeFormat) {
+            case NORMAL:
                 mSize = NORMAL_SIZE;
                 mJointAnchorWidth = NORMAL_ANCHOR_WIDTH;
                 break;
-            case SIZE_SMALL:
+            case SMALL:
                 mSize = SMALL_SIZE;
                 mJointAnchorWidth = SMALL_ANCHOR_WIDTH;
                 break;
@@ -107,15 +107,19 @@ public class Tile {
     /**
      *      タイルのサイズ(スペースを除く)を取得
      */
-    public float getSize() {
+    float getSize() {
         return mSize;
+    }
+
+    int getSizeFormat() {
+        return mSizeFormat;
     }
 
     /**
      *			ジョイントアンカー1(左)位置取得
      * @return タイル中心を原点としたジョイントアンカー1位置
      */
-    public Vec2 getJointAnchorPosition1() {
+    Vec2 getJointAnchorPosition1() {
         Vec2		pos = new Vec2();
         pos.x = -mJointAnchorWidth / 2f;
         pos.y = 0f;
@@ -126,7 +130,7 @@ public class Tile {
      *			ジョイントアンカー2(右)位置取得
      * @return タイル中心を原点としたジョイントアンカー2位置
      */
-    public Vec2 getJointAnchorPosition2() {
+    Vec2 getJointAnchorPosition2() {
         Vec2		pos = new Vec2();
         pos.x = mJointAnchorWidth / 2f;
         pos.y = 0f;
@@ -137,19 +141,19 @@ public class Tile {
         mBitmap = bitmap;
     }
 
-    public Bitmap getBitmap() {
+    Bitmap getBitmap() {
         return mBitmap;
     }
 
-    public float getDensity() {
+    float getDensity() {
         return mDensity;
     }
 
-    public float getFriction() {
+    float getFriction() {
         return mFriction;
     }
 
-    public float getRestitution() {
+    float getRestitution() {
         return mRestitution;
     }
 
@@ -158,18 +162,18 @@ public class Tile {
      * @param res		リソース
      * @param color		Tileのstatic変数を指定する
      */
-    public void createTileBitmap( Resources res, int color ) {
+    void createTileBitmap( Resources res, int color ) {
         switch(color) {
             default :
                 mBitmap = BitmapFactory.decodeResource( res, R.drawable.tile );
         }
     }
 
-    public int getIndex() {
+    int getIndex() {
         return mIndex;
     }
 
-    public int getPanelId() {
+    int getPanelId() {
         return mPanelId;
     }
 
@@ -178,19 +182,19 @@ public class Tile {
      * @param panelId
      * @param index
      */
-    public void setUniqueId(int panelId, int index) {
+    void setUniqueId(int panelId, int index) {
         mPanelId = panelId;
         mIndex = index;
     }
 
-    public Vec2 getPosition() {
+    Vec2 getPosition() {
         return mPosition;
     }
 
     /**
      * 			引数の配列で必要なタイルの数を取得
      */
-    public static int getTileCount(int[] array) {
+    static int getTileCount(int[] array) {
         int		count = 0;
         for(int i = 0; i < array.length; i++) {
             count += array[i];
@@ -202,14 +206,14 @@ public class Tile {
     /**
      * 			拘束された回数を一回加算
      */
-    public void addRestrainCount() {
+    void addRestrainCount() {
         mRestrainCount++;
     }
 
     /**
      * 			拘束された回数を取得
      */
-    public int getRestrainCount() {
+    int getRestrainCount() {
         return mRestrainCount;
     }
 }

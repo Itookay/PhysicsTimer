@@ -24,9 +24,6 @@ import java.util.ArrayList;
 
 public class PhysicsTimer implements TimeChangedListener {
 
-    /** 画面高さ(メートル) */
-    private final int       DISPLAY_HEIGHT_IN_METER = 10;
-
     /** アプリケーションコンテキスト */
     private Context			mAppContext = null;
 
@@ -69,6 +66,10 @@ public class PhysicsTimer implements TimeChangedListener {
         mFont = style.getFont();
     }
 
+    public void setScale(Scale scale) {
+        mScale = scale;
+    }
+
     /**
      * 			時計を生成して表示
      */
@@ -77,26 +78,18 @@ public class PhysicsTimer implements TimeChangedListener {
             return;
         }
 
-        mScale = new Scale();
-        WindowManager   windowManager = (WindowManager)mAppContext.getSystemService(Context.WINDOW_SERVICE);
-        Display         disp = windowManager.getDefaultDisplay();
-        Point           size = new Point();
-        disp.getSize(size);
-        mScale.setDisplay(size.x, size.y, DISPLAY_HEIGHT_IN_METER);
-
         mDial = new Dial();
         mDial.setScale(mScale);
         mDial.setStyle(mStyle);
         setTimerSizeScale(TIMER_SCALE_IN_PORTRATE, 0.1f, 0.1f);
         mDial.createDials();
-        mDial.arrangeDials();
-        setDialPosition();
 
         Vec2	gravity = new Vec2(0f, -10f);
         mWorld = new ControlWorld(mAppContext, gravity, true);
         mWorld.setStep(1f/60f, 10, 8);
         mWorld.setScale(mScale);
         mWorld.createWorld(mStyle.getSmallTileCount(), mStyle.getNomalTileCount());
+        mWorld.setDebugDial(mDial);
 
         mBgAttr = new BackgroundAttribution();
         mBgAttr.setColor(Color.WHITE);

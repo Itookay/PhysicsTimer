@@ -37,6 +37,8 @@ public class Dial {
         for(DialPanel dialPanel : mDialPanelList) {
             dialPanel.createDialPanel();
         }
+
+        mStyle.arrangeDialPanels(mDialPanelList);
     }
     /**
      *          タイマーのスタイルをセット
@@ -52,19 +54,6 @@ public class Dial {
 
     public void setScale( Scale scale ) {
         mScale = scale;
-    }
-
-    /**
-     *          DialPanelをリストから出てきた順に一列になるようオフセット
-     */
-    public void arrangeDials() {
-        float       posX = 0;
-
-        for(DialPanel dialPanel : mDialPanelList) {
-            dialPanel.OffsetPosition(posX, 0f);
-            //次の位置へ移動
-            posX += dialPanel.getWidthWithSpace();
-        }
     }
 
     /**
@@ -100,12 +89,14 @@ public class Dial {
         mDialPanelList.add(minute);
 
         //コロン
-        DialPanel	cologne = new DialPanel(DialPanel.COLOGNE, id++);
-        column = mFont.getDialPanelColumnCount(DialPanel.COLOGNE);
-        array = mFont.getDialPanelArrayCount(DialPanel.COLOGNE);
-        cologne.setTileBaseArray(column, array);
-        cologne.setSizeFormat(mStyle.getCologneTileSizeFormat());
-        mDialPanelList.add(cologne);
+        if(mStyle.existCologne()) {
+            DialPanel cologne = new DialPanel(DialPanel.COLOGNE, id++);
+            column = mFont.getDialPanelColumnCount(DialPanel.COLOGNE);
+            array = mFont.getDialPanelArrayCount(DialPanel.COLOGNE);
+            cologne.setTileBaseArray(column, array);
+            cologne.setSizeFormat(mStyle.getCologneTileSizeFormat());
+            mDialPanelList.add(cologne);
+        }
 
         //秒
         DialPanel	second = new DialPanel(DialPanel.SECOND, id);
@@ -153,12 +144,8 @@ public class Dial {
      * 			DialPanelの書き出し位置をオフセット
      */
     public void OffsetPosition( float x, float y ) {
-        Iterator<DialPanel>		it = mDialPanelList.iterator();
-
-        DialPanel	panel = null;
-        while( it.hasNext() ) {
-            panel = it.next();
-            panel.OffsetPosition( x, y );
+        for(DialPanel panel : mDialPanelList) {
+            panel.OffsetPosition(x, y);
         }
     }
 

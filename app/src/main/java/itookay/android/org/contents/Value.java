@@ -17,7 +17,7 @@ public class Value {
 	public static float		mDampingRatio = DAMPING_RATIO;
 
 	/** タイルのサイズ */
-//	public static float		mTileSize = Tile.SIZE_SMALL;
+//	public static float		mTileSize = Tile.SMALL;
 
 	/**
 	 * 			タイルを拘束するジョイントの値を取得
