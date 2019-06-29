@@ -17,18 +17,28 @@ public class DialPanel {
     /** 空白 */
     public static final int		BLANK = 140;
 
-    /** ふつうの数字1桁目左側の空白 */
+    /** パネル上側の空白 */
+    private static float        NORMAL_UPPER_SPACE = 0f;
+    /** パネル左側の空白 */
     private static float        NORMAL_LEFT_SPACE = 0f;
-    /** ふつうの数字1桁目と2桁目の間の空白 */
+    /** パネルの数字1桁目と2桁目の間の空白 */
     private static float        NORMAL_CENTER_SPACE = 0f;
-    /** ふつうの数字2桁目右側の空白 */
+    /** パネル右側の空白 */
     private static float        NORMAL_RIGHT_SPACE = 0f;
-    /** ちいさい数字1桁目左側の空白 */
+    /** パネル下側の空白 */
+    private static float        NORMAL_BOTTOM_SPACE = 0f;
+
+    /** パネル上側の空白 */
+    private static float        SMALL_UPPER_SPACE = 0f;
+    /** パネル左側の空白 */
     private static float        SMALL_LEFT_SPACE = 0f;
-    /** ちいさい数字1桁目と2桁目の間の空白 */
+    /** パネルの数字1桁目と2桁目の間の空白 */
     private static float        SMALL_CENTER_SPACE = 0f;
-    /** ちいさい数字2桁目右側の空白 */
+    /** パネル右側の空白 */
     private static float        SMALL_RIGHT_SPACE = 0f;
+    /** パネル下側の空白 */
+    private static float        SMALL_BOTTOM_SPACE = 0f;
+
     /** コロン左側スペース */
     private static float        COLOGNE_LEFT_SPACE = 0;
     /** コロン右側スペース */
@@ -36,12 +46,16 @@ public class DialPanel {
 
     /** タイルサイズフォーマット */
     private int         mSizeFormat = 0;
+    /** パネル上側の空白 */
+    private float       mUpperSpace = 0;
     /** パネル左側の空白 */
     private float       mLeftSpace = 0;
     /** パネルの数字1桁目と2桁目の間の空白 */
     private float       mCenterSpace = 0;
     /** パネル右側の空白 */
     private float       mRightSpace = 0;
+    /** パネル下側の空白 */
+    private float       mBottomSpace = 0;
 
     /** ToleBaseのカラム数 */
     private int         mTileBaseColumnCount = 0;
@@ -75,13 +89,23 @@ public class DialPanel {
     /**
      *      DialPanel数字のスペースをセット
      */
-    public static void setStaticSpace(float normalLeft, float normalCenter, float normalRight, float smallLeft, float smallCenter, float smallRight) {
+    public static void setStaticNormalSpace(float normalUpper, float normalLeft, float normalCenter, float normalRight, float normalBottom) {
+        NORMAL_UPPER_SPACE = normalUpper;
         NORMAL_LEFT_SPACE = normalLeft;
         NORMAL_CENTER_SPACE = normalCenter;
         NORMAL_RIGHT_SPACE = normalRight;
+        NORMAL_BOTTOM_SPACE = normalBottom;
+    }
+
+    /**
+     *      DialPanel数字のスペースをセット
+     */
+    public static void setStaticSmallSpace(float smallUpper, float smallLeft, float smallCenter, float smallRight, float smallBottom) {
+        SMALL_UPPER_SPACE = smallUpper;
         SMALL_LEFT_SPACE = smallLeft;
         SMALL_CENTER_SPACE = smallCenter;
         SMALL_RIGHT_SPACE = smallRight;
+        SMALL_BOTTOM_SPACE = smallBottom;
     }
 
     /**
@@ -107,6 +131,8 @@ public class DialPanel {
 
         switch(mSizeFormat) {
             case Tile.NORMAL:
+                mUpperSpace = NORMAL_UPPER_SPACE;
+                mBottomSpace = NORMAL_BOTTOM_SPACE;
                 if(mFormat == COLOGNE) {
                     mLeftSpace = COLOGNE_LEFT_SPACE;
                     mRightSpace = COLOGNE_RIGHT_SPACE;
@@ -124,6 +150,8 @@ public class DialPanel {
                 mLeftSpace = SMALL_LEFT_SPACE;
                 mRightSpace = SMALL_RIGHT_SPACE;
                 mCenterSpace = SMALL_CENTER_SPACE;
+                mUpperSpace = SMALL_UPPER_SPACE;
+                mBottomSpace = SMALL_BOTTOM_SPACE;
                 break;
         }
     }
@@ -149,7 +177,16 @@ public class DialPanel {
      */
     public float getWidthWithSpace() {
         float   tileSize = new TileBase().setSizeFormat(mSizeFormat).getSizeWithSpace();
-        return  mRightSpace + mTileBaseColumnCount * tileSize + mCenterSpace + mRightSpace;
+        return mRightSpace + mTileBaseColumnCount * tileSize + mCenterSpace + mRightSpace;
+    }
+
+    /**
+     *          DialPanelの高さ(上下スペース有り)を取得
+     */
+    public float getHeightWithSpace() {
+        float   tileSize = new TileBase().setSizeFormat(mSizeFormat).getSizeWithSpace();
+        int     row = mTileBaseArrayCount / mTileBaseColumnCount;
+        return mUpperSpace + tileSize * row + mBottomSpace;
     }
 
     /**

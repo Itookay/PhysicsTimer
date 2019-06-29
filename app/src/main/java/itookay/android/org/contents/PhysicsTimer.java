@@ -27,11 +27,6 @@ public class PhysicsTimer implements TimeChangedListener {
     /** アプリケーションコンテキスト */
     private Context			mAppContext = null;
 
-    /** 端末方向portrateのときの画面幅に対するタイマーのスケール */
-    private final float     TIMER_SCALE_IN_PORTRATE = 0.9f;
-    /** 端末方向landscapeのときの画面幅に対するタイマーのスケール */
-    private final float     TIMER_SCALE_IN_LANDSCAPE = 0.5f;
-
     /** Timerサービスとバインドされているか */
     private boolean         mIsTimerServiceBound = false;
     /** TimeChanegedサービスインスタンス */
@@ -43,8 +38,6 @@ public class PhysicsTimer implements TimeChangedListener {
     private MainSurfaceView				mMainSurface = null;
     /** R.layout.main_activityから取得したSurfaceView */
     private SurfaceView     mSurfaceViewFromLayout = null;
-    /** 背景の設定 */
-    private BackgroundAttribution		mBgAttr = null;
     /** ワールド管理 */
     private ControlWorld	mWorld = null;
     /** スクリーン座標管理 */
@@ -81,7 +74,7 @@ public class PhysicsTimer implements TimeChangedListener {
         mDial = new Dial();
         mDial.setScale(mScale);
         mDial.setStyle(mStyle);
-        setTimerSizeScale(TIMER_SCALE_IN_PORTRATE, 0.1f, 0.1f);
+        mDial.setTimerSizeScale();
         mDial.createDials();
 
         Vec2	gravity = new Vec2(0f, -10f);
@@ -91,11 +84,7 @@ public class PhysicsTimer implements TimeChangedListener {
         mWorld.createWorld(mStyle.getSmallTileCount(), mStyle.getNomalTileCount());
         mWorld.setDebugDial(mDial);
 
-        mBgAttr = new BackgroundAttribution();
-        mBgAttr.setColor(Color.WHITE);
-
         mMainSurface = new MainSurfaceView(mAppContext, mSurfaceViewFromLayout, mWorld);
-        mMainSurface.setBackground(mBgAttr);
         mMainSurface.setScale(mScale);
 
         Intent      intentService = new Intent(mAppContext, TimeChanged.class);
@@ -117,40 +106,6 @@ public class PhysicsTimer implements TimeChangedListener {
             mIsTimerServiceBound = false;
         }
     };
-
-    /**
-     *          タイマーのサイズスケールをセットしてタイマーとタイルのサイズを計算<br>
-     *          TileとDialPanelのサイズも代入。
-     * @param timerSizeScale 画面幅を1とした時のタイマーのスケール
-     * @param dialSpaceScale DialPanelサイズを1とした時のDialPanel間すきまの割合
-     * @param tileSpaceScale Tileサイズを1とした時のTile間すきまの割合
-     */
-    public void setTimerSizeScale(float timerSizeScale, float dialSpaceScale, float tileSpaceScale) {
-        /* DialPanel一枚(数字2文字)が4セクションとしてセクションのサイズを計算 */
-        float   timerWidth = mScale.getDisplayWidthMeter() * timerSizeScale;
-        float   sectionSize = timerWidth / mStyle.getSection();
-        float   dialPanelSize = sectionSize * 4;
-
-        /* 時・分のスペースサイズ */
-        float   dialPanelSpace = dialPanelSize * dialSpaceScale;
-        float   scale = 0.5f;
-        float   left = dialPanelSpace / 4f;
-        float   center = dialPanelSpace / 2f;
-        float   right = dialPanelSpace /4f;
-        DialPanel.setStaticSpace(left, center, right, left*scale, center*scale, right*scale);
-
-        //DialPanelスペースサイズからスペースサイズを除く
-        float       dialPanelSizeWithoutSpace = dialPanelSize - dialPanelSpace;
-        //タイル一枚のサイズ
-        float       normalTileSize = dialPanelSizeWithoutSpace / mFont.get2NumbersColumnsCount();
-        scale = 0.5f;
-        Tile.setStaticSize(normalTileSize, normalTileSize*scale, tileSpaceScale);
-        TileBase.setStaticSize(normalTileSize, normalTileSize*scale, tileSpaceScale);
-
-        /* コロンの前後スペースサイズ */
-        float   cologneSpace = (sectionSize - normalTileSize) / 2f;
-        DialPanel.setStaticCologneSpace(cologneSpace, cologneSpace);
-    }
 
     /**
      *          タイマーの位置をセット

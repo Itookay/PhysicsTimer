@@ -3,6 +3,7 @@ package itookay.android.org.contents;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.os.Handler;
 import android.view.SurfaceHolder;
@@ -13,8 +14,6 @@ import android.view.SurfaceView;
  */
 public class MainSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
 
-    /** タッチイベント管理 */
-    private ScreenTouch		mTouch = null;
     /** サーフェースホルダー */
     private SurfaceHolder	mHolder = null;
     /** ワールド管理 */
@@ -23,36 +22,27 @@ public class MainSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     private Runnable		mDrawRunnable = null;
     /** 描画用ハンドラ */
     private Handler			mHandler = null;
-
-    /** 背景の設定 */
-    private BackgroundAttribution		mBgAttr = null;
     /** 画面スケール */
-    private Scale		mScale = null;
+    private Scale   		mScale = null;
 
     /** 壁紙がアクティブ */
-    private boolean		mVisibility = true;
+    private boolean 		mVisibility = true;
 
     /**
      * 			コンストラクタ
      */
     public MainSurfaceView( Context appContext, SurfaceView surfaceView, ControlWorld world ) {
-        super( appContext );
+        super(appContext);
 
         //XMLレイアウトされたSurfaceViewに描画
         mHolder = surfaceView.getHolder();
         mWorld = world;
 
         mHandler = new Handler();
-        mTouch = new ScreenTouch( mWorld );
 
-        mHolder.addCallback( this );
-        setOnTouchListener( mTouch );
+        mHolder.addCallback(this);
 
-        setDisplaySize( appContext );
-    }
-
-    public void setBackground( BackgroundAttribution bgAttr ) {
-        mBgAttr = bgAttr;
+        setDisplaySize(appContext);
     }
 
     /**
@@ -127,8 +117,8 @@ public class MainSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             drawBackground(canvas);
             //ボディの描画
             mWorld.drawBodies(canvas);
-            //ジョイントの描画
-            mWorld.drawJoints(canvas);
+            //デバッグ用描画
+            //mWorld.drawJoints(canvas);
 
             mHolder.unlockCanvasAndPost(canvas);
 
@@ -143,18 +133,7 @@ public class MainSurfaceView extends SurfaceView implements SurfaceHolder.Callba
          * 			背景を描画
          */
         private void drawBackground( Canvas canvas ) {
-            if( mBgAttr.getColor() != BackgroundAttribution.INVALID_COLOR ) {
-                canvas.drawColor( mBgAttr.getColor() );
-            }
-            else if( mBgAttr.getImage() != null ) {
-                Bitmap	image = mBgAttr.getImage();
-                Matrix	matrix = new Matrix();
-                float	cx = image.getWidth() / 2f;
-                float	cy = image.getHeight() / 2f;
-                matrix.setTranslate( -cx, cy );
-                matrix.preScale( 1f/mBgAttr.getScale(), -1f/mBgAttr.getScale(), cx, cy );
-                canvas.drawBitmap( image, matrix, null );
-            }
+            canvas.drawColor(Color.WHITE);
         }
     }
 
@@ -163,7 +142,6 @@ public class MainSurfaceView extends SurfaceView implements SurfaceHolder.Callba
      */
     public void setScale( Scale scale ) {
         mScale = scale;
-        mTouch.setScale( mScale );
     }
 }
 

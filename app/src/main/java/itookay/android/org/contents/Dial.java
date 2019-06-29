@@ -57,6 +57,45 @@ public class Dial {
     }
 
     /**
+     *          タイマーのサイズスケールをセットしてタイマーとタイルのサイズを計算<br>
+     *          TileとDialPanelのサイズも代入。
+     */
+    public void setTimerSizeScale() {
+        /* DialPanel一枚(数字2文字)が4セクションとしてセクションのサイズを計算 */
+        float   timerWidth = mScale.getDisplayWidthMeter() * mStyle.getDialWidthRatio();
+        float   sectionSize = timerWidth / mStyle.getSection();
+        float   dialPanelSize = sectionSize * 4;
+
+        /* 時・分のスペースサイズ */
+        float   dialPanelSpace = dialPanelSize * mStyle.getDialPanelSpaceRatio();
+        float   left = dialPanelSpace / 4f;
+        float   upper = left;
+        float   center = dialPanelSpace / 2f;
+        float   right = dialPanelSpace /4f;
+        float   bottom = right;
+        DialPanel.setStaticNormalSpace(upper, left, center, right, bottom);
+        float   scale = 0.5f;
+        left *= scale;
+        upper *= scale;
+        center *= scale;
+        right *= scale;
+        bottom *= scale;
+        DialPanel.setStaticSmallSpace(upper, left, center, right, bottom);
+
+        //DialPanelスペースサイズからスペースサイズを除く
+        float       dialPanelSizeWithoutSpace = dialPanelSize - dialPanelSpace;
+        //タイル一枚のサイズ
+        float   normalTileSize = dialPanelSizeWithoutSpace / mFont.get2NumbersColumnsCount();
+        float   smallTileSize = normalTileSize * 0.5f;
+        Tile.setStaticSize(normalTileSize, smallTileSize, mStyle.getTileSpaceRatio());
+        TileBase.setStaticSize(normalTileSize, smallTileSize, mStyle.getTileSpaceRatio());
+
+        /* コロンの前後スペースサイズ */
+        float   cologneSpace = (sectionSize - normalTileSize) / 2f;
+        DialPanel.setStaticCologneSpace(cologneSpace, cologneSpace);
+    }
+
+    /**
      *          タイマーの幅を取得
      * @return
      */
