@@ -79,7 +79,7 @@ public abstract class StyleBase {
      *      DialPanelに対するDialPanel内スペースとの比を取得
      */
     public float getDialPanelSpaceRatio() {
-        return 0.1f;
+        return 0.2f;
     }
 
     /**

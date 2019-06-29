@@ -71,6 +71,9 @@ public class PhysicsTimer implements TimeChangedListener {
             return;
         }
 
+        /* ------------------------------------------------------------
+         * 【注意】Dial->ControlWorld->MainSurfaceの順番を変えると起動しない
+         */
         mDial = new Dial();
         mDial.setScale(mScale);
         mDial.setStyle(mStyle);
@@ -86,6 +89,7 @@ public class PhysicsTimer implements TimeChangedListener {
 
         mMainSurface = new MainSurfaceView(mAppContext, mSurfaceViewFromLayout, mWorld);
         mMainSurface.setScale(mScale);
+        /* ------------------------------------------------------------ */
 
         Intent      intentService = new Intent(mAppContext, TimeChanged.class);
         mAppContext.bindService(intentService, mTimerConnection, Context.BIND_AUTO_CREATE);

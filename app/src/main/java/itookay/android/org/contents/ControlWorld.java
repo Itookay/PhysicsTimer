@@ -396,29 +396,12 @@ public class ControlWorld {
     /**
      * 			ジョイントを描画(デバッグ用)
      */
-    public void drawJoints(Canvas canvas) {
+    public void debugDraw(Canvas canvas) {
         Vec2	start = new Vec2();
         Vec2	end = new Vec2();
         Paint	paint = new Paint();
         paint.setColor( Color.BLACK );
         paint.setStrokeWidth( 1 );
-        /*
-        for( Joint joint = mWorld.getJointList(); joint != null; joint = joint.getNext() ) {
-            if( joint instanceof DistanceJoint ) {
-                joint.getAnchorA( start );
-                joint.getAnchorB( end );
-                start = Scale.toPixel( start );
-                end = Scale.toPixel( end );
-                canvas.drawLine( start.x, start.y, end.x, end.y, paint );
-                //Tailbase側
-                canvas.drawCircle(start.x, start.y, 10, paint);
-                //Tile側
-                Paint   paint2 = new Paint();
-                paint2.setColor(Color.RED);
-                canvas.drawCircle(end.x, end.y, 10, paint2);
-            }
-        }
-        */
 
         /* TileBaseのジョイントアンカーを表示 */
         Paint   paint2 = new Paint();
@@ -432,24 +415,18 @@ public class ControlWorld {
             }
         }
 
-        /*
-        //上横ライン
-        canvas.drawLine(0, Scale.toPixel(mScale.getDisplayHeightMeter()-1f), mScale.getDisplayWidthPixel(), Scale.toPixel(mScale.getDisplayHeightMeter()-1f), paint);
-        //左縦ライン
-        float   startX = (mScale.getDisplayWidthPixel() - Scale.toPixel(mDial.getTimerWidth())) / 2f;
-        canvas.drawLine(startX, 0, startX, mScale.getDisplayHeightPixel(), paint);
-        //右縦ライン
-        float   endX = startX + Scale.toPixel(mDial.getTimerWidth());
-        canvas.drawLine(endX, 0, endX, mScale.getDisplayHeightPixel(), paint);
-        */
-
-        //Bitmapタイルサイズを表示
-        //float pos = Scale.toPixel(Tile.getSize()) * 1f/4f;
-        float pos = 0;
-        //canvas.drawRect(pos, pos, Scale.toPixel(Tile.getSize()) + pos, Scale.toPixel(Tile.getSize()) + pos, paint);
-
-        canvas.drawCircle(0, 0, 20, paint);
-        canvas.drawCircle(mScale.getDisplayWidthPixel()/2f, mScale.getDisplayHeightPixel(), 20, paint);
+        /* DialPanelサイズを表示 */
+        Paint   paint3 = new Paint();
+        paint3.setColor(Color.GREEN);
+        paint3.setStrokeWidth(5);
+        paint3.setStyle(Paint.Style.STROKE);
+        for(DialPanel panel : mDebugDial.getDialPanelList()) {
+            Vec2    pos = panel.getPosition();
+            pos = Scale.toPixel(pos);
+            float   width = Scale.toPixel(panel.getWidthWithSpace());
+            float   height = Scale.toPixel(panel.getHeightWithSpace());
+            canvas.drawRect(pos.x, pos.y, pos.x+width, pos.y-height, paint3);
+        }
     }
 
     private Dial        mDebugDial = null;

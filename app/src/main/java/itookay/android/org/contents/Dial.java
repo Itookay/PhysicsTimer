@@ -34,6 +34,10 @@ public class Dial {
      *          DialPanelを生成
      */
     public void createDials() {
+        //仮置き------
+        setDial();
+        //-----------
+
         for(DialPanel dialPanel : mDialPanelList) {
             dialPanel.createDialPanel();
         }
@@ -46,10 +50,6 @@ public class Dial {
     public void setStyle(StyleBase style) {
         mStyle = style;
         mFont = mStyle.getFont();
-
-        //仮置き------
-        setDial();
-        //-----------
     }
 
     public void setScale( Scale scale ) {

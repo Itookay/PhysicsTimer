@@ -205,6 +205,10 @@ public class DialPanel {
         }
     }
 
+    public Vec2 getPosition() {
+        return mPosition;
+    }
+
     /**
      *          DialPanel生成
      */
@@ -256,7 +260,7 @@ public class DialPanel {
 
             /* 分・秒の場合：1桁目と2桁目の数字の間にすきま追加 */
             if(mFormat == MINUTE || mFormat == SECOND) {
-                if(currentColumn + 1 == mTileBaseColumnCount) { //mFont.getColumnCount();
+                if(currentColumn + 1 == mTileBaseColumnCount) {
                     currentTileBaseCenterPos.addLocal(mCenterSpace, 0);
                 }
             }
