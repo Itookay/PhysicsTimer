@@ -239,12 +239,12 @@ public class Dial {
      * @return		引数に指定した2桁の数字に対応する文字盤配列を返す．引数が負で空白の配列2桁分を返す
      */
     private int[] getDialArray( int arg ) {
-        int[]	num = Array.toArray( arg );
+        int[]	num = toArray( arg );
 
         int[]	a = mFont.getNumber( num[0] );
         int[]	b = mFont.getNumber( num[1] );
 
-        return Array.conbine( a, b, mFont.getColumnCount(), mFont.getColumnCount() );
+        return conbine( a, b, mFont.getColumnCount(), mFont.getColumnCount() );
     }
 
     /*
@@ -277,5 +277,56 @@ public class Dial {
             default :
                 return mFont.BLANK;
         }
+    }
+
+    /**
+     * 			引数の配列を[array1 array2]の並びで1つの配列に結合<br>
+     * 			配列の行数は同じであること
+     */
+    public int[] conbine( int[] array1, int[] array2, int columnCount1, int columnCount2 ) {
+
+        int[]	ret = new int[ array1.length + array2.length ];
+        int		len = ret.length;
+        int		array1Count = 0;
+        int		array2Count = 0;
+
+        for( int i = 0; i < len; ) {
+            for( int n = 0; n < columnCount1; n++ ) {
+                ret[i++] = array1[array1Count++];
+            }
+            for( int n = 0; n < columnCount2; n++ ) {
+                ret[i++] = array2[array2Count++];
+            }
+        }
+
+        array2Count = 0;
+
+        return ret;
+    }
+
+    /**
+     * 			引数のint（二桁）を一桁ずつバラして配列に入れて返す<br>
+     */
+    public int[] toArray( int num ) {
+
+        String	str = Integer.toString( num );
+        int[]	ret = new int[ 2 ];
+
+        //10より小さい正の数
+        if( num < 10 && num >= 0 ) {
+            ret[0] = 0;
+            ret[1] = str.charAt( 0 ) - '0';
+        }
+        //負の数
+        else if( num < 0 ) {
+            ret[0] = -1;
+            ret[1] = -1;
+        }
+        else {
+            ret[0] = str.charAt( 0 ) - '0';
+            ret[1] = str.charAt( 1 ) - '0';
+        }
+
+        return ret;
     }
 }

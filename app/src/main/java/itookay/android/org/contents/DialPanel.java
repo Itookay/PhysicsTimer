@@ -57,7 +57,7 @@ public class DialPanel {
     /** パネル下側の空白 */
     private float       mBottomSpace = 0;
 
-    /** ToleBaseのカラム数 */
+    /** TileBaseのカラム数 */
     private int         mTileBaseColumnCount = 0;
     /** TileBaseの配列数 */
     private int         mTileBaseArrayCount = 0;
@@ -222,7 +222,7 @@ public class DialPanel {
      *          TileBaseとTileはTileの中心が原点。Tileから取得できるアンカー位置もTile中心が原点
      */
     private void createTileBase() {
-        int     currentColumn = 0;
+        int     currentColumn = 1;
         float   tileSize = new TileBase().setSizeFormat(mSizeFormat).getSize();
         float   tileSizeWithSpace = new TileBase().setSizeFormat(mSizeFormat).getSizeWithSpace();
 
@@ -232,9 +232,13 @@ public class DialPanel {
         currentTileBaseCenterPos.y = mPosition.y - tileSize / 2f;
 
         for (int index = 0; index <mTileBaseArrayCount ; index++) {
-            /* コロンの場合：左すきまを追加 */
-            if(mFormat == COLOGNE) {
-                currentTileBaseCenterPos.addLocal(mLeftSpace, 0f);
+            if(currentColumn == 1) {
+                //左すきまを追加
+                currentTileBaseCenterPos.addLocal(mLeftSpace, 0);
+                if(index <= mTileBaseColumnCount / 2) {
+                    //上すきまを追加
+                    currentTileBaseCenterPos.addLocal(0, -mUpperSpace);
+                }
             }
 
             TileBase    tileBase = new TileBase(mId, index);
@@ -258,22 +262,26 @@ public class DialPanel {
 
             mTileBaseList.add(tileBase);
 
-            /* 分・秒の場合：1桁目と2桁目の数字の間にすきま追加 */
-            if(mFormat == MINUTE || mFormat == SECOND) {
-                if(currentColumn + 1 == mTileBaseColumnCount) {
-                    currentTileBaseCenterPos.addLocal(mCenterSpace, 0);
-                }
+            /* 1桁目と2桁目の数字の間にすきま追加 */
+            if(currentColumn == mTileBaseColumnCount / 2) {
+                currentTileBaseCenterPos.addLocal(mCenterSpace, 0);
+            }
+            /* 右側にすきま追加 */
+            if(currentColumn == mTileBaseColumnCount) {
+                currentTileBaseCenterPos.addLocal(mRightSpace, 0);
             }
 
-            currentColumn++;
             //次のタイルに座標を移動
             currentTileBaseCenterPos.addLocal(tileSizeWithSpace, 0);
 
             //タイルを改行
-            if (currentColumn == mTileBaseColumnCount) {  //mFont.getDialPanelColumnCount(mFormat)
+            if (currentColumn == mTileBaseColumnCount) {
                 currentTileBaseCenterPos.x = mPosition.x + tileSize / 2f;
                 currentTileBaseCenterPos.y -= tileSizeWithSpace;
-                currentColumn = 0;
+                currentColumn = 1;
+            }
+            else {
+                currentColumn++;
             }
         }
     }

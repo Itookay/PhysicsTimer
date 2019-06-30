@@ -14,6 +14,9 @@ public abstract class FontBase implements Serializable {
 	/** フォント名 */
 	protected String		FONT_NAME = null;
 
+	/* 配列の区切り */
+	public static int	RT = -1;
+
 	public int[]		NONE = null;
 	public int[]		ONE = null;
 	public int[]		TWO= null;
@@ -58,7 +61,6 @@ public abstract class FontBase implements Serializable {
 	 * 			フォント名を取得
 	 */
 	public String getFontName() {
-
 		return getClass().getSimpleName();
 	}
 
@@ -66,7 +68,6 @@ public abstract class FontBase implements Serializable {
 	 * 			フォント名（かな）を取得
 	 */
 	public String getFontNameJp() {
-
 		return FONT_NAME;
 	}
 
@@ -74,7 +75,6 @@ public abstract class FontBase implements Serializable {
 	 * 			そのフォントの数字を取得
 	 */
 	public int[] getNumber( int loc ) {
-
 		if( loc < 0 ) {
 			return fontArray.get( 10 );
 		}
@@ -87,7 +87,6 @@ public abstract class FontBase implements Serializable {
 	 * 			コロン（セパレート）を取得
 	 */
 	public int[] getCologne() {
-
 		return COLOGNE;
 	}
 
@@ -95,7 +94,6 @@ public abstract class FontBase implements Serializable {
 	 * 			ドット（セパレート）を取得
 	 */
 	public int[] getDot() {
-
 		return DOT;
 	}
 
@@ -103,7 +101,6 @@ public abstract class FontBase implements Serializable {
 	 * 			空白のセパレート（セパレートなし）を取得
 	 */
 	public int[] getBlankSeparate() {
-
 		return BLANK;
 	}
 
@@ -111,7 +108,6 @@ public abstract class FontBase implements Serializable {
 	 * 			数字1文字あたりの平均必要タイル数を取得
 	 */
 	public int getAverageTileCount() {
-
 		Iterator<int[]>  it = fontArray.iterator();
 		int[]	font = null;
 		int		count = 0;
