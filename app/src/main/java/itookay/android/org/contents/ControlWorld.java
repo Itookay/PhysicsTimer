@@ -12,9 +12,6 @@ import org.jbox2d.dynamics.joints.JointEdge;
 
 import android.content.Context;
 
-/**
- *
- */
 public class ControlWorld {
 
     /** アプリケーション・コンテキスト */
@@ -28,9 +25,6 @@ public class ControlWorld {
     private int			mVelocityIterations = 0;
     /** 位置イテレーション */
     private int			mPositionIterations = 0;
-
-    /** 時間管理 */
-//    private Dial		mDial = null;
     /** 画面スケール */
     private Scale		mScale = null;
 
@@ -38,23 +32,16 @@ public class ControlWorld {
     private Body		mGround = null;
     /** タイルのリスト */
     private BodyList    mBodyList = new BodyList();
-    /** 生成するタイルサイズのリスト */
-    private int[]       mCreateTileSizeList;
 
-    /** 拘束タイル衝突カテゴリbit */
-    private final int   STRAIN_TILE_CAT = 0x0001;
-    /** 拘束タイル衝突マスクbit */
-    private final int   STRAIN_TILE_MASK = 0xFFFF;
-    /** 自由タイル衝突カテゴリbit */
-    private final int   FREE_TILE_CAT = 0x0001;
-    /** 自由タイル衝突マスクbit */
-    private final int   FREE_TILE_MASK = 0xFFFF;
     /** 拘束タイルグループインデックス **/
     private final int   STRAIN_TILE_GROUPINDEX = 2;
     /** 自由タイルグループインデックス **/
     private final int   FREE_TILE_GROUPINDEX = 4;
     /** グラウンドグループインデックス **/
     private final int   GROUND_GROUPINDEX = 4;
+
+    /** 重力加速度 */
+    public static final float       GRAVITY = 9.8f;
 
     /**
      * 			コンストラクタ
@@ -217,7 +204,7 @@ public class ControlWorld {
     }
 
     /**
-     * 			不必要なタイルをリリースし、必要なタイルをジョイントする
+     *      不必要なタイルをリリースし、必要なタイルをジョイントする
      */
     void invalidate(Dial dial) {
         for(DialPanel panel : dial.getDialPanelList()) {
@@ -372,7 +359,7 @@ public class ControlWorld {
     /**
      * 			ディスタンス・ジョイントを全消去
      */
-    void destroyAllDistanceJoint() {
+    void clearTime() {
         for(Joint joint = mWorld.getJointList(); joint != null; joint = joint.getNext()) {
             mWorld.destroyJoint(joint);
         }
@@ -416,17 +403,17 @@ public class ControlWorld {
         }
 
         /* DialPanelサイズを表示 */
-        Paint   paint3 = new Paint();
-        paint3.setColor(Color.GREEN);
-        paint3.setStrokeWidth(5);
-        paint3.setStyle(Paint.Style.STROKE);
-        for(DialPanel panel : mDebugDial.getDialPanelList()) {
-            Vec2    pos = panel.getPosition();
-            pos = Scale.toPixel(pos);
-            float   width = Scale.toPixel(panel.getWidthWithSpace());
-            float   height = Scale.toPixel(panel.getHeightWithSpace());
-            canvas.drawRect(pos.x, pos.y, pos.x+width, pos.y-height, paint3);
-        }
+//        Paint   paint3 = new Paint();
+//        paint3.setColor(Color.GREEN);
+//        paint3.setStrokeWidth(5);
+//        paint3.setStyle(Paint.Style.STROKE);
+//        for(DialPanel panel : mDebugDial.getDialPanelList()) {
+//            Vec2    pos = panel.getPosition();
+//            pos = Scale.toPixel(pos);
+//            float   width = Scale.toPixel(panel.getWidthWithSpace());
+//            float   height = Scale.toPixel(panel.getHeightWithSpace());
+//            canvas.drawRect(pos.x, pos.y, pos.x+width, pos.y-height, paint3);
+//        }
     }
 
     private Dial        mDebugDial = null;

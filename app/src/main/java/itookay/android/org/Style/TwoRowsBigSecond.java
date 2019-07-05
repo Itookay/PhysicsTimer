@@ -1,9 +1,6 @@
 package itookay.android.org.Style;
 
-import itookay.android.org.contents.Dial;
-import itookay.android.org.contents.DialPanel;
-import itookay.android.org.contents.Scale;
-import itookay.android.org.contents.Tile;
+import itookay.android.org.contents.*;
 import itookay.android.org.font.FontBase;
 import org.jbox2d.common.Vec2;
 
@@ -16,9 +13,8 @@ import java.util.ArrayList;
  */
 public class TwoRowsBigSecond extends StyleBase {
 
-    public TwoRowsBigSecond(FontBase font, Scale scale) {
-        super(font, scale);
-        mScale = scale;
+    public TwoRowsBigSecond() {
+        super();
     }
 
     @Override
@@ -26,13 +22,13 @@ public class TwoRowsBigSecond extends StyleBase {
     }
 
     @Override
-    public int getSmallTileCount() {
-        return mFont.getDialPanelArrayCount(DialPanel.MINUTE);
+    public int getSmallTileCount(FontBase font) {
+        return font.getDialPanelArrayCount(DialPanel.MINUTE);
     }
 
     @Override
-    public int getNomalTileCount() {
-        return mFont.getDialPanelArrayCount(DialPanel.SECOND);
+    public int getNomalTileCount(FontBase font) {
+        return font.getDialPanelArrayCount(DialPanel.SECOND);
     }
 
     @Override
@@ -64,7 +60,7 @@ public class TwoRowsBigSecond extends StyleBase {
      *      このメソッドで各スタイルごとにDialPanelを配置する
      */
     @Override
-    protected void costomArrangement(ArrayList<DialPanel> dialPanels) {
+    protected void customArrangement(ArrayList<DialPanel> dialPanels) {
         float       x = 0;
         float       y = 0;
         DialPanel   minute = dialPanels.get(0);
@@ -75,10 +71,35 @@ public class TwoRowsBigSecond extends StyleBase {
         y = -minute.getHeightWithSpace();
         second.OffsetPosition(0, y);
 
-        /* Dial全体をディスプレイ中央に配置 */
-        x = (mScale.getDisplayWidthMeter() - dialWidth) / 2f;
-        for(DialPanel panel : dialPanels) {
-            panel.OffsetPosition(x, -x);
+        //Dial全体をディスプレイ中央に配置
+        alignCenter(dialPanels);
+    }
+
+    @Override
+    public void alignCenter(ArrayList<DialPanel> dialPanels) {
+        DialPanel   minute = dialPanels.get(0);
+        DialPanel   second = dialPanels.get(1);
+        float   dialWidth = second.getWidthWithSpace();
+        float   dialHeight = minute.getHeightWithSpace() + second.getHeightWithSpace();
+        float   x = 0f;
+        float   y = 0f;
+
+        //端末縦向き
+        if(mOrientation == PhysicsTimer.PORTRAIT || mOrientation == PhysicsTimer.UPSIDEDOWN) {
+            x = (mScale.getDisplayWidthMeter() - dialWidth) / 2f;
+            y = mScale.getDisplayHeightMeter() - x;
         }
+        //端末横向き
+        else {
+            x = (mScale.getDisplayWidthMeter() - dialHeight) / 2f + dialHeight;
+            y = (mScale.getDisplayHeightMeter() - dialWidth) / 2f + dialWidth;
+        }
+
+        //現在のDial原点位置
+        Vec2    c = minute.getPosition();
+        float   dx = x - c.x;
+        float   dy = y - c.y;
+        minute.OffsetPosition(dx, dy);
+        second.OffsetPosition(dx, dy);
     }
 }

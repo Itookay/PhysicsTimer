@@ -27,13 +27,11 @@ public class Dial {
     private int         mNextSeparator = DialPanel.COLOGNE;
     /** DialPanel格納場所 */
     private ArrayList<DialPanel>		mDialPanelList = new ArrayList<DialPanel>();
-    /** ワールドスケール */
-    private Scale		mScale = null;
 
     /**
      *          DialPanelを生成
      */
-    public void createDials() {
+    public void createDials(float displayWidth,float displayHeight) {
         //仮置き------
         setDial();
         //-----------
@@ -49,20 +47,19 @@ public class Dial {
      */
     public void setStyle(StyleBase style) {
         mStyle = style;
-        mFont = mStyle.getFont();
     }
 
-    public void setScale( Scale scale ) {
-        mScale = scale;
+    public void setFont(FontBase font) {
+        mFont = font;
     }
 
     /**
      *          タイマーのサイズスケールをセットしてタイマーとタイルのサイズを計算<br>
      *          TileとDialPanelのサイズも代入。
      */
-    public void setTimerSizeScale() {
+    public void setTimerSize(float displayWidth) {
         /* DialPanel一枚(数字2文字)が4セクションとしてセクションのサイズを計算 */
-        float   timerWidth = mScale.getDisplayWidthMeter() * mStyle.getDialWidthRatio();
+        float   timerWidth = displayWidth * mStyle.getDialWidthRatio();
         float   sectionSize = timerWidth / mStyle.getSection();
         float   dialPanelSize = sectionSize * 4;
 
@@ -97,9 +94,8 @@ public class Dial {
 
     /**
      *          タイマーの幅を取得
-     * @return
      */
-    public float getTimerWidth() {
+    public float getTimerWidthWithSpace() {
         float       timerWidth = 0;
         //パネルの横幅を取得
         for (DialPanel dial : mDialPanelList) {
@@ -147,6 +143,14 @@ public class Dial {
     }
 
     /**
+     *      端末向きをセット
+     * @param orientation PhysicsTimer.PORTRAIT, LEFT_LANDSCAPE, RIGHT_LANDSCAPE, UPSIDEDOWN
+     */
+    public void setOrientation(int orientation) {
+
+    }
+
+    /**
      * 			次の時間をセット
      * @param time
      */
@@ -163,8 +167,21 @@ public class Dial {
 
     /**
      *      時間をクリア
+     * @param rejoint trueで次の時間に再ジョイント
      */
-    public void clearTime() {
+    public void clearTime(boolean rejoint) {
+        if(rejoint) {
+            clearAndRejointTime();
+        }
+        else {
+            clearTime();
+        }
+    }
+
+    /**
+     *      時間をクリアし終了処理
+     */
+    private void clearTime() {
         mTime = null;
         mNextTime = null;
         mSeparator = DialPanel.BLANK;
@@ -175,17 +192,32 @@ public class Dial {
         }
     }
 
-    public ArrayList<DialPanel> getDialPanelList() {
-        return mDialPanelList;
+    /**
+     *      時間をクリアしジョイントリストを更新して次の時間で再ジョイント
+     */
+    private void clearAndRejointTime() {
+        for(DialPanel panel : mDialPanelList) {
+            switch(panel.getFormat()) {
+                case DialPanel.MINUTE:
+                    compareNumber(panel, -1, mTime.getMinute());
+                    break;
+
+                case DialPanel.SECOND:
+                    compareNumber(panel, -1, mTime.getSecond());
+                    break;
+
+                case DialPanel.COLOGNE:
+                    compareSeparator(panel, -1, mSeparator);
+                    break;
+
+                case DialPanel.BLANK:
+                    break;
+            }
+        }
     }
 
-    /**
-     * 			DialPanelの書き出し位置をオフセット
-     */
-    public void OffsetPosition( float x, float y ) {
-        for(DialPanel panel : mDialPanelList) {
-            panel.OffsetPosition(x, y);
-        }
+    public ArrayList<DialPanel> getDialPanelList() {
+        return mDialPanelList;
     }
 
     /**
@@ -200,13 +232,13 @@ public class Dial {
 
             switch( panel.getFormat() ) {
                 case DialPanel.MINUTE :
-                    comparePanels( panel, mTime.getMinute(), mNextTime.getMinute() );
+                    compareNumber( panel, mTime.getMinute(), mNextTime.getMinute() );
                     break;
                 case DialPanel.SECOND :
-                    comparePanels( panel, mTime.getSecond(), mNextTime.getSecond() );
+                    compareNumber( panel, mTime.getSecond(), mNextTime.getSecond() );
                     break;
                 case DialPanel.COLOGNE :
-                    setSeparator( panel, mSeparator, mNextSeparator);
+                    compareSeparator( panel, mSeparator, mNextSeparator);
                     break;
             }
         }
@@ -219,17 +251,17 @@ public class Dial {
      * 			現在時present->次の時間nextで必要となるタイル：
      * 			　present[inedx]=1,next[index]=0で{@link DialPanel#getDestroyTileList()}にindexを追加
      */
-    private void comparePanels( DialPanel panel, int present, int next ) {
-        int[]	presentArray = getDialArray( present );
-        int[]	nextArray = getDialArray( next );
+    private void compareNumber(DialPanel panel, int present, int next) {
+        int[]	presentArray = getDialArray(present);
+        int[]	nextArray = getDialArray(next);
         int		length = presentArray.length;
 
-        for( int i = 0; i < length; i++ ) {
-            if( presentArray[i] == 0 && nextArray[i] == 1 ) {
+        for(int i = 0; i < length; i++) {
+            if(presentArray[i] == 0 && nextArray[i] == 1) {
                 panel.getJointTileList().add( i );
             }
-            if( presentArray[i] == 1 && nextArray[i] == 0 ) {
-                panel.getDestroyTileList().add( i );
+            if(presentArray[i] == 1 && nextArray[i] == 0) {
+                panel.getDestroyTileList().add(i);
             }
         }
     }
@@ -238,19 +270,19 @@ public class Dial {
      * 			引数のintから対応するタイルの配列を取得
      * @return		引数に指定した2桁の数字に対応する文字盤配列を返す．引数が負で空白の配列2桁分を返す
      */
-    private int[] getDialArray( int arg ) {
-        int[]	num = toArray( arg );
+    private int[] getDialArray(int arg) {
+        int[]	num = toArray(arg);
 
-        int[]	a = mFont.getNumber( num[0] );
-        int[]	b = mFont.getNumber( num[1] );
+        int[]	a = mFont.getNumber(num[0]);
+        int[]	b = mFont.getNumber(num[1]);
 
-        return conbine( a, b, mFont.getColumnCount(), mFont.getColumnCount() );
+        return conbine(a, b, mFont.getColumnCount(), mFont.getColumnCount());
     }
 
     /*
      *      ☆　ここでセパレータ(空白、コロン、ドット)タイルの描画を指示する　☆
      */
-    private void setSeparator(DialPanel panel, int present, int next) {
+    private void compareSeparator(DialPanel panel, int present, int next) {
         int[]   presentArray = getSeparatorArray(present);
         int[]   nextArray = getSeparatorArray(next);
 

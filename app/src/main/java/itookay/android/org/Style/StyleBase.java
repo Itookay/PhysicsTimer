@@ -1,10 +1,8 @@
 package itookay.android.org.Style;
 
-import itookay.android.org.contents.Dial;
-import itookay.android.org.contents.DialPanel;
-import itookay.android.org.contents.Scale;
-import itookay.android.org.contents.Tile;
+import itookay.android.org.contents.*;
 import itookay.android.org.font.FontBase;
+import org.jbox2d.common.Vec2;
 
 import java.util.ArrayList;
 
@@ -13,9 +11,9 @@ public abstract class StyleBase {
     /** DialPanelのスタイルをここで定義する。コンンストラクタから呼ばれる。 */
     protected abstract void     defineStyle();
     /** 小さいタイルの数を取得 */
-    public abstract int         getSmallTileCount();
+    public abstract int         getSmallTileCount(FontBase font);
     /** ふつうタイルの数を取得 */
-    public abstract int         getNomalTileCount();
+    public abstract int         getNomalTileCount(FontBase font);
     /** 「分」のタイルサイズを取得 */
     public abstract int         getMinuteTileSizeFormat();
     /** 「秒」のタイルサイズを取得 */
@@ -27,25 +25,25 @@ public abstract class StyleBase {
     /** スタイルにコロンがあるか */
     public abstract boolean     existCologne();
     /** このメソッドで各スタイルごとにDialPanelを配置する */
-    protected abstract void     costomArrangement(ArrayList<DialPanel> dialPanels);
+    protected abstract void     customArrangement(ArrayList<DialPanel> dialPanels);
+    /** Dialを画面の中央に配置 */
+    public abstract void        alignCenter(ArrayList<DialPanel> dialPanels);
 
-    /** フォント */
-    protected FontBase      mFont;
-    /** ディスプレイスケール */
-    protected Scale         mScale;
-    /** 「分」のタイルサイズ。Tile.SIZE_SMALLかTile.NORMAL */
-    protected int           mMiunteTileSize;
-    /** 「秒」のタイルサイズ。Tile.SIZE_SMALLかTile.NORMAL */
-    protected int           mSecondTileSize;
+    /** 端末向き */
+    protected int       mOrientation = PhysicsTimer.PORTRAIT;
+    /** スケール */
+    protected Scale     mScale = null;
 
-    public StyleBase(FontBase font, Scale scale) {
-        mFont = font;
-        mScale = scale;
+    public StyleBase() {
         defineStyle();
     }
 
-    public FontBase getFont() {
-        return mFont;
+    public final void setScale(Scale scale) {
+        mScale = scale;
+    }
+
+    public void setOrientation(int orientation) {
+        mOrientation = orientation;
     }
 
     /**
@@ -54,19 +52,60 @@ public abstract class StyleBase {
      */
     public final void arrangeDialPanels(ArrayList<DialPanel> dialPanels) {
         baseArrangement(dialPanels);
-        costomArrangement(dialPanels);
+        customArrangement(dialPanels);
     }
 
     /**
      *      DialPanelをディスプレイ原点(左上)に配置
      * @param dialPanels
      */
-    private void baseArrangement(ArrayList<DialPanel> dialPanels) {
-        float   y = mScale.getDisplayHeightMeter();
+    protected void baseArrangement(ArrayList<DialPanel> dialPanels) {
         for(DialPanel panel : dialPanels) {
-            panel.OffsetPosition(0, y);
+            //panel.OffsetPosition(0, mScale.getDisplayHeightMeter());
         }
     }
+
+    /**
+     *      Dialを回転
+     * @param deg 回転角度
+     */
+    public final void rotateDial(ArrayList<DialPanel> dialPanels, float deg) {
+        //Dialの原点
+        Vec2 center = dialPanels.get(0).getPosition();
+
+        for(DialPanel panel : dialPanels) {
+            for (TileBase tileBase : panel.getTileBaseList()) {
+                Vec2 pos1 = tileBase.getWorldJointPos1();
+                Vec2 pos2 = tileBase.getWorldJointPos2();
+
+                pos1 = rotate(center, pos1, -90);
+                pos2 = rotate(center, pos2, -90);
+                tileBase.setWorldJointPos1(pos1);
+                tileBase.setWorldJointPos2(pos2);
+            }
+        }
+
+        alignCenter(dialPanels);
+    }
+
+    /**
+     *      座標を回転
+     * @param c 回転の中心
+     * @param p 回転する座標
+     * @param w 回転角度
+     * @return 回転後の座標
+     */
+    private Vec2 rotate(Vec2 c, Vec2 p, float w) {
+        float   dx = p.x - c.x;
+        float   dy = p.y - c.y;
+        Vec2    r = new Vec2();
+        float   pi = 3.14f;
+        r.x = (float)(dx*Math.cos(w/180*pi) - dy*Math.sin(w/180*pi) + c.x);
+        r.y = (float)(dx*Math.sin(w/180*pi) + dy*Math.cos(w/180*pi) + c.y);
+        return r;
+    }
+
+
 
     /**
      *      ディスプレイに対するDial幅との比を取得

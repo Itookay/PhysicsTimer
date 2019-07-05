@@ -12,6 +12,7 @@ import android.widget.ImageButton
 import itookay.android.org.Style.SingleRow
 import itookay.android.org.Style.StyleBase
 import itookay.android.org.Style.TwoRowsBigSecond
+import itookay.android.org.contents.ControlWorld
 
 import itookay.android.org.contents.PhysicsTimer
 import itookay.android.org.contents.Scale
@@ -30,8 +31,6 @@ class MainActivity : BackgroundActivity(), View.OnTouchListener, View.OnClickLis
     private lateinit var mPhysicsTimer : PhysicsTimer
     //フォント
     private var mFont : FontBase? = null
-    //スタイル
-    private var mStyle : Int = -1
 
     /** 直前にドラッグしていた番号 */
     private var PreviousDraggingNumber : Int = INVALID_TIME
@@ -56,15 +55,19 @@ class MainActivity : BackgroundActivity(), View.OnTouchListener, View.OnClickLis
         requestWindowFeature(Window.FEATURE_NO_TITLE)
 
         setContentView(R.layout.activity_main)
-        loadPreference()
         val scale = getDisplayScale()
 
-        //スタイル
+        /* フォント */
+        mFont = FontList.getFont(1)
+        /* スタイル----------------------------------- */
         //val style:StyleBase = SingleRow(mFont)
-        val style:StyleBase = TwoRowsBigSecond(mFont, scale)
+        val style:StyleBase = TwoRowsBigSecond()
+        /* ------------------------------------------ */
+        style.setScale(scale)
 
         mPhysicsTimer = PhysicsTimer(applicationContext)
         mPhysicsTimer.setStyle(style)
+        mPhysicsTimer.setFont(mFont);
         mPhysicsTimer.scale = scale
         val surfaceView = findViewById<SurfaceView>(R.id.svMain)
         mPhysicsTimer.setSurfaceView(surfaceView)
@@ -87,11 +90,6 @@ class MainActivity : BackgroundActivity(), View.OnTouchListener, View.OnClickLis
         val scale = Scale()
         scale.setDisplay(size.x, size.y, Scale.DISPLAY_HEIGHT_IN_METER)
         return scale
-    }
-
-    fun loadPreference() {
-        mFont = FontList.getFont(1)
-        mStyle = -1
     }
 
     /*
@@ -126,6 +124,7 @@ class MainActivity : BackgroundActivity(), View.OnTouchListener, View.OnClickLis
             val     y:Float = -event.values[1]
 
             mPhysicsTimer.setGravity(x, y)
+            checkOrientation(x, y)
         }
     }
 
@@ -135,6 +134,35 @@ class MainActivity : BackgroundActivity(), View.OnTouchListener, View.OnClickLis
     override fun onDestroy() {
         super.onDestroy()
         mPhysicsTimer.Destroy()
+    }
+
+    /**
+     *      端末向きを検出してDialの向きを変える
+     */
+    private fun checkOrientation(X:Float, Y:Float) {
+        val gravity = ControlWorld.GRAVITY / 2f;
+
+        if(-gravity < X && X < gravity){
+            //通常の向き
+            if(Y < 0) {
+                mPhysicsTimer.setOrientation(PhysicsTimer.PORTRAIT)
+            }
+            //端末上側が下を向いている
+            if(Y > 0) {
+                //ひっくり返したら通常の向きにする
+                mPhysicsTimer.setOrientation(PhysicsTimer.PORTRAIT)
+            }
+        }
+        else if(-gravity < Y && Y < gravity) {
+            //端末左側が下を向いている
+            if(X < 0) {
+                mPhysicsTimer.setOrientation(PhysicsTimer.LEFT_LANDSCAPE)
+            }
+            //端末右側が下を向いている
+            if(X > 0) {
+                mPhysicsTimer.setOrientation(PhysicsTimer.RIGHT_LANDSCAPE)
+            }
+        }
     }
 
     /*

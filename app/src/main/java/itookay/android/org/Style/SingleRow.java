@@ -14,8 +14,8 @@ import java.util.ArrayList;
  */
 public class SingleRow extends StyleBase {
 
-    public SingleRow(FontBase font, Scale scale) {
-        super(font, scale);
+    public SingleRow() {
+        super();
     }
 
     @Override
@@ -24,15 +24,15 @@ public class SingleRow extends StyleBase {
     }
 
     @Override
-    public int getNomalTileCount() {
+    public int getNomalTileCount(FontBase font) {
         int count = 0;
-        count += mFont.getDialPanelArrayCount(DialPanel.MINUTE);
-        count += mFont.getDialPanelArrayCount(DialPanel.SECOND);
+        count += font.getDialPanelArrayCount(DialPanel.MINUTE);
+        count += font.getDialPanelArrayCount(DialPanel.SECOND);
         return count;
     }
 
     @Override
-    public int getSmallTileCount() {
+    public int getSmallTileCount(FontBase font) {
         return 0;
     }
 
@@ -62,13 +62,18 @@ public class SingleRow extends StyleBase {
     }
 
     @Override
-    protected void costomArrangement(ArrayList<DialPanel> dialPanels) {
+    protected void customArrangement(ArrayList<DialPanel> dialPanels) {
         float       posX = 0;
         for(DialPanel panel : dialPanels) {
             panel.OffsetPosition(posX, 0f);
             //次の位置へ移動
             posX += panel.getWidthWithSpace();
         }
+    }
+
+    @Override
+    public void alignCenter(ArrayList<DialPanel> dialPanels) {
+
     }
 
     @Override

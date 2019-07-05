@@ -24,6 +24,15 @@ import java.util.ArrayList;
 
 public class PhysicsTimer implements TimeChangedListener {
 
+    /** 端末向き：端末上が上 */
+    public static final int     PORTRAIT = 50;
+    /** 端末向き：端末左が上 */
+    public static final int     LEFT_LANDSCAPE = 60;
+    /** 端末向き：端末右が上 */
+    public static final int     RIGHT_LANDSCAPE = 70;
+    /** 端末向き：端末下が上 */
+    public static final int     UPSIDEDOWN = 80;
+
     /** アプリケーションコンテキスト */
     private Context			mAppContext = null;
 
@@ -46,6 +55,8 @@ public class PhysicsTimer implements TimeChangedListener {
     private FontBase		mFont = null;
     /** 表示スタイル */
     private StyleBase       mStyle = null;
+    /** 端末向き */
+    private int             mOrientation = 0;
 
     /**
      * 			コンストラクタ
@@ -56,7 +67,10 @@ public class PhysicsTimer implements TimeChangedListener {
 
     public void setStyle(StyleBase style) {
         mStyle = style;
-        mFont = style.getFont();
+    }
+
+    public void setFont(FontBase font) {
+        mFont = font;
     }
 
     public void setScale(Scale scale) {
@@ -71,25 +85,26 @@ public class PhysicsTimer implements TimeChangedListener {
             return;
         }
 
-        /* ------------------------------------------------------------
-         * 【注意】Dial->ControlWorld->MainSurfaceの順番を変えると起動しない
+        /* -----------------------------------------------------------------
+         * 【注意】ここでDial->ControlWorld->MainSurfaceの順番を変えると起動しない
          */
+
         mDial = new Dial();
-        mDial.setScale(mScale);
         mDial.setStyle(mStyle);
-        mDial.setTimerSizeScale();
-        mDial.createDials();
+        mDial.setFont(mFont);
+        mDial.setTimerSize(mScale.getDisplayWidthMeter());
+        mDial.createDials(mScale.getDisplayWidthMeter(), mScale.getDisplayHeightMeter());
 
         Vec2	gravity = new Vec2(0f, -10f);
         mWorld = new ControlWorld(mAppContext, gravity, true);
         mWorld.setStep(1f/60f, 10, 8);
         mWorld.setScale(mScale);
-        mWorld.createWorld(mStyle.getSmallTileCount(), mStyle.getNomalTileCount());
+        mWorld.createWorld(mStyle.getSmallTileCount(mFont), mStyle.getNomalTileCount(mFont));
         mWorld.setDebugDial(mDial);
 
         mMainSurface = new MainSurfaceView(mAppContext, mSurfaceViewFromLayout, mWorld);
         mMainSurface.setScale(mScale);
-        /* ------------------------------------------------------------ */
+        /* ----------------------------------------------------------------- */
 
         Intent      intentService = new Intent(mAppContext, TimeChanged.class);
         mAppContext.bindService(intentService, mTimerConnection, Context.BIND_AUTO_CREATE);
@@ -112,15 +127,34 @@ public class PhysicsTimer implements TimeChangedListener {
     };
 
     /**
-     *          タイマーの位置をセット
+     *      端末向きをセット
+     * @param orientation PhysicsTimer.PORTRAIT, LEFT_LANDSCAPE, RIGHT_LANDSCAPE, UPSIDEDOWN
      */
-    private void setDialPosition() {
-        PointF      pos = new PointF();
-        pos.x = (mScale.getDisplayWidthMeter() - mDial.getTimerWidth()) / 2;
-        pos.y = mScale.getDisplayHeightMeter() * 0.8f;  //ひとまずここ
+    public void setOrientation(int orientation) {
+        if(mOrientation == orientation) {
+            return;
+        }
 
-        //書き出し位置
-        mDial.OffsetPosition(pos.x, pos.y);
+        switch(orientation) {
+            case PORTRAIT:
+                break;
+
+            case LEFT_LANDSCAPE:
+                mDial.clearTime(true);
+                mWorld.clearTime();
+                mStyle.setOrientation(LEFT_LANDSCAPE);
+                mStyle.rotateDial(mDial.getDialPanelList(), -90f);
+                break;
+
+            case RIGHT_LANDSCAPE:
+                break;
+
+            case UPSIDEDOWN:
+                //なにもしない
+                break;
+        }
+
+        mOrientation = orientation;
     }
 
     public void setSurfaceView(SurfaceView surfaceView) {
@@ -154,8 +188,8 @@ public class PhysicsTimer implements TimeChangedListener {
      */
     public void stopTimer() {
         mTimeChagedService.removeCallback();
-        mWorld.destroyAllDistanceJoint();
-        mDial.clearTime();
+        mWorld.clearTime();
+        mDial.clearTime(false);
         mWorld.clearTileId();
     }
 
@@ -167,7 +201,7 @@ public class PhysicsTimer implements TimeChangedListener {
     public void onTimeChanged(int hour, int minute, int second) {
         try {
             if(second == TimeChanged.TIMER_FINISHED) {
-                mWorld.destroyAllDistanceJoint();
+                mWorld.clearTime();
             }
             else {
                 mDial.setTime(new Time(hour, minute, second));

@@ -74,12 +74,12 @@ public abstract class FontBase implements Serializable {
 	/**
 	 * 			そのフォントの数字を取得
 	 */
-	public int[] getNumber( int loc ) {
-		if( loc < 0 ) {
-			return fontArray.get( 10 );
+	public int[] getNumber(int loc) {
+		if(loc < 0) {
+			return fontArray.get(10);
 		}
 		else {
-			return fontArray.get( loc );
+			return fontArray.get(loc);
 		}
 	}
 

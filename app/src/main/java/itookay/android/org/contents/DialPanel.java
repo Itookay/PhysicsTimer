@@ -67,14 +67,14 @@ public class DialPanel {
     /** このパネルが保持する時間の属性。時・分・秒・コロン・ドッドのどれか */
     private int			mFormat = -1;
     /** パネルの描画開始位置．デフォルトで原点．必要に応じてオフセット */
-    private Vec2		mPosition = new Vec2( 0, 0 );
+    private Vec2		mPosition = new Vec2();
 
     /** パネルの識別ID */
     private int			mId = -1;
     /** 次の時刻で落下予定のタイル */
-    private ArrayList<Integer>			mDestroyTileIndexList = new ArrayList<Integer>();
+    private ArrayList<Integer>      mDestroyTileIndexList = new ArrayList<Integer>();
     /** 次の時刻でジョイント予定のタイル */
-    private ArrayList<Integer>			mJointTileIndexList = new ArrayList<Integer>();
+    private ArrayList<Integer>      mJointTileIndexList = new ArrayList<Integer>();
 
     /**
      * 			コンストラクタ
@@ -199,9 +199,8 @@ public class DialPanel {
         mPosition.y += y;
 
         //TileBaseジョイント座標もオフセット
-        Iterator<TileBase>	it = mTileBaseList.iterator();
-        while(it.hasNext()) {
-            it.next().setOffset(x, y);
+        for(TileBase tile : mTileBaseList) {
+            tile.setOffset(x, y);
         }
     }
 

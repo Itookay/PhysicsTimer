@@ -43,12 +43,10 @@ public class FontList {
 	}
 
 	public static FontBase getDefaultFont() {
-
 		return mDefaultFont;
 	}
 
 	public static int getDefaultFontId() {
-
 		return mDefaultFontId;
 	}
 
@@ -56,7 +54,6 @@ public class FontList {
 	 * 			フォント名（カナ）のリストを取得
 	 */
 	public static String[] getFontJpList() {
-
 		return mFontListJp;
 	}
 
@@ -64,7 +61,6 @@ public class FontList {
 	 * 			フォント名のリストを取得
 	 */
 	public static String[] getFontList() {
-
 		return mFontList;
 	}
 
@@ -74,7 +70,6 @@ public class FontList {
 	 * @return			対応するID。存在しないフォント名には負の数
 	 */
 	public static int getFontIdByName( String name ) {
-
 		int		length = mFontListEntry.length;
 		int		ret = -1;
 
@@ -92,7 +87,6 @@ public class FontList {
 	 * 			フォント名を取得
 	 */
 	public static String getFontName( int id ) {
-
 		return mFontListEntry[id].getFontName();
 	}
 
@@ -100,7 +94,6 @@ public class FontList {
 	 * 			フォント名（カナ）を取得
 	 */
 	public static String getFontNameJp( int id ) {
-
 		return mFontListEntry[id].getFontNameJp();
 	}
 
@@ -108,7 +101,6 @@ public class FontList {
 	 * 			フォントを取得
 	 */
 	public static FontBase getFont( int id ) {
-
 		mId = id;
 		return mFontListEntry[id];
 	}
@@ -117,7 +109,6 @@ public class FontList {
 	 * 			次のフォントを取得
 	 */
 	public static FontBase getNext() {
-
 		FontBase		font = null;
 		if( mId++ < mFontListEntry.length ) {
 			font = mFontListEntry[mId];
@@ -130,7 +121,6 @@ public class FontList {
 	 * 			前のフォントを取得
 	 */
 	public static FontBase getBack() {
-
 		FontBase		font = null;
 		if( mId-- >= 0 ) {
 			font = mFontListEntry[mId];
@@ -143,7 +133,6 @@ public class FontList {
 	 * 			次のフォントが存在する
 	 */
 	public static boolean isNext() {
-
 		boolean		ret = false;
 
 		if( mId + 1 < mFontListEntry.length ) {
@@ -157,7 +146,6 @@ public class FontList {
 	 * 			前のフォントが存在する
 	 */
 	public static boolean isBack() {
-
 		boolean		ret = false;
 
 		if( mId - 1 >= 0 ) {
@@ -171,7 +159,6 @@ public class FontList {
 	 * 			現在選択中のフォントを取得
 	 */
 	public static FontBase getSelectedFont() {
-
 		FontBase	font = null;
 
 		if( mId >= 0 && mId < mFontListEntry.length ) {
@@ -185,7 +172,6 @@ public class FontList {
 	 * 			現在選択中のフォントを取得
 	 */
 	public static int getSelectedFontId() {
-
 		int		ret = -1;
 
 		if( mId >= 0 && mId < mFontListEntry.length ) {

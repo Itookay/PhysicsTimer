@@ -51,10 +51,18 @@ public class Scale {
         return mDisplayHeightPixel;
     }
 
+    /**
+     *      ディスプレイ高さ(メートル)<br>
+     *      端末向きに応じて値が変わる
+     */
     public float getDisplayHeightMeter() {
         return mDisplayHeightMeter;
     }
 
+    /**
+     *      ディスプレイ幅(メートル)<br>
+     *      端末向きに応じて値が変わる
+     */
     public float getDisplayWidthMeter() {
         return mDisplayWidthMeter;
     }

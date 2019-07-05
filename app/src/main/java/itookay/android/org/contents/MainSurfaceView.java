@@ -118,7 +118,7 @@ public class MainSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             //ボディの描画
             mWorld.drawBodies(canvas);
             //デバッグ用描画
-            //mWorld.debugDraw(canvas);
+            mWorld.debugDraw(canvas);
 
             mHolder.unlockCanvasAndPost(canvas);
 

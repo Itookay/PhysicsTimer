@@ -7,7 +7,7 @@ import org.jbox2d.common.Vec2;
  * 			タイルがなくても，ジョイント位置，パネル，インデックスなどを保持する。
  * 			タイルとは一対一対応
  */
-class TileBase {
+public class TileBase {
 
     /** 無効なIDもしくはIndex */
     public static final int		INVALID_ID = -1;
@@ -172,9 +172,9 @@ class TileBase {
     }
 
     /**
-     * 			ジョイントアンカーを引数でオフセットする
+     *      ジョイントアンカー位置をオフセット
      */
-    public void setOffset( float x, float y ) {
+    public void setOffset(float x, float y) {
         mWorldJointPos1.x += x;
         mWorldJointPos1.y += y;
 
