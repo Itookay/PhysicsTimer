@@ -1,4 +1,4 @@
-package itookay.android.org.Style;
+package itookay.android.org.style;
 
 import itookay.android.org.contents.*;
 import itookay.android.org.font.FontBase;
@@ -78,8 +78,8 @@ public abstract class StyleBase {
                 Vec2 pos1 = tileBase.getWorldJointPos1();
                 Vec2 pos2 = tileBase.getWorldJointPos2();
 
-                pos1 = rotate(center, pos1, -90);
-                pos2 = rotate(center, pos2, -90);
+                pos1 = rotate(center, pos1, deg);
+                pos2 = rotate(center, pos2, deg);
                 tileBase.setWorldJointPos1(pos1);
                 tileBase.setWorldJointPos2(pos2);
             }

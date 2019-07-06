@@ -9,9 +9,8 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.widget.ImageButton
-import itookay.android.org.Style.SingleRow
-import itookay.android.org.Style.StyleBase
-import itookay.android.org.Style.TwoRowsBigSecond
+import itookay.android.org.style.StyleBase
+import itookay.android.org.style.TwoRowsBigSecond
 import itookay.android.org.contents.ControlWorld
 
 import itookay.android.org.contents.PhysicsTimer
@@ -119,6 +118,10 @@ class MainActivity : BackgroundActivity(), View.OnTouchListener, View.OnClickLis
      *      センサー値の変化
      */
     override fun onSensorChanged(event:SensorEvent) {
+        if(mPhysicsTimer.isReadyToStart == false) {
+            return;
+        }
+
         if(event.sensor.type == Sensor.TYPE_ACCELEROMETER) {
             val     x:Float = -event.values[0]
             val     y:Float = -event.values[1]

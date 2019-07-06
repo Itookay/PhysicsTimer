@@ -3,13 +3,10 @@ package itookay.android.org.contents;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import itookay.android.org.Style.StyleBase;
+import itookay.android.org.style.StyleBase;
 import itookay.android.org.font.FontBase;
 
 import org.jbox2d.common.Vec2;
-
-import android.graphics.PointF;
-import android.util.Log;
 
 public class Dial {
 
@@ -166,10 +163,14 @@ public class Dial {
     }
 
     /**
-     *      時間をクリア
+     *      時間をクリア【ControlWorld.clearTime()も呼ぶこと】<br>
      * @param rejoint trueで次の時間に再ジョイント
      */
     public void clearTime(boolean rejoint) {
+        if(mTime == null) {
+            return;
+        }
+
         if(rejoint) {
             clearAndRejointTime();
         }
@@ -179,7 +180,7 @@ public class Dial {
     }
 
     /**
-     *      時間をクリアし終了処理
+     *      時間をクリアし終了処理【ControlWorld.clearTime()も呼ぶこと】<br>
      */
     private void clearTime() {
         mTime = null;
@@ -197,22 +198,11 @@ public class Dial {
      */
     private void clearAndRejointTime() {
         for(DialPanel panel : mDialPanelList) {
-            switch(panel.getFormat()) {
-                case DialPanel.MINUTE:
-                    compareNumber(panel, -1, mTime.getMinute());
-                    break;
+            /* 現在のジョイントTileをクリア */
+            panel.getJointTileList().clear();
+            panel.getDestroyTileList().clear();
 
-                case DialPanel.SECOND:
-                    compareNumber(panel, -1, mTime.getSecond());
-                    break;
-
-                case DialPanel.COLOGNE:
-                    compareSeparator(panel, -1, mSeparator);
-                    break;
-
-                case DialPanel.BLANK:
-                    break;
-            }
+            mTime = new Time(Time.CLEAR, Time.CLEAR, Time.CLEAR);
         }
     }
 

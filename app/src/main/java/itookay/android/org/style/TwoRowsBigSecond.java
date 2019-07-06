@@ -1,4 +1,4 @@
-package itookay.android.org.Style;
+package itookay.android.org.style;
 
 import itookay.android.org.contents.*;
 import itookay.android.org.font.FontBase;
@@ -84,19 +84,28 @@ public class TwoRowsBigSecond extends StyleBase {
         float   x = 0f;
         float   y = 0f;
 
-        //端末縦向き
-        if(mOrientation == PhysicsTimer.PORTRAIT || mOrientation == PhysicsTimer.UPSIDEDOWN) {
-            x = (mScale.getDisplayWidthMeter() - dialWidth) / 2f;
-            y = mScale.getDisplayHeightMeter() - x;
-        }
-        //端末横向き
-        else {
-            x = (mScale.getDisplayWidthMeter() - dialHeight) / 2f + dialHeight;
-            y = (mScale.getDisplayHeightMeter() - dialWidth) / 2f + dialWidth;
-        }
-
         //現在のDial原点位置
         Vec2    c = minute.getPosition();
+
+        //端末縦向き
+        switch(mOrientation) {
+            case PhysicsTimer.PORTRAIT:
+            case PhysicsTimer.UPSIDEDOWN:
+                x = (mScale.getDisplayWidthMeter() - dialWidth) / 2f;
+                y = mScale.getDisplayHeightMeter() - x;
+                break;
+            case PhysicsTimer.LEFT_LANDSCAPE:
+                x = (mScale.getDisplayWidthMeter() - dialHeight) / 2f + dialHeight;
+                y = (mScale.getDisplayHeightMeter() - dialWidth) / 2f + dialWidth;
+                break;
+            case PhysicsTimer.RIGHT_LANDSCAPE:
+                x = (mScale.getDisplayWidthMeter() - dialHeight) / 2f;
+                y = (mScale.getDisplayHeightMeter() - dialWidth) / 2f;
+                break;
+            default:
+                return;
+        }
+
         float   dx = x - c.x;
         float   dy = y - c.y;
         minute.OffsetPosition(dx, dy);

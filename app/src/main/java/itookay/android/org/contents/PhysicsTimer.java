@@ -4,23 +4,12 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.Color;
-import android.graphics.Point;
-import android.graphics.PointF;
-import android.hardware.Sensor;
-import android.hardware.SensorManager;
 import android.os.IBinder;
-import android.util.Log;
-import android.view.Display;
 import android.view.SurfaceView;
-import android.view.WindowManager;
-import itookay.android.org.Style.StyleBase;
-import itookay.android.org.Style.TwoRowsBigSecond;
+
+import itookay.android.org.style.StyleBase;
 import itookay.android.org.font.FontBase;
 import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.World;
-
-import java.util.ArrayList;
 
 public class PhysicsTimer implements TimeChangedListener {
 
@@ -57,6 +46,8 @@ public class PhysicsTimer implements TimeChangedListener {
     private StyleBase       mStyle = null;
     /** 端末向き */
     private int             mOrientation = 0;
+    /** タイマーの初期化が全て終了 */
+    private boolean         mIsReadyToStart = false;
 
     /**
      * 			コンストラクタ
@@ -88,7 +79,6 @@ public class PhysicsTimer implements TimeChangedListener {
         /* -----------------------------------------------------------------
          * 【注意】ここでDial->ControlWorld->MainSurfaceの順番を変えると起動しない
          */
-
         mDial = new Dial();
         mDial.setStyle(mStyle);
         mDial.setFont(mFont);
@@ -108,6 +98,11 @@ public class PhysicsTimer implements TimeChangedListener {
 
         Intent      intentService = new Intent(mAppContext, TimeChanged.class);
         mAppContext.bindService(intentService, mTimerConnection, Context.BIND_AUTO_CREATE);
+        mIsReadyToStart = true;
+    }
+
+    public boolean isReadyToStart() {
+        return mIsReadyToStart;
     }
 
     /**
@@ -135,26 +130,65 @@ public class PhysicsTimer implements TimeChangedListener {
             return;
         }
 
+        float       deg = 0;
         switch(orientation) {
             case PORTRAIT:
+                switch(mOrientation) {
+                    case LEFT_LANDSCAPE:
+                        deg = 90f;
+                        break;
+                    case RIGHT_LANDSCAPE:
+                        deg = -90f;
+                        break;
+                    case UPSIDEDOWN:
+                        break;
+                }
                 break;
-
             case LEFT_LANDSCAPE:
-                mDial.clearTime(true);
-                mWorld.clearTime();
-                mStyle.setOrientation(LEFT_LANDSCAPE);
-                mStyle.rotateDial(mDial.getDialPanelList(), -90f);
+                switch(mOrientation) {
+                    case PORTRAIT:
+                        deg = -90f;
+                        break;
+                    case RIGHT_LANDSCAPE:
+                        break;
+                    case UPSIDEDOWN:
+                        deg = -90f;
+                        break;
+                }
                 break;
-
             case RIGHT_LANDSCAPE:
+                switch(mOrientation) {
+                    case LEFT_LANDSCAPE:
+                        break;
+                    case PORTRAIT:
+                        deg = 90f;
+                        break;
+                    case UPSIDEDOWN:
+                        deg = 90f;
+                        break;
+                }
                 break;
-
             case UPSIDEDOWN:
-                //なにもしない
+                switch(mOrientation) {
+                    case LEFT_LANDSCAPE:
+                        deg = 90f;
+                        break;
+                    case RIGHT_LANDSCAPE:
+                        deg = -90f;
+                        break;
+                    case PORTRAIT:
+                        break;
+                }
                 break;
         }
 
+        /* 共通処理 ------------------------ */
+        mDial.clearTime(true);
+        mWorld.clearTime();
+        mStyle.setOrientation(orientation);
+        mStyle.rotateDial(mDial.getDialPanelList(), deg);
         mOrientation = orientation;
+        /* -------------------------------- */
     }
 
     public void setSurfaceView(SurfaceView surfaceView) {
@@ -190,7 +224,6 @@ public class PhysicsTimer implements TimeChangedListener {
         mTimeChagedService.removeCallback();
         mWorld.clearTime();
         mDial.clearTime(false);
-        mWorld.clearTileId();
     }
 
 

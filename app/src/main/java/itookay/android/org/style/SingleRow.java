@@ -1,7 +1,6 @@
-package itookay.android.org.Style;
+package itookay.android.org.style;
 
 import itookay.android.org.contents.DialPanel;
-import itookay.android.org.contents.Scale;
 import itookay.android.org.contents.Tile;
 import itookay.android.org.font.FontBase;
 

@@ -88,14 +88,4 @@ class BodyList {
 
 		return count;
 	}
-
-	/**
-	 * 		タイルのユニークIDをクリア
-	 */
-	void clearTileId() {
-		for(Body body : mBodyList) {
-			Tile	tile = (Tile)body.getUserData();
-			tile.setUniqueId(TileBase.INVALID_ID, TileBase.INVALID_ID);
-		}
-	}
 }

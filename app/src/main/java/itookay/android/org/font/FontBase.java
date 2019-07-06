@@ -14,9 +14,6 @@ public abstract class FontBase implements Serializable {
 	/** フォント名 */
 	protected String		FONT_NAME = null;
 
-	/* 配列の区切り */
-	public static int	RT = -1;
-
 	public int[]		NONE = null;
 	public int[]		ONE = null;
 	public int[]		TWO= null;
@@ -34,9 +31,6 @@ public abstract class FontBase implements Serializable {
 	public int[]		COLOGNE = null;
 	/** 分と秒の区切り */
 	public int[]		DOT = null;
-
-	/** ノーマルフォント */
-	public final int		FONT_NOMAL = 10;
 
 	/** フォント配列を入れるリスト */
 	protected ArrayList<int[]>	fontArray = new ArrayList<int[]>();

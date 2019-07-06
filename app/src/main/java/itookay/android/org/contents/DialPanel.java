@@ -297,10 +297,7 @@ public class DialPanel {
      * 			DialPanel上の指定したindexのTileBaseを取得
      */
     public TileBase getTileBase(int index) {
-        Iterator<TileBase>	it = mTileBaseList.iterator();
-        TileBase	tileBase = null;
-        while(it.hasNext()) {
-            tileBase = it.next();
+        for(TileBase tileBase : mTileBaseList) {
             if(tileBase.getIndex() == index) {
                 return tileBase;
             }

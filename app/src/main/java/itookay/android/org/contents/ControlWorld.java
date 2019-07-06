@@ -343,41 +343,19 @@ public class ControlWorld {
     }
 
     /**
-     * 			ワールドが使用可能である
-     * @return
+     *      ControlWorldが保持している時間情報を初期化【Dial.clearTime()も呼ぶこと】<br>
+     *      ・ディスタンス・ジョイントを全消去<br>
+     *      ・TileのIDをクリア<br>
      */
-    boolean isAlive() {
-
-        if( mWorld != null ) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
-    /**
-     * 			ディスタンス・ジョイントを全消去
-     */
-    void clearTime() {
+    public void clearTime() {
         for(Joint joint = mWorld.getJointList(); joint != null; joint = joint.getNext()) {
             mWorld.destroyJoint(joint);
         }
-
-        ArrayList<Body>       bodyList = mBodyList.getList();
-        Tile	tile = null;
-        for(Body body : bodyList) {
-            tile = (Tile)body.getUserData();
+        for(Body body : mBodyList.getList()) {
+            Tile    tile = (Tile)body.getUserData();
             tile.setUniqueId(TileBase.INVALID_ID, TileBase.INVALID_ID);
             setFreeTileFilter(body);
         }
-    }
-
-    /**
-     *      タイルのIDをクリア
-     */
-    void clearTileId() {
-        mBodyList.clearTileId();
     }
 
     /**

@@ -7,44 +7,47 @@ package itookay.android.org.contents;
  */
 public class Time {
 
-	private int		mHour = -1;
-	private int		mMinute = -1;
-	private int		mSecond = -1;
+    /** 時間のクリア */
+    public static int       CLEAR = -1;
 
-	public Time( int hour, int minute, int second ) {
-		mHour = hour;
-		mMinute = minute;
-		mSecond = second;
-	}
+    private int		mHour = CLEAR;
+    private int		mMinute = CLEAR;
+    private int		mSecond = CLEAR;
 
-	public int getHour() {
-		return mHour;
-	}
+    public Time( int hour, int minute, int second ) {
+        mHour = hour;
+        mMinute = minute;
+        mSecond = second;
+    }
 
-	public int getMinute() {
-		return mMinute;
-	}
+    public int getHour() {
+        return mHour;
+    }
 
-	public int getSecond() {
-		return mSecond;
-	}
+    public int getMinute() {
+        return mMinute;
+    }
 
-	public String getHourString() {
-		return Integer.toString( mHour );
-	}
+    public int getSecond() {
+        return mSecond;
+    }
 
-	public String getMinuteString() {
-		return Integer.toString( mMinute );
-	}
+    public String getHourString() {
+        return Integer.toString( mHour );
+    }
 
-	public String getSecondString() {
-		return Integer.toString( mSecond );
-	}
+    public String getMinuteString() {
+        return Integer.toString( mMinute );
+    }
 
-	public void set( Time time ) {
+    public String getSecondString() {
+        return Integer.toString( mSecond );
+    }
 
-		mHour = time.getHour();
-		mMinute = time.getMinute();
-		mSecond = time.getSecond();
-	}
+    public void set( Time time ) {
+
+        mHour = time.getHour();
+        mMinute = time.getMinute();
+        mSecond = time.getSecond();
+    }
 }
