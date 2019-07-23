@@ -45,7 +45,7 @@ public class PhysicsTimer implements TimeChangedListener {
     /** Timerサービスとバインドされているか */
     private boolean         mIsTimerServiceBound = false;
     /** TimeChanegedサービスインスタンス */
-    private Intent          mService = null;
+    //private Intent          mService = null;
 
     /** 文字盤 */
     private Dial			mDial = null;
@@ -168,13 +168,13 @@ public class PhysicsTimer implements TimeChangedListener {
      */
     public void start() {
         /* タイマーをサービスで起動する */
-        mService = new Intent(mAppContext, TimeWatchingService.class);
+        Intent  service = new Intent(mAppContext, TimeWatchingService.class);
         ServiceInfo     info = new ServiceInfo();
         info.Time = mTime;
         info.BindService = mBindService;
-        mService.putExtra(INTENT_KEY_TIME_WATCHING_SERVICE, info);
+        service.putExtra(INTENT_KEY_TIME_WATCHING_SERVICE, info);
         TimeWatchingService.setOnTimeChangedListener(this);
-        mAppContext.startForegroundService(mService);
+        mAppContext.startForegroundService(service);
     }
 
     /**

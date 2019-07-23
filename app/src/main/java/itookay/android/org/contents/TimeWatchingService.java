@@ -1,9 +1,6 @@
 package itookay.android.org.contents;
 
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.Service;
+import android.app.*;
 import android.content.ContentProvider;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +9,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import itookay.android.org.MainActivity;
 import itookay.android.org.R;
 
 /**
@@ -93,10 +91,16 @@ public class TimeWatchingService extends Service {
     }
 
     public Notification getNotification(String channelId) {
+        /* 通知をタップした時に起動するActivity */
+        Intent      intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent   pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId)
                 .setContentTitle("Physics Timer Title")
                 .setContentText("タイマー動作中です。")
-                .setSmallIcon(R.drawable.ic_launcher_foreground);
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentIntent(pendingIntent);
         return builder.build();
     }
 
