@@ -12,7 +12,7 @@ public abstract class FontBase implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/** フォント名 */
-	protected String		FONT_NAME = null;
+	public String		NAME = null;
 
 	public int[]		NONE = null;
 	public int[]		ONE = null;
@@ -48,21 +48,6 @@ public abstract class FontBase implements Serializable {
 	public abstract int getDialPanelArrayCount(int format);
 
 	public FontBase() {
-
-	}
-
-	/**
-	 * 			フォント名を取得
-	 */
-	public String getFontName() {
-		return getClass().getSimpleName();
-	}
-
-	/**
-	 * 			フォント名（かな）を取得
-	 */
-	public String getFontNameJp() {
-		return FONT_NAME;
 	}
 
 	/**

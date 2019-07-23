@@ -5,8 +5,7 @@ public class NormalA extends FontBaseA {
 	private static final long serialVersionUID = 1L;
 
 	public NormalA() {
-
-		FONT_NAME = "ノーマルＡ";
+		NAME = "Normal A";
 
 		int[]	zero =
 			{	1, 1, 1, 1,

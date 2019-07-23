@@ -6,7 +6,7 @@ public class NormalRoundA extends FontBaseA {
 
     public NormalRoundA() {
 
-        FONT_NAME = "ノーマル角丸Ｂ";
+        NAME = "Normal Round A";
 
         int[]	zero =
             {	0, 1, 1, 0,

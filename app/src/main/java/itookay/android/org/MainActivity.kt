@@ -1,6 +1,8 @@
 package itookay.android.org
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import android.graphics.*
@@ -8,35 +10,37 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.widget.ImageButton
-import itookay.android.org.style.StyleBase
-import itookay.android.org.style.TwoRowsBigSecond
+import android.widget.Button
 import itookay.android.org.contents.ControlWorld
 
 import itookay.android.org.contents.PhysicsTimer
 import itookay.android.org.contents.Scale
-import itookay.android.org.font.FontBase
-import itookay.android.org.font.FontList
+import itookay.android.org.contents.Settings
 
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : BackgroundActivity(), View.OnTouchListener, View.OnClickListener, SensorEventListener {
+class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, SensorEventListener {
 
     /** ドラッグしたと判定する距離 */
     private val DRAGABLE_DISTANCE = 20f
     /** 無効な時間 */
     private val INVALID_TIME = 0
 
+    /**  */
     private lateinit var mPhysicsTimer : PhysicsTimer
-    //フォント
-    private var mFont : FontBase? = null
+    /** NumPadボタンリスト */
+    lateinit var NumpadButtonList : List<Button>
+    /** 設定ボタン */
+    lateinit var btSetting : Button
+    /** タイマーストップ表示ボタン */
+    lateinit var btStopTimer : Button
 
     /** 直前にドラッグしていた番号 */
     private var PreviousDraggingNumber : Int = INVALID_TIME
     /** 最初に選択された番号 */
     private var FirstSelectedNumber : Int = INVALID_TIME
     /** 現在ドラッグしているボタン */
-    private var CurrentDraggingButton : ImageButton? = null
+    private var CurrentDraggingButton : Button? = null
     /** 2つ目のボタンまでにドラッグされたか */
     private var IsDragged = false
     /** 最初にタップされたポイント */
@@ -54,30 +58,71 @@ class MainActivity : BackgroundActivity(), View.OnTouchListener, View.OnClickLis
         requestWindowFeature(Window.FEATURE_NO_TITLE)
 
         setContentView(R.layout.activity_main)
+        /* ボタンの初期化 ------ */
+        initNumpadButtonList()
+        initControlButton()
+        setButtonListener()
+        /* ------------------- */
         val scale = getDisplayScale()
 
-        /* フォント */
-        mFont = FontList.getFont(1)
-        /* スタイル----------------------------------- */
-        //val style:StyleBase = SingleRow(mFont)
-        val style:StyleBase = TwoRowsBigSecond()
-        /* ------------------------------------------ */
+        val setting = Settings(applicationContext)
+        val font = setting.savedFont
+        val style = setting.savedStyle;
         style.setScale(scale)
 
         mPhysicsTimer = PhysicsTimer(applicationContext)
         mPhysicsTimer.setStyle(style)
-        mPhysicsTimer.setFont(mFont);
-        mPhysicsTimer.scale = scale
+        mPhysicsTimer.setFont(font);
+        mPhysicsTimer.setScale(scale)
         val surfaceView = findViewById<SurfaceView>(R.id.svMain)
         mPhysicsTimer.setSurfaceView(surfaceView)
         mPhysicsTimer.init()
 
-        initButtonWidth(mPhysicsTimer.scale, 0.8, 0.2)
-        initNumPad()
-        initControlButtons()
-        setListener()
+        /* ForegroundServiceが起動中 --------------- */
+        if(mPhysicsTimer.isAlive) {
+            numpadVisivility(false)
+            settingButtonVisibility(false)
+            stopTimerButtonVisibility(true)
+            mPhysicsTimer.resume()
+        }
+        /* ---------------------------------------- */
+    }
 
-        SensorMgr = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+    fun initNumpadButtonList() {
+        NumpadButtonList = listOf(
+            findViewById(R.id.btNum0),
+            findViewById(R.id.btNum1),
+            findViewById(R.id.btNum2),
+            findViewById(R.id.btNum3),
+            findViewById(R.id.btNum4),
+            findViewById(R.id.btNum5),
+            findViewById(R.id.btNum6),
+            findViewById(R.id.btNum7),
+            findViewById(R.id.btNum8),
+            findViewById(R.id.btNum9))
+    }
+
+    /**
+     *      コントロールボタンを表示<br>
+     *      Numpad表示時：設定ボタン<br>
+     *      タイマー表示時：Numpadに戻るボタン
+     */
+    fun initControlButton() {
+        btStopTimer = findViewById(R.id.btStopTimer)
+        btSetting = findViewById(R.id.btSetting)
+    }
+
+    /*
+     *      イベントリスナーをセット
+     */
+    private fun setButtonListener() {
+        /* Numpad */
+        for(button in NumpadButtonList) {
+            button.setOnTouchListener(this)
+        }
+
+        btSetting.setOnClickListener(this)
+        btStopTimer.setOnClickListener(this)
     }
 
     fun getDisplayScale() : Scale {
@@ -98,7 +143,7 @@ class MainActivity : BackgroundActivity(), View.OnTouchListener, View.OnClickLis
         super.onPause()
 
         SensorMgr.unregisterListener(this)
-        mPhysicsTimer.Destroy()
+        mPhysicsTimer.pause()
     }
 
     /*
@@ -106,12 +151,14 @@ class MainActivity : BackgroundActivity(), View.OnTouchListener, View.OnClickLis
      */
     override fun onResume() {
         super.onResume()
-        mPhysicsTimer.Resume()
 
+        SensorMgr = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         val     sensors:List<Sensor> = SensorMgr.getSensorList(Sensor.TYPE_ACCELEROMETER)
         for(sensor in sensors) {
             SensorMgr.registerListener(this, sensor, SensorManager.SENSOR_DELAY_UI)
         }
+
+        mPhysicsTimer.resume()
     }
 
     /**
@@ -136,7 +183,6 @@ class MainActivity : BackgroundActivity(), View.OnTouchListener, View.OnClickLis
 
     override fun onDestroy() {
         super.onDestroy()
-        mPhysicsTimer.Destroy()
     }
 
     /**
@@ -169,28 +215,15 @@ class MainActivity : BackgroundActivity(), View.OnTouchListener, View.OnClickLis
     }
 
     /*
-     *      イベントリスナーをセット
-     */
-    private fun setListener() {
-        /* Numpad */
-        for(button in NumpadButtonList) {
-            button.setOnTouchListener(this)
-        }
-
-        /* 戻るボタン */
-        btBack.setOnClickListener(this)
-    }
-
-    /*
-     *
+     *      選択されたボタンから数字を取得
      */
     fun getSelectedButtonNumber(view: View?) : Int {
-        var index = 0
+        var     index = 0;
         for(button in NumpadButtonList) {
             if(button.id == view?.id) {
-                return index
+                return index;
             }
-            index++
+            index++;
         }
 
         return -1
@@ -200,9 +233,10 @@ class MainActivity : BackgroundActivity(), View.OnTouchListener, View.OnClickLis
      *      タッチイベント
      */
     override fun onTouch(view: View?, event: MotionEvent?): Boolean {
+        /** ドラッグ中のボタンはviewに渡されないらしい */
         val button = getTouchPointButton(event?.rawX!!, event.rawY)
         if(button == null) {
-            clearButtonState()
+            //clearButtonState()
             return false
         }
 
@@ -217,12 +251,14 @@ class MainActivity : BackgroundActivity(), View.OnTouchListener, View.OnClickLis
                 button.isPressed = true
             }
             MotionEvent.ACTION_UP -> {
-                mPhysicsTimer.startTimer()
+                mPhysicsTimer.start()
 
                 //Numpadを非表示
-                removeNumpad()
-                //戻るボタンを表示
-                showReturnButton()
+                numpadVisivility(false)
+                //タイマーストップボタンを表示
+                stopTimerButtonVisibility(true)
+                //設定ボタンを非表示
+                settingButtonVisibility(false)
 
                 button.performClick()
                 clearButtonState()
@@ -269,40 +305,53 @@ class MainActivity : BackgroundActivity(), View.OnTouchListener, View.OnClickLis
      */
     override fun onClick(view: View?) {
         when(view) {
-            btBack -> {
-                //removeReturnButton()
-                showNumpad()
-                mPhysicsTimer.stopTimer()
+            btSetting -> {
+                val intent = Intent(this, MainSettingActivity::class.java)
+                startActivity(intent)
+            }
+            btStopTimer -> {
+                numpadVisivility(true)
+                stopTimerButtonVisibility(false)
+                settingButtonVisibility(true)
+                mPhysicsTimer.stop()
             }
         }
     }
 
     /*
-     *          Numpadを表示
+     *          Numpadの表示・非表示
      */
-    fun showNumpad() {
-        tlNumPad.visibility = View.VISIBLE
+    fun numpadVisivility(visivility: Boolean) {
+        if(visivility) {
+            NumPad.visibility = View.VISIBLE
+        }
+        else {
+            NumPad.visibility = View.INVISIBLE
+        }
     }
 
     /*
-     *          Numpadを非表示にする
+     *        設定ボタンの表示・非表示
      */
-    fun removeNumpad() {
-        tlNumPad.visibility = View.INVISIBLE
+    fun settingButtonVisibility(visibility: Boolean) {
+        if(visibility) {
+            btSetting.visibility = View.VISIBLE
+        }
+        else {
+            btSetting.visibility = View.INVISIBLE
+        }
     }
 
     /*
-     *          戻るボタンを表示
+     *        タイマーストップボタンの表示・非表示
      */
-    fun showReturnButton() {
-        btBack.visibility = View.VISIBLE
-    }
-
-    /*
-     *          戻るボタンを非表示
-     */
-    fun removeReturnButton() {
-        btBack.visibility = View.INVISIBLE
+    fun stopTimerButtonVisibility(visibility: Boolean) {
+        if(visibility) {
+            btStopTimer.visibility = View.VISIBLE
+        }
+        else {
+            btStopTimer.visibility = View.INVISIBLE
+        }
     }
 
     /*
@@ -333,7 +382,7 @@ class MainActivity : BackgroundActivity(), View.OnTouchListener, View.OnClickLis
     /*
      *      タッチされたポイントにあるボタンを取得
      */
-    private fun getTouchPointButton(_x:Float, _y:Float) : ImageButton? {
+    private fun getTouchPointButton(_x:Float, _y:Float) : Button? {
         for(button in NumpadButtonList) {
             val location = IntArray(2)
             button.getLocationInWindow(location)

@@ -8,6 +8,9 @@ import java.util.ArrayList;
 
 public abstract class StyleBase {
 
+    /** スタイル名 */
+    public String		NAME = null;
+
     /** DialPanelのスタイルをここで定義する。コンンストラクタから呼ばれる。 */
     protected abstract void     defineStyle();
     /** 小さいタイルの数を取得 */

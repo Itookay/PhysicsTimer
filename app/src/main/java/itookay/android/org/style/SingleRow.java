@@ -15,6 +15,7 @@ public class SingleRow extends StyleBase {
 
     public SingleRow() {
         super();
+        NAME = "Single Row";
     }
 
     @Override

@@ -1,11 +1,13 @@
 package itookay.android.org.contents;
 
+import java.io.Serializable;
+
 /**
  *
  * 			表示する時間を保持
  *
  */
-public class Time {
+public class Time implements Serializable {
 
     /** 時間のクリア */
     public static int       CLEAR = -1;

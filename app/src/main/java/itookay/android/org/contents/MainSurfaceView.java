@@ -1,7 +1,6 @@
 package itookay.android.org.contents;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -31,7 +30,7 @@ public class MainSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     /**
      * 			コンストラクタ
      */
-    public MainSurfaceView( Context appContext, SurfaceView surfaceView, ControlWorld world ) {
+    public MainSurfaceView(Context appContext, SurfaceView surfaceView, ControlWorld world) {
         super(appContext);
 
         //XMLレイアウトされたSurfaceViewに描画
@@ -39,23 +38,14 @@ public class MainSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         mWorld = world;
 
         mHandler = new Handler();
-
         mHolder.addCallback(this);
-
-        setDisplaySize(appContext);
-    }
-
-    /**
-     * 			画面サイズを取得
-     */
-    private void setDisplaySize( Context appContext ) {
     }
 
     /**
      * 			サーフェース生成
      */
     @Override
-    public void surfaceCreated( SurfaceHolder holder ) {
+    public void surfaceCreated(SurfaceHolder holder) {
         mDrawRunnable = new DrawCanvas();
         mDrawRunnable.run();
     }
@@ -64,16 +54,33 @@ public class MainSurfaceView extends SurfaceView implements SurfaceHolder.Callba
      * 			サーフェース変更
      */
     @Override
-    public void surfaceChanged( SurfaceHolder holder, int format, int width, int height ) {
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
     }
 
     /**
      * 			サーフェース破棄
-     * @param holder
      */
     @Override
-    public void surfaceDestroyed( SurfaceHolder holder ) {
-        removeCallbacks( mDrawRunnable );
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        removeCallbacks(mDrawRunnable);
+    }
+
+    /**
+     *      サーフェース描画を停止
+     */
+    public void pauseDrawing() {
+        mVisibility = false;
+    }
+
+    /**
+     *      サーフェース描画を再開
+     */
+    public void resumeDrawing() {
+        if(mDrawRunnable == null) {
+            mDrawRunnable = new DrawCanvas();
+        }
+        mVisibility = true;
+        mDrawRunnable.run();
     }
 
     /* ---------------------------------------------------------- */
@@ -83,9 +90,6 @@ public class MainSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     public class DrawCanvas implements Runnable {
         /** 次の呼び出し時間 */
         public final int		DELAY_TIME = Math.round(mWorld.getStep() * 1000);
-
-        public DrawCanvas() {
-        }
 
         @Override
         public void run() {
@@ -132,7 +136,7 @@ public class MainSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         /**
          * 			背景を描画
          */
-        private void drawBackground( Canvas canvas ) {
+        private void drawBackground(Canvas canvas) {
             canvas.drawColor(Color.WHITE);
         }
     }
@@ -140,7 +144,7 @@ public class MainSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     /**
      * 			画面スケールをセット
      */
-    public void setScale( Scale scale ) {
+    public void setScale(Scale scale) {
         mScale = scale;
     }
 }

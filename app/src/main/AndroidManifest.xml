@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="itookay.android.org">
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+
     <application
             android:allowBackup="true"
             android:icon="@mipmap/ic_launcher"
@@ -9,6 +11,19 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
+        <activity
+                android:name=".StyleSettingActivity"
+                android:screenOrientation="portrait">
+        </activity>
+        <activity
+                android:name=".FontSettingActivity"
+                android:screenOrientation="portrait">
+        </activity>
+        <activity
+                android:name=".MainSettingActivity"
+                android:label="@string/title_activity_settings"
+                android:screenOrientation="portrait">
+        </activity>
         <activity
                 android:name=".MainActivity"
                 android:screenOrientation="portrait">
@@ -19,7 +34,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".contents.TimeChanged"></service>
+        <service android:name=".contents.TimeWatchingService"/>
     </application>
 
 </manifest>

@@ -23,24 +23,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
-            android:visibility="visible" android:id="@+id/SettingButton">
-        <Button
-                android:text="設定"
-                android:layout_width="72dp"
-                android:layout_height="72dp" android:id="@+id/btSetting" android:layout_margin="10dp"/>
-    </LinearLayout>
-    <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
             android:visibility="visible" android:id="@+id/StopTimerButton">
-        <Button
-                android:text="Num"
-                android:layout_width="72dp"
-                android:layout_height="72dp" android:id="@+id/btStopTimer" android:layout_margin="10dp"
-                android:visibility="invisible"/>
     </LinearLayout>
 
     <!-- Numpad -->
@@ -48,24 +31,25 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:id="@+id/NumPad"
-            app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" android:layout_marginTop="8dp"
-            app:layout_constraintTop_toTopOf="@+id/guideline6">
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="@+id/guideline"
+    >
         <TableRow
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" android:id="@+id/tr1" android:layout_weight="1">
             <Button
-                    android:id="@+id/btNum1"
                     android:text="1"
-                    style="@style/NumpadButton" android:background="@drawable/numpad_state"/>
+                    android:id="@+id/btNum1"
+                    style="@style/NumpadButton"/>
             <Button
                     android:text="2"
                     android:id="@+id/btNum2"
-                    style="@style/NumpadButton" android:background="@drawable/numpad_state"/>
+                    style="@style/NumpadButton"/>
             <Button
                     android:text="3"
                     android:id="@+id/btNum3"
-                    style="@style/NumpadButton" android:background="@drawable/numpad_state"/>
+                    style="@style/NumpadButton"/>
         </TableRow>
         <TableRow
                 android:layout_width="match_parent"
@@ -73,31 +57,31 @@
             <Button
                     android:text="4"
                     android:id="@+id/btNum4"
-                    style="@style/NumpadButton" android:background="@drawable/numpad_state"/>
+                    style="@style/NumpadButton"/>
             <Button
                     android:text="5"
                     android:id="@+id/btNum5"
-                    style="@style/NumpadButton" android:background="@drawable/numpad_state"/>
+                    style="@style/NumpadButton"/>
             <Button
                     android:text="6"
                     android:id="@+id/btNum6"
-                    style="@style/NumpadButton" android:background="@drawable/numpad_state"/>
+                    style="@style/NumpadButton"/>
         </TableRow>
         <TableRow
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" android:id="@+id/tr3" android:layout_weight="1">
             <Button
-                    android:id="@+id/btNum7"
                     android:text="7"
-                    style="@style/NumpadButton" android:background="@drawable/numpad_state"/>
+                    android:id="@+id/btNum7"
+                    style="@style/NumpadButton"/>
             <Button
                     android:text="8"
                     android:id="@+id/btNum8"
-                    style="@style/NumpadButton" android:background="@drawable/numpad_state"/>
+                    style="@style/NumpadButton"/>
             <Button
                     android:text="9"
                     android:id="@+id/btNum9"
-                    style="@style/NumpadButton" android:background="@drawable/numpad_state"/>
+                    style="@style/NumpadButton"/>
         </TableRow>
         <TableRow
                 android:layout_width="match_parent"
@@ -105,20 +89,20 @@
             <Button
                     android:id="@+id/btSpace1"
                     android:visibility="invisible"
-                    style="@style/NumpadButton" android:background="@drawable/numpad_state"/>
+                    style="@style/NumpadButton"
+            />
             <Button
                     android:text="0"
                     android:id="@+id/btNum0"
-                    style="@style/NumpadButton" android:background="@drawable/numpad_state"/>
+                    style="@style/NumpadButton"/>
             <Button
                     android:id="@+id/btSpace2"
                     android:visibility="invisible"
-                    style="@style/NumpadButton" android:background="@drawable/numpad_state"/>
+                    style="@style/NumpadButton"/>
         </TableRow>
     </TableLayout>
-    <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content"
-                                                android:layout_height="wrap_content"
-                                                android:id="@+id/guideline6"
-                                                android:orientation="horizontal"
+    <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                                android:id="@+id/guideline"
+                                                android:orientation="vertical"
                                                 app:layout_constraintGuide_percent="0.55"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

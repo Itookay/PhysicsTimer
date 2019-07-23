@@ -15,6 +15,7 @@ public class TwoRowsBigSecond extends StyleBase {
 
     public TwoRowsBigSecond() {
         super();
+        NAME = "Two Rows Big Second";
     }
 
     @Override
@@ -28,7 +29,7 @@ public class TwoRowsBigSecond extends StyleBase {
 
     @Override
     public int getNomalTileCount(FontBase font) {
-        return font.getDialPanelArrayCount(DialPanel.SECOND);
+        return font.getDialPanelArrayCount(DialPanel.SECOND) + 20;
     }
 
     @Override

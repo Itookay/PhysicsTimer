@@ -13,7 +13,6 @@ public abstract class FontBaseA extends FontBase {
 
 
 	public FontBaseA() {
-
 		int[]	none =
 			{	0, 0, 0, 0,
 				0, 0, 0, 0,

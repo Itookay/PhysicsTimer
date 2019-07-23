@@ -106,13 +106,11 @@ public class Dial {
      * 			タイマー（分:秒）を作成
      */
     private void setDial() {
-        Vec2	pos = new Vec2();
         int		id = 0;
         int     column = 0;
         int     array = 0;
-        Tile    tile = null;
 
-        //分
+        /* 分 */
         DialPanel	minute = new DialPanel(DialPanel.MINUTE, id++);
         column = mFont.getDialPanelColumnCount(DialPanel.MINUTE);
         array = mFont.getDialPanelArrayCount(DialPanel.MINUTE);
@@ -120,7 +118,7 @@ public class Dial {
         minute.setSizeFormat(mStyle.getMinuteTileSizeFormat());
         mDialPanelList.add(minute);
 
-        //コロン
+        /* コロン */
         if(mStyle.existCologne()) {
             DialPanel cologne = new DialPanel(DialPanel.COLOGNE, id++);
             column = mFont.getDialPanelColumnCount(DialPanel.COLOGNE);
@@ -130,21 +128,13 @@ public class Dial {
             mDialPanelList.add(cologne);
         }
 
-        //秒
+        /* 秒 */
         DialPanel	second = new DialPanel(DialPanel.SECOND, id);
         column = mFont.getDialPanelColumnCount(DialPanel.SECOND);
         array = mFont.getDialPanelArrayCount(DialPanel.SECOND);
         second.setTileBaseArray(column, array);
         second.setSizeFormat(mStyle.getSecondTileSizeFormat());
         mDialPanelList.add(second);
-    }
-
-    /**
-     *      端末向きをセット
-     * @param orientation PhysicsTimer.PORTRAIT, LEFT_LANDSCAPE, RIGHT_LANDSCAPE, UPSIDEDOWN
-     */
-    public void setOrientation(int orientation) {
-
     }
 
     /**
@@ -180,7 +170,7 @@ public class Dial {
     }
 
     /**
-     *      時間をクリアし終了処理【ControlWorld.clearTime()も呼ぶこと】<br>
+     *      時間をクリアし終了処理<br>
      */
     private void clearTime() {
         mTime = null;
@@ -217,18 +207,18 @@ public class Dial {
     private void setDialPanel() {
         Iterator<DialPanel>		it = mDialPanelList.iterator();
         DialPanel		panel = null;
-        while( it.hasNext() ) {
+        while(it.hasNext()) {
             panel = it.next();
 
-            switch( panel.getFormat() ) {
+            switch(panel.getFormat()) {
                 case DialPanel.MINUTE :
-                    compareNumber( panel, mTime.getMinute(), mNextTime.getMinute() );
+                    compareNumber(panel, mTime.getMinute(), mNextTime.getMinute());
                     break;
                 case DialPanel.SECOND :
-                    compareNumber( panel, mTime.getSecond(), mNextTime.getSecond() );
+                    compareNumber(panel, mTime.getSecond(), mNextTime.getSecond());
                     break;
                 case DialPanel.COLOGNE :
-                    compareSeparator( panel, mSeparator, mNextSeparator);
+                    compareSeparator(panel, mSeparator, mNextSeparator);
                     break;
             }
         }
@@ -248,7 +238,7 @@ public class Dial {
 
         for(int i = 0; i < length; i++) {
             if(presentArray[i] == 0 && nextArray[i] == 1) {
-                panel.getJointTileList().add( i );
+                panel.getJointTileList().add(i);
             }
             if(presentArray[i] == 1 && nextArray[i] == 0) {
                 panel.getDestroyTileList().add(i);
