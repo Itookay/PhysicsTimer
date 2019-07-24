@@ -155,6 +155,7 @@ public class PhysicsTimer implements TimeChangedListener {
         try {
             mTime = new Time(hour, minute, second);
             /* グラフィカル領域にタイマー表示 */
+            TimeWatchingService.setOnTimeChangedListener(this);
             mDial.setTime(mTime);
             mWorld.invalidate(mDial);
         }
@@ -169,10 +170,13 @@ public class PhysicsTimer implements TimeChangedListener {
     public void start() {
         /* タイマーをサービスで起動する */
         Intent  service = new Intent(mAppContext, TimeWatchingService.class);
+        service.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
         ServiceInfo     info = new ServiceInfo();
         info.Time = mTime;
         info.BindService = mBindService;
         service.putExtra(INTENT_KEY_TIME_WATCHING_SERVICE, info);
+
         TimeWatchingService.setOnTimeChangedListener(this);
         mAppContext.startForegroundService(service);
     }
@@ -201,8 +205,6 @@ public class PhysicsTimer implements TimeChangedListener {
     public void pause() {
         TimeWatchingService.setCallbackAvailability(false);
         mMainSurface.pauseDrawing();
-//        mWorld.clearTime();
-//        mDial.clearTime(false);
     }
 
     /**

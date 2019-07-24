@@ -56,7 +56,7 @@ public class TimeWatchingService extends Service {
 
     @Override
     public void onCreate() {
-        //super.onCreate();
+
     }
 
     @Override
@@ -81,8 +81,8 @@ public class TimeWatchingService extends Service {
 
     public void setNotificationChannel(String channelId) {
         NotificationManager     notificationMgr = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-        String      name = "Physics Timer Name";
-        String      description = "タイマー動作中です。";
+        String      name = "Physics Timer Notification Channel";
+        String      description = "It is Physics Timer Notification.";
         if(notificationMgr.getNotificationChannel(channelId) != null) {
             NotificationChannel     channel = new NotificationChannel(channelId, name, NotificationManager.IMPORTANCE_DEFAULT);
             channel.setDescription(description);
@@ -93,7 +93,7 @@ public class TimeWatchingService extends Service {
     public Notification getNotification(String channelId) {
         /* 通知をタップした時に起動するActivity */
         Intent      intent = new Intent(this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent   pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId)
@@ -112,10 +112,12 @@ public class TimeWatchingService extends Service {
     }
 
     /**
-     *      タイマーの停止
+     *      (タイマー起動中なら)タイマーの停止
      */
     public static void stopTimer() {
-        mStopService = true;
+        if(mIsAlive) {
+            mStopService = true;
+        }
     }
 
     /**
@@ -173,7 +175,7 @@ public class TimeWatchingService extends Service {
     private void removeCallback() {
         if(mRunnable != null) {
             mHandler.removeCallbacks(mRunnable);
-            stopForeground(Service.STOP_FOREGROUND_REMOVE);
+            stopForeground(true);
             mIsAlive = false;
         }
     }
