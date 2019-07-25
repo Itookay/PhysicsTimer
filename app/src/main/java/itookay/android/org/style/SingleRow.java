@@ -24,7 +24,7 @@ public class SingleRow extends StyleBase {
     }
 
     @Override
-    public int getNomalTileCount(FontBase font) {
+    public int getNormalTileCount(FontBase font) {
         int count = 0;
         count += font.getDialPanelArrayCount(DialPanel.MINUTE);
         count += font.getDialPanelArrayCount(DialPanel.SECOND);

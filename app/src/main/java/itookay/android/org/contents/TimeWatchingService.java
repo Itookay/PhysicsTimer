@@ -47,6 +47,8 @@ public class TimeWatchingService extends Service {
     private Notification    mNotification = null;
     /** サービスの停止 */
     private static boolean         mStopService = false;
+    /** ForegroundServiceで起動するか */
+    private boolean         mBindService = true;
 
     @Nullable
     @Override
@@ -69,7 +71,7 @@ public class TimeWatchingService extends Service {
         setNotificationChannel(channelId);
         mNotification = getNotification(channelId);
 
-        startTimer();
+        startTimer(true);
 
         return START_REDELIVER_INTENT;
     }
@@ -123,11 +125,15 @@ public class TimeWatchingService extends Service {
     /**
      * 			タイマースタート
      */
-    private void startTimer() {
+    public void startTimer(boolean bindService) {
+        mBindService = bindService;
+        mCallbackAvailability = true;
         if(mObserver != null) {
             mRunnable.run();
             mIsAlive = true;
-            startForeground(1, mNotification);
+            if(mBindService) {
+                startForeground(1, mNotification);
+            }
         }
     }
 
@@ -174,8 +180,10 @@ public class TimeWatchingService extends Service {
      */
     private void removeCallback() {
         if(mRunnable != null) {
+            if(mBindService) {
+                stopForeground(true);
+            }
             mHandler.removeCallbacks(mRunnable);
-            stopForeground(true);
             mIsAlive = false;
         }
     }

@@ -16,7 +16,7 @@ public abstract class StyleBase {
     /** 小さいタイルの数を取得 */
     public abstract int         getSmallTileCount(FontBase font);
     /** ふつうタイルの数を取得 */
-    public abstract int         getNomalTileCount(FontBase font);
+    public abstract int         getNormalTileCount(FontBase font);
     /** 「分」のタイルサイズを取得 */
     public abstract int         getMinuteTileSizeFormat();
     /** 「秒」のタイルサイズを取得 */

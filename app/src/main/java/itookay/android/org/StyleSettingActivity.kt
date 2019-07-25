@@ -1,10 +1,14 @@
 package itookay.android.org
 
+import android.os.Bundle
 import android.view.View
 import itookay.android.org.contents.Settings
 
 class StyleSettingActivity : DrawableSettingActivity() {
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
     /**
      *      ボタンクリック
      */
@@ -12,17 +16,21 @@ class StyleSettingActivity : DrawableSettingActivity() {
         when(view) {
             btReturn -> {
                 mPhysicsTimer.stop()
-                Settings(applicationContext).saveStyleByIndex(ListIndex)
+                Settings(applicationContext).saveStyleByIndex(StyleListIndex)
                 finish()
             }
             btPrevious -> {
-                val style = Settings(applicationContext).getStyle(--ListIndex)
+                val style = Settings(applicationContext).getStyle(--StyleListIndex)
+                style.setScale(getDisplayScale())
                 mPhysicsTimer.setStyle(style)
+                mPhysicsTimer.initDial();
                 mPhysicsTimer.invalidate()
             }
             btNext -> {
-                val style = Settings(applicationContext).getStyle(++ListIndex)
+                val style = Settings(applicationContext).getStyle(++StyleListIndex)
+                style.setScale(getDisplayScale())
                 mPhysicsTimer.setStyle(style)
+                mPhysicsTimer.initDial();
                 mPhysicsTimer.invalidate()
             }
         }
@@ -34,7 +42,7 @@ class StyleSettingActivity : DrawableSettingActivity() {
      */
     override fun setButtonState() {
         val setting = Settings(applicationContext)
-        btNext.isEnabled = (setting.getStyle(ListIndex + 1) != null)
-        btPrevious.isEnabled = (setting.getStyle(ListIndex - 1) != null)
+        btNext.isEnabled = (setting.getStyle(StyleListIndex + 1) != null)
+        btPrevious.isEnabled = (setting.getStyle(StyleListIndex - 1) != null)
     }
 }

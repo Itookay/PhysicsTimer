@@ -209,18 +209,11 @@ public class DialPanel {
     }
 
     /**
-     *          DialPanel生成
-     */
-    public void createDialPanel() {
-        createTileBase();
-    }
-
-    /**
      *          TileBaseを作成<br>
      *          DialPanelは画面の左下原点<br>
      *          TileBaseとTileはTileの中心が原点。Tileから取得できるアンカー位置もTile中心が原点
      */
-    private void createTileBase() {
+    public void createTileBase() {
         int     currentColumn = 1;
         float   tileSize = new TileBase().setSizeFormat(mSizeFormat).getSize();
         float   tileSizeWithSpace = new TileBase().setSizeFormat(mSizeFormat).getSizeWithSpace();

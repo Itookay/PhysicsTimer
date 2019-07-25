@@ -1,40 +1,39 @@
 package itookay.android.org.style;
 
-import itookay.android.org.contents.*;
+import itookay.android.org.contents.DialPanel;
+import itookay.android.org.contents.PhysicsTimer;
+import itookay.android.org.contents.Tile;
+import itookay.android.org.contents.Time;
 import itookay.android.org.font.FontBase;
 import org.jbox2d.common.Vec2;
 
 import java.util.ArrayList;
 
-/**
- *      DialPnaleスタイル「分¥n秒」 ex.12¥n34」<br>
- *          タイルサイズ　：分はTile.SMALL、秒はTile.NORMAL<br>
- *          列　　　　　　：2列
- */
-public class TwoRowsBigSecond extends StyleBase {
+public class TwoRows extends StyleBase {
 
-    public TwoRowsBigSecond() {
+    public TwoRows() {
         super();
-        NAME = "Two Rows Big Second";
+        NAME = "Two Rows";
     }
 
     @Override
-    public void defineStyle() {
+    protected void defineStyle() {
+
     }
 
     @Override
     public int getSmallTileCount(FontBase font) {
-        return font.getDialPanelArrayCount(DialPanel.MINUTE);
+        return 0;
     }
 
     @Override
     public int getNormalTileCount(FontBase font) {
-        return font.getDialPanelArrayCount(DialPanel.SECOND) + 20;
+        return font.getDialPanelArrayCount(DialPanel.SECOND) * 2;
     }
 
     @Override
     public int getMinuteTileSizeFormat() {
-        return Tile.SMALL;
+        return Tile.NORMAL;
     }
 
     @Override
@@ -44,7 +43,7 @@ public class TwoRowsBigSecond extends StyleBase {
 
     @Override
     public int getCologneTileSizeFormat() {
-        return 0;
+        return Tile.NORMAL;
     }
 
     @Override
@@ -57,9 +56,6 @@ public class TwoRowsBigSecond extends StyleBase {
         return false;
     }
 
-    /**
-     *      このメソッドで各スタイルごとにDialPanelを配置する
-     */
     @Override
     protected void customArrangement(ArrayList<DialPanel> dialPanels) {
         float       x = 0;
@@ -85,7 +81,7 @@ public class TwoRowsBigSecond extends StyleBase {
         float   y = 0f;
 
         //現在のDial原点位置
-        Vec2    c = minute.getPosition();
+        Vec2 c = minute.getPosition();
 
         //端末縦向き
         switch(mOrientation) {

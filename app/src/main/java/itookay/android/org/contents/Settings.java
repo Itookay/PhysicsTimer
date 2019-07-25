@@ -8,6 +8,7 @@ import itookay.android.org.font.NormalA;
 import itookay.android.org.font.NormalRoundA;
 import itookay.android.org.style.SingleRow;
 import itookay.android.org.style.StyleBase;
+import itookay.android.org.style.TwoRows;
 import itookay.android.org.style.TwoRowsBigSecond;
 
 import java.util.ArrayList;
@@ -25,7 +26,8 @@ public class Settings {
     /** スタイルリスト */
     private static List<StyleBase> mStyleList = Arrays.asList(
             new SingleRow(),
-            new TwoRowsBigSecond()
+            new TwoRowsBigSecond(),
+            new TwoRows()
     );
     public static FontBase     DEFAULT_FONT = mFontList.get(0);
     public static StyleBase    DEFAULT_STYLE = mStyleList.get(1);
@@ -41,7 +43,7 @@ public class Settings {
      *      SharedPreferenceのフォントを取得
      */
     public FontBase getSavedFont() {
-        SharedPreferences   pref =mAppContext.getSharedPreferences(PhysicsTimer.PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
+        SharedPreferences   pref = mAppContext.getSharedPreferences(PhysicsTimer.PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
         String              fontName = pref.getString(PhysicsTimer.PREFERENCE_KEY_FONT, "");
 
         for(FontBase font : mFontList) {
@@ -130,6 +132,20 @@ public class Settings {
         int     index = 0;
         for(FontBase font : mFontList) {
             if(font.NAME == getSavedFont().NAME) {
+                return index;
+            }
+            index++;
+        }
+        return -1;
+    }
+
+    /**
+     *      保存されたスタイルのリスト上でのインデックスを返す
+     */
+    public int getSavedStyleIndex() {
+        int     index = 0;
+        for(StyleBase style : mStyleList) {
+            if(style.NAME == getSavedStyle().NAME) {
                 return index;
             }
             index++;

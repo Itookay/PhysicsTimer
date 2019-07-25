@@ -58,15 +58,14 @@ public class TileBase {
      *          タイルのサイズをセット<br>
      *          サイズからジョイントアンカー幅も計算される
      * @param normalTileSize ふつうのタイルサイズ
-     * @param smallTileSize ちいさいタイルサイズ
      * @param spaceScale タイルサイズの内、どれだけをスペースにするか。スペースは左右均等になる
      */
-    public static void setStaticSize(float normalTileSize, float smallTileSize, float spaceScale) {
+    public static void setStaticSize(float normalTileSize, float spaceScale) {
         NORMAL_SIZE = normalTileSize;
         NORMAL_SPACE = NORMAL_SIZE * spaceScale / 2f;
         NORMAL_ANCHOR_WIDTH = NORMAL_SIZE / 2f;
 
-        SMALL_SIZE = smallTileSize;
+        SMALL_SIZE = normalTileSize * Tile.SMALL_RATIO;
         SMALL_SPACE = SMALL_SIZE * spaceScale / 2f;
         SMALL_ANCHOR_WIDTH = SMALL_SIZE / 2f;
     }

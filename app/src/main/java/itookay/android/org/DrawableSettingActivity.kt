@@ -21,7 +21,9 @@ abstract class DrawableSettingActivity : Activity(), View.OnClickListener {
     lateinit var mPhysicsTimer : PhysicsTimer
 
     /** フォントリスト配列インデックス */
-    var ListIndex:Int = 0
+    var FontListIndex : Int = 0
+    /** スタイルリスト配列インデックス */
+    var StyleListIndex : Int = 0
 
     /** リターンボタン */
     lateinit var btReturn : Button
@@ -42,9 +44,12 @@ abstract class DrawableSettingActivity : Activity(), View.OnClickListener {
         val setting = Settings(applicationContext)
         val font = setting.savedFont
         val style = setting.savedStyle;
+
+        FontListIndex = setting.savedFontIndex
+        StyleListIndex = setting.savedStyleIndex
+
         style.setScale(getDisplayScale())
 
-        ListIndex = setting.savedFontIndex;
         setButtonState()
 
         mPhysicsTimer = PhysicsTimer(applicationContext)

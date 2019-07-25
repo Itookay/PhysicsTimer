@@ -79,6 +79,9 @@ public class PhysicsTimer implements TimeChangedListener {
 
     public void setStyle(StyleBase style) {
         mStyle = style;
+        if(mDial != null) {
+            mDial.setStyle(mStyle);
+        }
     }
 
     public void setFont(FontBase font) {
@@ -107,13 +110,13 @@ public class PhysicsTimer implements TimeChangedListener {
         mDial.setStyle(mStyle);
         mDial.setFont(mFont);
         mDial.setTimerSize(mScale.getDisplayWidthMeter());
-        mDial.createDials(mScale.getDisplayWidthMeter(), mScale.getDisplayHeightMeter());
+        mDial.initDialPanel();
 
         Vec2	gravity = new Vec2(0f, -10f);
         mWorld = new ControlWorld(mAppContext, gravity, true);
         mWorld.setStep(1f/60f, 10, 8);
         mWorld.setScale(mScale);
-        mWorld.createWorld(mStyle.getSmallTileCount(mFont), mStyle.getNomalTileCount(mFont));
+        mWorld.createWorld(mStyle.getSmallTileCount(mFont), mStyle.getNormalTileCount(mFont));
         mWorld.setDebugDial(mDial);
 
         mMainSurface = new MainSurfaceView(mAppContext, mSurfaceViewFromLayout, mWorld);
@@ -128,8 +131,7 @@ public class PhysicsTimer implements TimeChangedListener {
     }
 
     /**
-     *      タイマーをサービスで起動する<br>
-     *      デフォルトではtrue
+     *      タイマーをサービスで起動する<br>デフォルトではtrue
      * @param bindService falseでサービスなし
      */
     public void bindService(boolean bindService) {
@@ -165,10 +167,21 @@ public class PhysicsTimer implements TimeChangedListener {
 
     /**
      *      タイマースタート<br>
-     *      IntentServiceを使ってTimeChangedをサービスに投げる
+     *      サービスを使うかどうかはbindServiceによる
      */
     public void start() {
-        /* タイマーをサービスで起動する */
+        if(mBindService) {
+            startWithForegroundService();
+        }
+        else {
+            startWithoutService();
+        }
+    }
+
+    /**
+     *      タイマーをForegroundServiceで起動
+     */
+    private void startWithForegroundService() {
         Intent  service = new Intent(mAppContext, TimeWatchingService.class);
         service.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
@@ -179,6 +192,15 @@ public class PhysicsTimer implements TimeChangedListener {
 
         TimeWatchingService.setOnTimeChangedListener(this);
         mAppContext.startForegroundService(service);
+    }
+
+    /**
+     *      タイマーをサービスなしで起動
+     */
+    private void startWithoutService() {
+        TimeWatchingService     timeWatching = new TimeWatchingService();
+        timeWatching.setTime(mTime);
+        timeWatching.startTimer(false);
     }
 
     /**
@@ -234,6 +256,14 @@ public class PhysicsTimer implements TimeChangedListener {
 
     public void setGravity(float x, float y) {
         mWorld.setGravity(x, y);
+    }
+
+    /**
+     *      Dialの中のDialPanelのTileBaseを初期化<br>
+     *      スタイルの更新時に使用する
+     */
+    public void initDial() {
+        mDial.initDialPanel();
     }
 
     /**

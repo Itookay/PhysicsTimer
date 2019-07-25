@@ -18,6 +18,8 @@ public class Tile {
     public static final int     NORMAL = 10;
     /** タイルのサイズ ちいさいの */
     public static final int     SMALL = 20;
+    /** ふつうサイズのタイルに対してちいさいのの比 */
+    public static final float  SMALL_RATIO = 0.7f;
 
     /** ふつうタイルサイズ */
     private static float        NORMAL_SIZE = 0;
@@ -57,7 +59,7 @@ public class Tile {
     /** 摩擦係数 */
     private float		mFriction = 0.4f;
     /** 反発係数 */
-    private float		mRestitution = 0.2f;
+    private float		mRestitution = 0.15f;
 
     /**
      * 			タイルの中心ワールド座標をセット
@@ -67,18 +69,17 @@ public class Tile {
     }
 
     /**
-     *          タイルのサイズをセット<br>
-     *          サイズからジョイントアンカー幅も計算される
+     *          タイルのふつうサイズをセット<br>
+     *          サイズからちいさいのとジョイントアンカー幅も計算される
      * @param normalTileSize ふつうのタイルサイズ
-     * @param smallTileSize ちいさいタイルサイズ
      * @param spaceScale タイルサイズの内、どれだけをスペースにするか。スペースは左右均等になる
      */
-    static void setStaticSize(float normalTileSize, float smallTileSize, float spaceScale) {
+    static void setStaticSize(float normalTileSize, float spaceScale) {
         NORMAL_SIZE = normalTileSize;
         NORMAL_SPACE = NORMAL_SIZE * spaceScale / 2f;
         NORMAL_ANCHOR_WIDTH = NORMAL_SIZE / 2f;
 
-        SMALL_SIZE = smallTileSize;
+        SMALL_SIZE = normalTileSize * SMALL_RATIO;
         SMALL_SPACE = SMALL_SIZE * spaceScale / 2f;
         SMALL_ANCHOR_WIDTH = SMALL_SIZE / 2f;
     }

@@ -236,7 +236,6 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
         /** ドラッグ中のボタンはviewに渡されないらしい */
         val button = getTouchPointButton(event?.rawX!!, event.rawY)
         if(button == null) {
-            //clearButtonState()
             return false
         }
 

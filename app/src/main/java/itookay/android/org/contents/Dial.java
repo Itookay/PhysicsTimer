@@ -26,17 +26,10 @@ public class Dial {
     private ArrayList<DialPanel>		mDialPanelList = new ArrayList<DialPanel>();
 
     /**
-     *          DialPanelを生成
+     *          DialPanelを初期化
      */
-    public void createDials(float displayWidth,float displayHeight) {
-        //仮置き------
-        setDial();
-        //-----------
-
-        for(DialPanel dialPanel : mDialPanelList) {
-            dialPanel.createDialPanel();
-        }
-
+    public void initDialPanel() {
+        createDialPanel();
         mStyle.arrangeDialPanels(mDialPanelList);
     }
     /**
@@ -80,9 +73,8 @@ public class Dial {
         float       dialPanelSizeWithoutSpace = dialPanelSize - dialPanelSpace;
         //タイル一枚のサイズ
         float   normalTileSize = dialPanelSizeWithoutSpace / mFont.get2NumbersColumnsCount();
-        float   smallTileSize = normalTileSize * 0.5f;
-        Tile.setStaticSize(normalTileSize, smallTileSize, mStyle.getTileSpaceRatio());
-        TileBase.setStaticSize(normalTileSize, smallTileSize, mStyle.getTileSpaceRatio());
+        Tile.setStaticSize(normalTileSize, mStyle.getTileSpaceRatio());
+        TileBase.setStaticSize(normalTileSize, mStyle.getTileSpaceRatio());
 
         /* コロンの前後スペースサイズ */
         float   cologneSpace = (sectionSize - normalTileSize) / 2f;
@@ -103,12 +95,14 @@ public class Dial {
     }
 
     /**
-     * 			タイマー（分:秒）を作成
+     * 			DialPanelを作成
      */
-    private void setDial() {
+    private void createDialPanel() {
         int		id = 0;
         int     column = 0;
         int     array = 0;
+
+        mDialPanelList.clear();
 
         /* 分 */
         DialPanel	minute = new DialPanel(DialPanel.MINUTE, id++);
@@ -116,6 +110,7 @@ public class Dial {
         array = mFont.getDialPanelArrayCount(DialPanel.MINUTE);
         minute.setTileBaseArray(column, array);
         minute.setSizeFormat(mStyle.getMinuteTileSizeFormat());
+        minute.createTileBase();
         mDialPanelList.add(minute);
 
         /* コロン */
@@ -125,6 +120,7 @@ public class Dial {
             array = mFont.getDialPanelArrayCount(DialPanel.COLOGNE);
             cologne.setTileBaseArray(column, array);
             cologne.setSizeFormat(mStyle.getCologneTileSizeFormat());
+            cologne.createTileBase();
             mDialPanelList.add(cologne);
         }
 
@@ -134,6 +130,7 @@ public class Dial {
         array = mFont.getDialPanelArrayCount(DialPanel.SECOND);
         second.setTileBaseArray(column, array);
         second.setSizeFormat(mStyle.getSecondTileSizeFormat());
+        second.createTileBase();
         mDialPanelList.add(second);
     }
 
