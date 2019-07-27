@@ -130,7 +130,7 @@ public class PhysicsTimer implements TimeChangedListener {
     /**
      *      描画を無効化<br>タイル解放->再拘束
      */
-    public void invalidate() {
+    public void invalidateDrawing() {
         mDial.clearTime(true);
         mWorld.clearTime();
     }
@@ -251,7 +251,7 @@ public class PhysicsTimer implements TimeChangedListener {
      *      Dialの中のDialPanelのTileBaseを初期化<br>
      *      スタイルの更新時に使用する
      */
-    public void initDial() {
+    public void invalidateDial() {
         mWorld.destroyTiles();
 
         mDial.setTimerSize();
@@ -321,7 +321,7 @@ public class PhysicsTimer implements TimeChangedListener {
         }
 
         /* 共通処理 ------------------------ */
-        invalidate();
+        invalidateDrawing();
         mStyle.setOrientation(orientation);
         mStyle.rotateDial(mDial.getDialPanelList(), deg);
         mOrientation = orientation;

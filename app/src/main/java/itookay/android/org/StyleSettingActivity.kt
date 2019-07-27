@@ -22,14 +22,14 @@ class StyleSettingActivity : DrawableSettingActivity() {
             btPrevious -> {
                 val style = Settings(applicationContext).getStyle(--StyleListIndex)
                 mPhysicsTimer.setStyle(style)
-                mPhysicsTimer.initDial();
-                mPhysicsTimer.invalidate()
+                mPhysicsTimer.invalidateDial();
+                mPhysicsTimer.invalidateDrawing()
             }
             btNext -> {
                 val style = Settings(applicationContext).getStyle(++StyleListIndex)
                 mPhysicsTimer.setStyle(style)
-                mPhysicsTimer.initDial();
-                mPhysicsTimer.invalidate()
+                mPhysicsTimer.invalidateDial();
+                mPhysicsTimer.invalidateDrawing()
             }
         }
         setButtonState()

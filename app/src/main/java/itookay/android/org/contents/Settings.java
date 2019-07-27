@@ -47,7 +47,7 @@ public class Settings {
         String              fontName = pref.getString(PhysicsTimer.PREFERENCE_KEY_FONT, "");
 
         for(FontBase font : mFontList) {
-            if(fontName == font.NAME) {
+            if(fontName.equals(font.NAME)) {
                 return font;
             }
         }
@@ -62,7 +62,7 @@ public class Settings {
         String              StyleName = pref.getString(PhysicsTimer.PREFERENCE_KEY_STYLE, "");
 
         for(StyleBase style : mStyleList) {
-            if(StyleName == style.NAME) {
+            if(StyleName.equals(style.NAME)) {
                 return style;
             }
         }
@@ -97,8 +97,8 @@ public class Settings {
      *      リストインデックスでスタイルを保存
      */
     public void saveStyleByIndex(int index) {
-        String  fontName = mStyleList.get(index).NAME;
-        saveFont(fontName);
+        String  style = mStyleList.get(index).NAME;
+        saveStyle(style);
     }
 
     /**

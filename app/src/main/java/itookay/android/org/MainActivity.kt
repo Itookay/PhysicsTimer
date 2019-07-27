@@ -154,6 +154,14 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
             SensorMgr.registerListener(this, sensor, SensorManager.SENSOR_DELAY_UI)
         }
 
+        val setting = Settings(applicationContext)
+        val font = setting.savedFont
+        val style = setting.savedStyle
+        mPhysicsTimer.setFont(font)
+        mPhysicsTimer.setStyle(style)
+        mPhysicsTimer.invalidateDrawing()
+        mPhysicsTimer.invalidateDial()
+
         mPhysicsTimer.resume()
     }
 

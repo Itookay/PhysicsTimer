@@ -96,7 +96,7 @@ public class SingleRow extends StyleBase {
             case PhysicsTimer.PORTRAIT:
             case PhysicsTimer.UPSIDEDOWN:
                 x = (Scale.getDisplayWidthMeter() - dialWidth) / 2f;
-                y = Scale.getDisplayHeightMeter() - x;
+                y = Scale.getDisplayHeightMeter() * 0.7f;
                 break;
             case PhysicsTimer.LEFT_LANDSCAPE:
                 x = (Scale.getDisplayWidthMeter() - dialHeight) / 2f + dialHeight;
@@ -112,7 +112,8 @@ public class SingleRow extends StyleBase {
 
         float   dx = x - c.x;
         float   dy = y - c.y;
-        minute.OffsetPosition(dx, dy);
-        second.OffsetPosition(dx, dy);
+        for(DialPanel panel : dialPanels) {
+            panel.OffsetPosition(dx, dy);
+        }
     }
 }
