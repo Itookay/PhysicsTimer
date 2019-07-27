@@ -229,6 +229,8 @@ public class ControlWorld {
             }
             panel.getJointTileList().clear();
         }
+
+        mWorld.clearForces();
     }
 
     /**

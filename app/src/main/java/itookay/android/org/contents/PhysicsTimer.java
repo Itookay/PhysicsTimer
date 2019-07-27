@@ -29,6 +29,13 @@ public class PhysicsTimer implements TimeChangedListener {
     /** 端末向き：端末下が上 */
     public static final int     UPSIDEDOWN = 80;
 
+    /** タイマーが稼働中 */
+    public static final int     STATE_PROCESSING = 1001;
+    /** タイマーが終了してNumpad画面に戻るのを待っている */
+    public static final int     STATE_FINISHED = 1002;
+    /** 待機中 */
+    public static final int     STATE_IDLING = 1003;
+
     /** SharedPreferenceファイル名 */
     public static String    PREFERENCE_FILE_NAME = "pref";
     /** preferenceキー：フォント */
@@ -50,8 +57,6 @@ public class PhysicsTimer implements TimeChangedListener {
     private SurfaceView     mSurfaceViewFromLayout = null;
     /** ワールド管理 */
     private ControlWorld	mWorld = null;
-    /** スクリーン座標管理 */
-    //private Scale			mScale = null;
     /** フォント */
     private FontBase		mFont = null;
     /** 表示スタイル */
@@ -59,11 +64,13 @@ public class PhysicsTimer implements TimeChangedListener {
     /** 端末向き */
     private int             mOrientation = 0;
     /** タイマーの初期化が全て終了 */
-    private boolean         mIsReadyToStart = false;
+    //private boolean         mIsReadyToStart = false;
     /** タイマーをサービスで起動 */
     private boolean         mBindService = true;
     /** タイマータイム */
     private Time            mTime = null;
+    /** 現在の状態 */
+    private int             mState = STATE_IDLING;
 
     /**
      * 			コンストラクタ
@@ -111,12 +118,10 @@ public class PhysicsTimer implements TimeChangedListener {
 
         mMainSurface = new MainSurfaceView(mAppContext, mSurfaceViewFromLayout, mWorld);
         /* ----------------------------------------------------------------- */
-
-        mIsReadyToStart = true;
     }
 
-    public boolean isReadyToStart() {
-        return mIsReadyToStart;
+    public int getState() {
+        return mState;
     }
 
     /**
@@ -159,6 +164,8 @@ public class PhysicsTimer implements TimeChangedListener {
      *      サービスを使うかどうかはbindServiceによる
      */
     public void start() {
+        mState = STATE_PROCESSING;
+
         if(mBindService) {
             startWithForegroundService();
         }
@@ -196,6 +203,7 @@ public class PhysicsTimer implements TimeChangedListener {
      *          タイマーを強制終了
      */
     public void stop() {
+        mState = STATE_IDLING;
         TimeWatchingService.stopTimer();
         mWorld.clearTime();
         mDial.clearTime(false);
@@ -219,20 +227,14 @@ public class PhysicsTimer implements TimeChangedListener {
     }
 
     /**
-     *      タイマーが起動中か
-     */
-    public boolean isAlive() {
-        return TimeWatchingService.isAlive();
-    }
-
-    /**
      * 			時間の更新
      */
     @Override
     public void onTimeChanged(int hour, int minute, int second) {
         try {
             if(second == TimeWatchingService.TIMER_FINISHED) {
-                mWorld.clearTime();
+                mState = STATE_FINISHED;
+                //何もしない
             }
             else {
                 mDial.setTime(new Time(hour, minute, second));

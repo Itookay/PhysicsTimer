@@ -11,11 +11,7 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.widget.Button
-import itookay.android.org.contents.ControlWorld
-
-import itookay.android.org.contents.PhysicsTimer
-import itookay.android.org.contents.Scale
-import itookay.android.org.contents.Settings
+import itookay.android.org.contents.*
 
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -34,6 +30,8 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
     lateinit var btSetting : Button
     /** タイマーストップ表示ボタン */
     lateinit var btStopTimer : Button
+    /** サーフェースビュー */
+    lateinit var svMain : SurfaceView
 
     /** 直前にドラッグしていた番号 */
     private var PreviousDraggingNumber : Int = INVALID_TIME
@@ -58,10 +56,10 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
         requestWindowFeature(Window.FEATURE_NO_TITLE)
 
         setContentView(R.layout.activity_main)
-        /* ボタンの初期化 ------ */
+        /* ビューの初期化 ------ */
         initNumpadButtonList()
         initControlButton()
-        setButtonListener()
+        initSurfaceView()
         /* ------------------- */
         getDisplayScale()
 
@@ -77,7 +75,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
         mPhysicsTimer.init()
 
         /* ForegroundServiceが起動中 --------------- */
-        if(mPhysicsTimer.isAlive) {
+        if(TimeWatchingService.isAlive()) {
             numpadVisivility(false)
             settingButtonVisibility(false)
             stopTimerButtonVisibility(true)
@@ -98,29 +96,25 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
             findViewById(R.id.btNum7),
             findViewById(R.id.btNum8),
             findViewById(R.id.btNum9))
-    }
 
-    /**
-     *      コントロールボタンを表示<br>
-     *      Numpad表示時：設定ボタン<br>
-     *      タイマー表示時：Numpadに戻るボタン
-     */
-    fun initControlButton() {
-        btStopTimer = findViewById(R.id.btStopTimer)
-        btSetting = findViewById(R.id.btSetting)
-    }
-
-    /*
-     *      イベントリスナーをセット
-     */
-    private fun setButtonListener() {
-        /* Numpad */
         for(button in NumpadButtonList) {
             button.setOnTouchListener(this)
         }
+    }
 
-        btSetting.setOnClickListener(this)
+    /**
+     *      コントロールボタン初期化
+     */
+    fun initControlButton() {
+        btStopTimer = findViewById(R.id.btStopTimer)
         btStopTimer.setOnClickListener(this)
+        btSetting = findViewById(R.id.btSetting)
+        btSetting.setOnClickListener(this)
+    }
+
+    fun initSurfaceView() {
+        svMain = findViewById(R.id.svMain)
+        svMain.setOnTouchListener(this)
     }
 
     private fun getDisplayScale() {
@@ -169,7 +163,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
      *      センサー値の変化
      */
     override fun onSensorChanged(event:SensorEvent) {
-        if(mPhysicsTimer.isReadyToStart == false) {
+        if(mPhysicsTimer.state != PhysicsTimer.STATE_PROCESSING) {
             return;
         }
 
@@ -237,10 +231,20 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
      *      タッチイベント
      */
     override fun onTouch(view: View?, event: MotionEvent?): Boolean {
+        if(mPhysicsTimer.state == PhysicsTimer.STATE_FINISHED) {
+            mPhysicsTimer.stop()
+            numpadVisivility(true)
+            settingButtonVisibility(true)
+            return true;
+        }
+        if(mPhysicsTimer.state == PhysicsTimer.STATE_PROCESSING) {
+            return false
+        }
+
         /** ドラッグ中のボタンはviewに渡されないらしい */
         val button = getTouchPointButton(event?.rawX!!, event.rawY)
         if(button == null) {
-            return false
+            return false;
         }
 
         when(event.action) {
