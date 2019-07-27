@@ -109,21 +109,21 @@ public abstract class StyleBase {
     /**
      *      ディスプレイに対するDial幅との比を取得
      */
-    public float getDialWidthRatio() {
+    public final float getDialWidthRatio() {
         return 0.7f;
     }
 
     /**
      *      DialPanelに対するDialPanel内スペースとの比を取得
      */
-    public float getDialPanelSpaceRatio() {
+    public final float getDialPanelSpaceRatio() {
         return 0.2f;
     }
 
     /**
      *      Tileに対するTile内スペースとの比を取得
      */
-    public float getTileSpaceRatio() {
+    public final float getTileSpaceRatio() {
         return 0.1f;
     }
 }

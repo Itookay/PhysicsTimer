@@ -134,8 +134,19 @@ public class ControlWorld {
         //接触条件をフィルタ
         boxFixture.filter.groupIndex = FREE_TILE_GROUPINDEX;
 
-        body.createFixture( boxFixture );
-        mBodyList.add( body );
+        body.createFixture(boxFixture);
+        mBodyList.add(body);
+    }
+
+    /**
+     *      ワールド内のタイルを全て削除
+     */
+    public void destroyTiles() {
+        for(Body body : mBodyList.getList()) {
+            body.setUserData(null);
+            mWorld.destroyBody(body);
+        }
+        mBodyList.getList().clear();
     }
 
     /**

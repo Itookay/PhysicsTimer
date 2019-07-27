@@ -252,7 +252,11 @@ public class PhysicsTimer implements TimeChangedListener {
      *      スタイルの更新時に使用する
      */
     public void initDial() {
+        mWorld.destroyTiles();
+
+        mDial.setTimerSize();
         mDial.initDialPanel();
+        mWorld.createWorld(mStyle.getSmallTileCount(mFont), mStyle.getNormalTileCount(mFont));
     }
 
     /**

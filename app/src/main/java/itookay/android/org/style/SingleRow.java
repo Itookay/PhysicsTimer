@@ -30,6 +30,7 @@ public class SingleRow extends StyleBase {
     public int getNormalTileCount(FontBase font) {
         int count = 0;
         count += font.getDialPanelArrayCount(DialPanel.MINUTE);
+        count += font.getDialPanelArrayCount(DialPanel.COLOGNE);
         count += font.getDialPanelArrayCount(DialPanel.SECOND);
         return count;
     }
@@ -72,6 +73,8 @@ public class SingleRow extends StyleBase {
             //次の位置へ移動
             posX += panel.getWidthWithSpace();
         }
+
+        alignCenter(dialPanels);
     }
 
     @Override
@@ -79,7 +82,7 @@ public class SingleRow extends StyleBase {
         DialPanel   minute = dialPanels.get(0);
         DialPanel   cologne = dialPanels.get(1);
         DialPanel   second = dialPanels.get(2);
-        float   dialWidth = second.getWidthWithSpace() * 2 + cologne.getWidthWithSpace();
+        float   dialWidth = minute.getWidthWithSpace() + cologne.getWidthWithSpace() + second.getWidthWithSpace();
         float   dialHeight = second.getHeightWithSpace();
         float   x = 0f;
         float   y = 0f;
@@ -110,10 +113,5 @@ public class SingleRow extends StyleBase {
         float   dy = y - c.y;
         minute.OffsetPosition(dx, dy);
         second.OffsetPosition(dx, dy);
-    }
-
-    @Override
-    public float getDialWidthRatio() {
-        return 0.7f;
     }
 }
