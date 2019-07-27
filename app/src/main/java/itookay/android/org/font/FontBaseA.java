@@ -7,12 +7,13 @@ import itookay.android.org.contents.DialPanel;
  */
 public abstract class FontBaseA extends FontBase {
 
-	public final int	COLUMN_COUNT = 4;
-	public final int	SIZE = COLUMN_COUNT * 5;
-	public final int	SEPARATE_COLUMN_COUNT = 1;
+	private final int	COLUMN_COUNT = 4;
+	private final int	SEPARATE_COLUMN_COUNT = 1;
+	private final int	ROW_COUNT = 5;
+	private final int	ARRAY_SIZE = COLUMN_COUNT * ROW_COUNT;
 
 
-	public FontBaseA() {
+	FontBaseA() {
 		int[]	none =
 			{	0, 0, 0, 0,
 				0, 0, 0, 0,
@@ -46,33 +47,29 @@ public abstract class FontBaseA extends FontBase {
 		DOT = dot.clone();
 	}
 
+	/**
+	 * 		数字1文字分のカラム数を返す
+	 */
 	@Override
-	public int getColumnCount() {
+	public int getOneNumberColumnCount() {
 		return COLUMN_COUNT;
 	}
 
+	/**
+	 * 		数字2文字分のカラム数を返す
+	 */
 	@Override
-	public int getSeparateColumnCount() {
-		return SEPARATE_COLUMN_COUNT;
-	}
-
-	@Override
-	public int get2NumbersColumnsCount() {
+	public int getTwoNumbersColumnsCount() {
 		return COLUMN_COUNT * 2;
-	}
-
-	@Override
-	public int getArrayLength() {
-		return SIZE;
 	}
 
 	@Override
 	public int getDialPanelColumnCount(int format) {
 		if(format == DialPanel.MINUTE || format == DialPanel.SECOND) {
-			return get2NumbersColumnsCount();
+			return COLUMN_COUNT * 2;
 		}
 		else if(format == DialPanel.COLOGNE) {
-			return getSeparateColumnCount();
+			return SEPARATE_COLUMN_COUNT;
 		}
 		else {
 			return 0;
@@ -82,10 +79,10 @@ public abstract class FontBaseA extends FontBase {
 	@Override
 	public int getDialPanelArrayCount(int format) {
 		if(format == DialPanel.MINUTE || format == DialPanel.SECOND) {
-			return getArrayLength() * 2;
+			return ARRAY_SIZE * 2;
 		}
 		else if(format == DialPanel.COLOGNE) {
-			return getArrayLength();
+			return SEPARATE_COLUMN_COUNT * ROW_COUNT;
 		}
 		else {
 			return 0;

@@ -11,6 +11,13 @@ public abstract class StyleBase {
     /** スタイル名 */
     public String		NAME = null;
 
+    /** 画面幅に対してタイマーの幅比 */
+    protected float             DIAL_WIDTH_RATIO = 0.7f;
+    /** DialPanelに対してのスペース幅比 */
+    protected float             DIALPANEL_SPACE_RATIO = 0.2f;
+    /** タイルに対してのスペース幅比 */
+    protected float             TILE_SPACE_RATIO = 0.1f;
+
     /** DialPanelのスタイルをここで定義する。コンンストラクタから呼ばれる。 */
     protected abstract void     defineStyle();
     /** 小さいタイルの数を取得 */
@@ -47,7 +54,6 @@ public abstract class StyleBase {
 
     /**
      *      DialPanelをスタイルの指定デザインに整列
-     * @param dialPanels
      */
     public final void arrangeDialPanels(ArrayList<DialPanel> dialPanels) {
         baseArrangement(dialPanels);
@@ -56,12 +62,8 @@ public abstract class StyleBase {
 
     /**
      *      DialPanelをディスプレイ原点(左上)に配置
-     * @param dialPanels
      */
     protected void baseArrangement(ArrayList<DialPanel> dialPanels) {
-        for(DialPanel panel : dialPanels) {
-            //panel.OffsetPosition(0, mScale.getDisplayHeightMeter());
-        }
     }
 
     /**
@@ -109,21 +111,21 @@ public abstract class StyleBase {
     /**
      *      ディスプレイに対するDial幅との比を取得
      */
-    public final float getDialWidthRatio() {
-        return 0.7f;
+    public float getDialWidthRatio() {
+        return DIAL_WIDTH_RATIO;
     }
 
     /**
      *      DialPanelに対するDialPanel内スペースとの比を取得
      */
-    public final float getDialPanelSpaceRatio() {
-        return 0.2f;
+    public float getDialPanelSpaceRatio() {
+        return DIALPANEL_SPACE_RATIO;
     }
 
     /**
      *      Tileに対するTile内スペースとの比を取得
      */
-    public final float getTileSpaceRatio() {
-        return 0.1f;
+    public float getTileSpaceRatio() {
+        return TILE_SPACE_RATIO;
     }
 }

@@ -381,19 +381,6 @@ public class ControlWorld {
                 canvas.drawCircle(pos2.x, pos2.y, 10, paint2);
             }
         }
-
-        /* DialPanelサイズを表示 */
-//        Paint   paint3 = new Paint();
-//        paint3.setColor(Color.GREEN);
-//        paint3.setStrokeWidth(5);
-//        paint3.setStyle(Paint.Style.STROKE);
-//        for(DialPanel panel : mDebugDial.getDialPanelList()) {
-//            Vec2    pos = panel.getPosition();
-//            pos = Scale.toPixel(pos);
-//            float   width = Scale.toPixel(panel.getWidthWithSpace());
-//            float   height = Scale.toPixel(panel.getHeightWithSpace());
-//            canvas.drawRect(pos.x, pos.y, pos.x+width, pos.y-height, paint3);
-//        }
     }
 
     private Dial        mDebugDial = null;

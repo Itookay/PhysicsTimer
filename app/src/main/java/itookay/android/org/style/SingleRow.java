@@ -19,6 +19,7 @@ public class SingleRow extends StyleBase {
     public SingleRow() {
         super();
         NAME = "Single Row";
+        DIAL_WIDTH_RATIO = 0.9f;
     }
 
     @Override

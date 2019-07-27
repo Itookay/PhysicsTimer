@@ -29,6 +29,8 @@ public class Dial {
      *          DialPanelを初期化
      */
     public void initDialPanel() {
+        mSeparator = DialPanel.BLANK;
+
         createDialPanel();
         mStyle.arrangeDialPanels(mDialPanelList);
     }
@@ -73,7 +75,7 @@ public class Dial {
         //DialPanelスペースサイズからスペースサイズを除く
         float       dialPanelSizeWithoutSpace = dialPanelSize - dialPanelSpace;
         //タイル一枚のサイズ
-        float   normalTileSize = dialPanelSizeWithoutSpace / mFont.get2NumbersColumnsCount();
+        float   normalTileSize = dialPanelSizeWithoutSpace / mFont.getTwoNumbersColumnsCount();
         Tile.setStaticSize(normalTileSize, mStyle.getTileSpaceRatio());
         TileBase.setStaticSize(normalTileSize, mStyle.getTileSpaceRatio());
 
@@ -254,7 +256,8 @@ public class Dial {
         int[]	a = mFont.getNumber(num[0]);
         int[]	b = mFont.getNumber(num[1]);
 
-        return conbine(a, b, mFont.getColumnCount(), mFont.getColumnCount());
+        int     column = mFont.getOneNumberColumnCount();
+        return conbine(a, b, column, column);
     }
 
     /*
