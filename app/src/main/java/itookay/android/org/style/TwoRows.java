@@ -15,7 +15,6 @@ public class TwoRows extends StyleBase {
 
     @Override
     protected void defineStyle() {
-
     }
 
     @Override
