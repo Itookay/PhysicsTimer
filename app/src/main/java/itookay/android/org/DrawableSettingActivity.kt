@@ -48,14 +48,11 @@ abstract class DrawableSettingActivity : Activity(), View.OnClickListener {
         FontListIndex = setting.savedFontIndex
         StyleListIndex = setting.savedStyleIndex
 
-        style.setScale(getDisplayScale())
-
         setButtonState()
 
         mPhysicsTimer = PhysicsTimer(applicationContext)
         mPhysicsTimer.setStyle(style)
         mPhysicsTimer.setFont(font)
-        mPhysicsTimer.setScale(getDisplayScale())
         val surfaceView = findViewById<SurfaceView>(R.id.svDrawableSetting)
         mPhysicsTimer.setSurfaceView(surfaceView)
         mPhysicsTimer.bindService(false)
@@ -78,17 +75,4 @@ abstract class DrawableSettingActivity : Activity(), View.OnClickListener {
         btPrevious = findViewById(R.id.btPrevious)
         btPrevious.setOnClickListener(this)
     }
-
-
-    fun getDisplayScale() : Scale {
-        val windowManager = applicationContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        val disp = windowManager.defaultDisplay
-        val size = Point()
-        disp.getSize(size)
-
-        val scale = Scale()
-        scale.setDisplay(size.x, size.y, Scale.DISPLAY_HEIGHT_IN_METER)
-        return scale
-    }
-
 }

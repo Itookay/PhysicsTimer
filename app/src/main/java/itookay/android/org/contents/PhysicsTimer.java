@@ -42,11 +42,6 @@ public class PhysicsTimer implements TimeChangedListener {
     /** アプリケーションコンテキスト */
     private Context			mAppContext = null;
 
-    /** Timerサービスとバインドされているか */
-    private boolean         mIsTimerServiceBound = false;
-    /** TimeChanegedサービスインスタンス */
-    //private Intent          mService = null;
-
     /** 文字盤 */
     private Dial			mDial = null;
     /** 描画用サーフェースビュー */
@@ -56,7 +51,7 @@ public class PhysicsTimer implements TimeChangedListener {
     /** ワールド管理 */
     private ControlWorld	mWorld = null;
     /** スクリーン座標管理 */
-    private Scale			mScale = null;
+    //private Scale			mScale = null;
     /** フォント */
     private FontBase		mFont = null;
     /** 表示スタイル */
@@ -91,10 +86,6 @@ public class PhysicsTimer implements TimeChangedListener {
         }
     }
 
-    public void setScale(Scale scale) {
-        mScale = scale;
-    }
-
     /**
      * 			時計を生成して表示
      */
@@ -109,18 +100,16 @@ public class PhysicsTimer implements TimeChangedListener {
         mDial = new Dial();
         mDial.setStyle(mStyle);
         mDial.setFont(mFont);
-        mDial.setTimerSize(mScale.getDisplayWidthMeter());
+        mDial.setTimerSize();
         mDial.initDialPanel();
 
         Vec2	gravity = new Vec2(0f, -10f);
         mWorld = new ControlWorld(mAppContext, gravity, true);
         mWorld.setStep(1f/60f, 10, 8);
-        mWorld.setScale(mScale);
         mWorld.createWorld(mStyle.getSmallTileCount(mFont), mStyle.getNormalTileCount(mFont));
         mWorld.setDebugDial(mDial);
 
         mMainSurface = new MainSurfaceView(mAppContext, mSurfaceViewFromLayout, mWorld);
-        mMainSurface.setScale(mScale);
         /* ----------------------------------------------------------------- */
 
         mIsReadyToStart = true;

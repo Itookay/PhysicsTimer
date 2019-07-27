@@ -47,7 +47,8 @@ public class Dial {
      *          タイマーのサイズスケールをセットしてタイマーとタイルのサイズを計算<br>
      *          TileとDialPanelのサイズも代入。
      */
-    public void setTimerSize(float displayWidth) {
+    public void setTimerSize() {
+        float displayWidth = Scale.getDisplayWidthMeter();
         /* DialPanel一枚(数字2文字)が4セクションとしてセクションのサイズを計算 */
         float   timerWidth = displayWidth * mStyle.getDialWidthRatio();
         float   sectionSize = timerWidth / mStyle.getSection();

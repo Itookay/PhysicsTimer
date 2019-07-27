@@ -1,8 +1,11 @@
 package itookay.android.org.style;
 
 import itookay.android.org.contents.DialPanel;
+import itookay.android.org.contents.PhysicsTimer;
+import itookay.android.org.contents.Scale;
 import itookay.android.org.contents.Tile;
 import itookay.android.org.font.FontBase;
+import org.jbox2d.common.Vec2;
 
 import java.util.ArrayList;
 
@@ -73,12 +76,44 @@ public class SingleRow extends StyleBase {
 
     @Override
     public void alignCenter(ArrayList<DialPanel> dialPanels) {
+        DialPanel   minute = dialPanels.get(0);
+        DialPanel   cologne = dialPanels.get(1);
+        DialPanel   second = dialPanels.get(2);
+        float   dialWidth = second.getWidthWithSpace() * 2 + cologne.getWidthWithSpace();
+        float   dialHeight = second.getHeightWithSpace();
+        float   x = 0f;
+        float   y = 0f;
 
+        //現在のDial原点位置
+        Vec2 c = minute.getPosition();
+
+        //端末縦向き
+        switch(mOrientation) {
+            case PhysicsTimer.PORTRAIT:
+            case PhysicsTimer.UPSIDEDOWN:
+                x = (Scale.getDisplayWidthMeter() - dialWidth) / 2f;
+                y = Scale.getDisplayHeightMeter() - x;
+                break;
+            case PhysicsTimer.LEFT_LANDSCAPE:
+                x = (Scale.getDisplayWidthMeter() - dialHeight) / 2f + dialHeight;
+                y = (Scale.getDisplayHeightMeter() - dialWidth) / 2f + dialWidth;
+                break;
+            case PhysicsTimer.RIGHT_LANDSCAPE:
+                x = (Scale.getDisplayWidthMeter() - dialHeight) / 2f;
+                y = (Scale.getDisplayHeightMeter() - dialWidth) / 2f;
+                break;
+            default:
+                return;
+        }
+
+        float   dx = x - c.x;
+        float   dy = y - c.y;
+        minute.OffsetPosition(dx, dy);
+        second.OffsetPosition(dx, dy);
     }
 
     @Override
     public float getDialWidthRatio() {
         return 0.7f;
     }
-
 }

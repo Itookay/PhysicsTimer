@@ -35,14 +35,10 @@ public abstract class StyleBase {
     /** 端末向き */
     protected int       mOrientation = PhysicsTimer.PORTRAIT;
     /** スケール */
-    protected Scale     mScale = null;
+    //protected Scale     mScale = null;
 
     public StyleBase() {
         defineStyle();
-    }
-
-    public final void setScale(Scale scale) {
-        mScale = scale;
     }
 
     public void setOrientation(int orientation) {

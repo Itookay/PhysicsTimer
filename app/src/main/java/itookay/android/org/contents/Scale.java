@@ -2,21 +2,19 @@ package itookay.android.org.contents;
 
 import org.jbox2d.common.Vec2;
 
-import android.util.Log;
-
 public class Scale {
 
     /** 画面高さ(メートル) */
     public static final int       DISPLAY_HEIGHT_IN_METER = 10;
 
     /** 画面横幅ピクセル */
-    private float		mDisplayWidthPixel = 0f;
+    private static float		mDisplayWidthPixel = 0f;
     /** 画面縦幅ピクセル */
-    private float		mDisplayHeightPixel = 0f;
+    private static float		mDisplayHeightPixel = 0f;
     /** 画面横長さメートル */
-    private float	    mDisplayWidthMeter = 0f;
+    private static float	    mDisplayWidthMeter = 0f;
     /** 画面縦長さメートル */
-    private float	    mDisplayHeightMeter = 0f;
+    private static float	    mDisplayHeightMeter = 0f;
     /** メートルからピクセルへの変換比 */
     private static float        mRatio = 1f;
 
@@ -43,11 +41,11 @@ public class Scale {
         return pixel / mRatio;
     }
 
-    public float getDisplayWidthPixel() {
+    public static float getDisplayWidthPixel() {
         return mDisplayWidthPixel;
     }
 
-    public float getDisplayHeightPixel() {
+    public static float getDisplayHeightPixel() {
         return mDisplayHeightPixel;
     }
 
@@ -55,7 +53,7 @@ public class Scale {
      *      ディスプレイ高さ(メートル)<br>
      *      端末向きに応じて値が変わる
      */
-    public float getDisplayHeightMeter() {
+    public static float getDisplayHeightMeter() {
         return mDisplayHeightMeter;
     }
 
@@ -63,7 +61,7 @@ public class Scale {
      *      ディスプレイ幅(メートル)<br>
      *      端末向きに応じて値が変わる
      */
-    public float getDisplayWidthMeter() {
+    public static float getDisplayWidthMeter() {
         return mDisplayWidthMeter;
     }
 
@@ -73,7 +71,7 @@ public class Scale {
      * @param displayHeightPixel    画面高さ
      * @param heightInMeter         画面高さのメートル値
      */
-    public void setDisplay(int displayWidthPixel, int displayHeightPixel, int heightInMeter) {
+    public static void setDisplay(int displayWidthPixel, int displayHeightPixel, int heightInMeter) {
         mDisplayWidthPixel = displayWidthPixel;
         mDisplayHeightPixel = displayHeightPixel;
 
@@ -87,14 +85,14 @@ public class Scale {
     /**
      * 			スクリーンX座標（ピクセル）からワールド座標（メートル）への変換
      */
-    public float getWorldCoordinateX(float xPixel) {
+    public static float getWorldCoordinateX(float xPixel) {
         return toMeter(xPixel);
     }
 
     /**
      * 			スクリーンY座標（ピクセル）からワールド座標（メートル）への変換
      */
-    public float getWorldCoordinateY(float yPixel) {
+    public static float getWorldCoordinateY(float yPixel) {
         return -toMeter(yPixel);
     }
 }

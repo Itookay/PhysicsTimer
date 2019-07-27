@@ -1,9 +1,6 @@
 package itookay.android.org.style;
 
-import itookay.android.org.contents.DialPanel;
-import itookay.android.org.contents.PhysicsTimer;
-import itookay.android.org.contents.Tile;
-import itookay.android.org.contents.Time;
+import itookay.android.org.contents.*;
 import itookay.android.org.font.FontBase;
 import org.jbox2d.common.Vec2;
 
@@ -87,16 +84,16 @@ public class TwoRows extends StyleBase {
         switch(mOrientation) {
             case PhysicsTimer.PORTRAIT:
             case PhysicsTimer.UPSIDEDOWN:
-                x = (mScale.getDisplayWidthMeter() - dialWidth) / 2f;
-                y = mScale.getDisplayHeightMeter() - x;
+                x = (Scale.getDisplayWidthMeter() - dialWidth) / 2f;
+                y = Scale.getDisplayHeightMeter() - x;
                 break;
             case PhysicsTimer.LEFT_LANDSCAPE:
-                x = (mScale.getDisplayWidthMeter() - dialHeight) / 2f + dialHeight;
-                y = (mScale.getDisplayHeightMeter() - dialWidth) / 2f + dialWidth;
+                x = (Scale.getDisplayWidthMeter() - dialHeight) / 2f + dialHeight;
+                y = (Scale.getDisplayHeightMeter() - dialWidth) / 2f + dialWidth;
                 break;
             case PhysicsTimer.RIGHT_LANDSCAPE:
-                x = (mScale.getDisplayWidthMeter() - dialHeight) / 2f;
-                y = (mScale.getDisplayHeightMeter() - dialWidth) / 2f;
+                x = (Scale.getDisplayWidthMeter() - dialHeight) / 2f;
+                y = (Scale.getDisplayHeightMeter() - dialWidth) / 2f;
                 break;
             default:
                 return;

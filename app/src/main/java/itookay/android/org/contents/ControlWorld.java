@@ -25,8 +25,6 @@ public class ControlWorld {
     private int			mVelocityIterations = 0;
     /** 位置イテレーション */
     private int			mPositionIterations = 0;
-    /** 画面スケール */
-    private Scale		mScale = null;
 
     /** ボディとジョイントするグラウンド */
     private Body		mGround = null;
@@ -111,8 +109,8 @@ public class ControlWorld {
         Vec2		pos = new Vec2();
 
         //画面上のランダムな位置に配置
-        pos.x = (float)(mScale.getDisplayWidthMeter() * Math.random());
-        pos.y = (float)(mScale.getDisplayHeightMeter() * Math.random());
+        pos.x = (float)(Scale.getDisplayWidthMeter() * Math.random());
+        pos.y = (float)(Scale.getDisplayHeightMeter() * Math.random());
 
         Tile	tile = createUserData(pos);
         tile.setSizeFormat(sizeFormat);
@@ -159,8 +157,8 @@ public class ControlWorld {
     private void createGround() {
         float	density = 1.0f;
 
-        float	width = mScale.getDisplayWidthMeter();
-        float	height = mScale.getDisplayHeightMeter();
+        float	width = Scale.getDisplayWidthMeter();
+        float	height = Scale.getDisplayHeightMeter();
         Vec2	upperLeft = new Vec2(0, 0); //左上
         Vec2	upperRight = new Vec2(width, 0); //右上
         Vec2	lowerLeft = new Vec2(0, height); //左下
@@ -333,13 +331,6 @@ public class ControlWorld {
 
             canvas.drawBitmap(bitmap, matrix, null);
         }
-    }
-
-    /**
-     * 		画面スケールをセット
-     */
-    public void setScale(Scale scale) {
-        mScale = scale;
     }
 
     /**

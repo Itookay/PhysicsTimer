@@ -63,17 +63,15 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
         initControlButton()
         setButtonListener()
         /* ------------------- */
-        val scale = getDisplayScale()
+        getDisplayScale()
 
         val setting = Settings(applicationContext)
         val font = setting.savedFont
         val style = setting.savedStyle;
-        style.setScale(scale)
 
         mPhysicsTimer = PhysicsTimer(applicationContext)
         mPhysicsTimer.setStyle(style)
         mPhysicsTimer.setFont(font);
-        mPhysicsTimer.setScale(scale)
         val surfaceView = findViewById<SurfaceView>(R.id.svMain)
         mPhysicsTimer.setSurfaceView(surfaceView)
         mPhysicsTimer.init()
@@ -125,15 +123,13 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
         btStopTimer.setOnClickListener(this)
     }
 
-    fun getDisplayScale() : Scale {
+    private fun getDisplayScale() {
         val windowManager = applicationContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val disp = windowManager.defaultDisplay
         val size = Point()
         disp.getSize(size)
 
-        val scale = Scale()
-        scale.setDisplay(size.x, size.y, Scale.DISPLAY_HEIGHT_IN_METER)
-        return scale
+        Scale.setDisplay(size.x, size.y, Scale.DISPLAY_HEIGHT_IN_METER)
     }
 
     /*

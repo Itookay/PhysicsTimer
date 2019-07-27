@@ -21,8 +21,6 @@ public class MainSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     private Runnable		mDrawRunnable = null;
     /** 描画用ハンドラ */
     private Handler			mHandler = null;
-    /** 画面スケール */
-    private Scale   		mScale = null;
 
     /** 壁紙がアクティブ */
     private boolean 		mVisibility = true;
@@ -114,7 +112,7 @@ public class MainSurfaceView extends SurfaceView implements SurfaceHolder.Callba
              */
             Matrix	canvasMatrix = new Matrix();
             canvasMatrix.setScale(1, -1);
-            canvasMatrix.preTranslate(0, -mScale.getDisplayHeightPixel());
+            canvasMatrix.preTranslate(0, -Scale.getDisplayHeightPixel());
             canvas.setMatrix(canvasMatrix);
 
             //背景の描画
@@ -139,13 +137,6 @@ public class MainSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         private void drawBackground(Canvas canvas) {
             canvas.drawColor(Color.WHITE);
         }
-    }
-
-    /**
-     * 			画面スケールをセット
-     */
-    public void setScale(Scale scale) {
-        mScale = scale;
     }
 }
 
