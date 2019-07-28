@@ -1,5 +1,7 @@
 package itookay.android.org
 
+import android.content.Context
+import android.media.RingtoneManager
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.Window
@@ -7,25 +9,56 @@ import android.view.WindowManager
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
+import androidx.preference.ListPreference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.*
+import itookay.android.org.contents.Settings
 
-class SettingsFragment : PreferenceFragmentCompat() {
+class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
+
+        setSoundListPreference()
+    }
+
+    /**
+     *
+     */
+    private fun setSoundListPreference() {
+        val ringtoneMgr = RingtoneManager(context)
+        val cursor = ringtoneMgr.cursor
+        val ringtoneEntries = arrayOfNulls<CharSequence>(cursor.count)
+        val ringtoneEntryValues = arrayOfNulls<CharSequence>(cursor.count)
+        var index = 0
+        while(cursor.moveToNext()) {
+            ringtoneEntries[index] = cursor.getString(RingtoneManager.TITLE_COLUMN_INDEX)
+            ringtoneEntryValues[index] = cursor.getInt(RingtoneManager.ID_COLUMN_INDEX).toString()
+            index++
+        }
+
+        val listPref = findPreference<ListPreference>("sound_pattern")
+        listPref?.entries = ringtoneEntries
+        listPref?.entryValues = ringtoneEntryValues
+
+        listPref?.setOnPreferenceChangeListener(this)
+    }
+
+    override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
+        if(newValue is String) {
+            Settings(context).saveSound(newValue)
+        }
+        return true
     }
 }
 
 class MainSettingActivity : AppCompatActivity() {
-
-    lateinit var MainSettingLayout: LinearLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
-        supportRequestWindowFeature(WindowCompat.FEATURE_ACTION_BAR_OVERLAY)
         setContentView(R.layout.main_settings_activity)
 
         supportFragmentManager
@@ -33,8 +66,6 @@ class MainSettingActivity : AppCompatActivity() {
             .replace(R.id.mainSetting, SettingsFragment())
             .commit()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        MainSettingLayout = findViewById(R.id.mainSettingLayout)
     }
 
     /**
@@ -49,5 +80,4 @@ class MainSettingActivity : AppCompatActivity() {
             else -> return super.onOptionsItemSelected(item)
         }
     }
-
 }

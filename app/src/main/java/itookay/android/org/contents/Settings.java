@@ -11,11 +11,19 @@ import itookay.android.org.style.StyleBase;
 import itookay.android.org.style.TwoRows;
 import itookay.android.org.style.TwoRowsBigSecond;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class Settings {
+
+    /** SharedPreferenceファイル名 */
+    public static String    PREFERENCE_FILE_NAME = "pref";
+    /** preferenceキー：フォント */
+    public static String    PREFERENCE_KEY_FONT = "prefkey_font";
+    /** preferenceキー：スタイル */
+    public static String    PREFERENCE_KEY_STYLE = "prefkey_style";
+    /** preferenceキー：サウンド */
+    public static String    PREFERENCE_KEY_SOUND = "prekey_sound";
 
     private Context     mAppContext = null;
     /** フォントリスト */
@@ -43,8 +51,8 @@ public class Settings {
      *      SharedPreferenceのフォントを取得
      */
     public FontBase getSavedFont() {
-        SharedPreferences   pref = mAppContext.getSharedPreferences(PhysicsTimer.PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
-        String              fontName = pref.getString(PhysicsTimer.PREFERENCE_KEY_FONT, "");
+        SharedPreferences   pref = mAppContext.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
+        String              fontName = pref.getString(PREFERENCE_KEY_FONT, "");
 
         for(FontBase font : mFontList) {
             if(fontName.equals(font.NAME)) {
@@ -58,8 +66,8 @@ public class Settings {
      *      SharedPreferenceのスタイルを取得
      */
     public StyleBase getSavedStyle() {
-        SharedPreferences   pref =mAppContext.getSharedPreferences(PhysicsTimer.PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
-        String              StyleName = pref.getString(PhysicsTimer.PREFERENCE_KEY_STYLE, "");
+        SharedPreferences   pref =mAppContext.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
+        String              StyleName = pref.getString(PREFERENCE_KEY_STYLE, "");
 
         for(StyleBase style : mStyleList) {
             if(StyleName.equals(style.NAME)) {
@@ -73,8 +81,8 @@ public class Settings {
      *      フォントを保存
      */
     public void saveFont(String fontName) {
-        SharedPreferences   pref = mAppContext.getSharedPreferences(PhysicsTimer.PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
-        pref.edit().putString(PhysicsTimer.PREFERENCE_KEY_FONT, fontName).apply();
+        SharedPreferences   pref = mAppContext.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
+        pref.edit().putString(PREFERENCE_KEY_FONT, fontName).apply();
     }
 
     /**
@@ -89,8 +97,8 @@ public class Settings {
      *      スタイルを保存
      */
     public void saveStyle(String styleName) {
-        SharedPreferences   pref = mAppContext.getSharedPreferences(PhysicsTimer.PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
-        pref.edit().putString(PhysicsTimer.PREFERENCE_KEY_STYLE, styleName).apply();
+        SharedPreferences   pref = mAppContext.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
+        pref.edit().putString(PREFERENCE_KEY_STYLE, styleName).apply();
     }
 
     /**
@@ -131,7 +139,7 @@ public class Settings {
     public int getSavedFontIndex() {
         int     index = 0;
         for(FontBase font : mFontList) {
-            if(font.NAME == getSavedFont().NAME) {
+            if(font.NAME.equals(getSavedFont().NAME)) {
                 return index;
             }
             index++;
@@ -145,11 +153,21 @@ public class Settings {
     public int getSavedStyleIndex() {
         int     index = 0;
         for(StyleBase style : mStyleList) {
-            if(style.NAME == getSavedStyle().NAME) {
+            if(style.NAME.equals(getSavedStyle().NAME)) {
                 return index;
             }
             index++;
         }
         return -1;
+    }
+
+    public void saveSound(String index) {
+        SharedPreferences   pref = mAppContext.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
+        pref.edit().putString(PREFERENCE_KEY_SOUND, index).apply();
+    }
+
+    public int getSavedSound() {
+        SharedPreferences   pref = mAppContext.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
+        return pref.getInt(PREFERENCE_KEY_SOUND, 1);
     }
 }

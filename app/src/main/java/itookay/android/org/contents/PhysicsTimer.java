@@ -36,13 +36,6 @@ public class PhysicsTimer implements TimeChangedListener {
     /** 待機中 */
     public static final int     STATE_IDLING = 1003;
 
-    /** SharedPreferenceファイル名 */
-    public static String    PREFERENCE_FILE_NAME = "pref";
-    /** preferenceキー：フォント */
-    public static String    PREFERENCE_KEY_FONT = "prefkey_font";
-    /** preferenceキー：スタイル */
-    public static String    PREFERENCE_KEY_STYLE = "prefkey_style";
-
     /** TimeWatchingServiceインテントキー */
     public static final String  INTENT_KEY_TIME_WATCHING_SERVICE = "itookay.android.org.contents.PhysicsTimer.ServiceIntentKey";
 

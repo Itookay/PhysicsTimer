@@ -38,4 +38,8 @@ class StyleSettingActivity : DrawableSettingActivity() {
         btNext.isEnabled = (setting.getStyle(StyleListIndex + 1) != null)
         btPrevious.isEnabled = (setting.getStyle(StyleListIndex - 1) != null)
     }
+
+    override fun saveSetting() {
+        Settings(applicationContext).saveStyleByIndex(StyleListIndex)
+    }
 }

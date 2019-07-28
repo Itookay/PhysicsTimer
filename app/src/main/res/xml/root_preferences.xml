@@ -52,29 +52,29 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        app:key="design_category"
+        app:key="notification_category"
         app:title="通知方法">
 
         <ListPreference
-            app:key="background_behavior"
+            app:key="alarm_time"
             app:title="アラーム動作時間">
 
         </ListPreference>
 
         <ListPreference
-            app:key="background_behavior"
-            app:title="アラーム音量">
+            app:key="sound_volume"
+            app:title="サウンド音量">
 
         </ListPreference>
 
         <ListPreference
-            app:key="list_preference"
-            app:title="アラーム音パターン">
+            app:key="sound_pattern"
+            app:title="サウンドパターン">
 
         </ListPreference>
 
         <ListPreference
-            app:key="list_preference"
+            app:key="vibration_pattern"
             app:title="バイブレーションパターン">
 
         </ListPreference>
@@ -82,11 +82,11 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        app:key="design_category"
+        app:key="background_category"
         app:title="バックグラウンド">
 
         <ListPreference
-            app:key="background_behavior"
+            app:key="background_notification"
             app:title="アプリ非表示時の通知方法">
 
         </ListPreference>

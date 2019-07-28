@@ -14,7 +14,10 @@ import itookay.android.org.contents.Settings
 
 abstract class DrawableSettingActivity : AppCompatActivity(), View.OnClickListener {
 
+    /** ボタンの状態をセット */
     abstract fun setButtonState()
+    /** 選択された設定を保存 */
+    abstract fun saveSetting()
 
     /**  */
     lateinit var mPhysicsTimer : PhysicsTimer
@@ -81,6 +84,7 @@ abstract class DrawableSettingActivity : AppCompatActivity(), View.OnClickListen
         when (item.getItemId()) {
             android.R.id.home -> {
                 mPhysicsTimer.stop()
+                saveSetting()
                 this.finish()
                 return true
             }
