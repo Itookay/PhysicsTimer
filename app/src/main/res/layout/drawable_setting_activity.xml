@@ -9,53 +9,37 @@
         android:orientation="vertical">
 
     <SurfaceView
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:id="@+id/svDrawableSetting"
-            app:layout_constraintTop_toTopOf="@+id/ReturnButton"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+        android:id="@+id/svDrawableSetting"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
-            android:visibility="visible" android:id="@+id/ReturnButton"
-            app:layout_constraintHorizontal_bias="0.0" android:background="#00FFFFFF">
-        <Button
-                android:text="&lt;"
-                android:layout_width="72dp"
-                android:layout_height="72dp"
-                android:id="@+id/btReturnSetting"
-                android:layout_margin="10dp"
-                android:visibility="visible"
-                android:textSize="32sp"/>
-    </LinearLayout>
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:background="#00FFFFFF"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-    <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
+        <Button
+            android:id="@+id/btPrevious"
+            style="@style/SettingBottomButtonStyle"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:background="#00FFFFFF"
-            android:id="@+id/linearLayout">
+            android:layout_weight="1"
+            android:text="&lt;&lt;" />
+
         <Button
-                android:text="&lt;&lt;"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/btPrevious"
-                android:layout_weight="1"
-                style="@style/SettingBottomButtonStyle"/>
-        <Button
-                android:text="&gt;&gt;"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/btNext"
-                style="@style/SettingBottomButtonStyle"/>
+            android:id="@+id/btNext"
+            style="@style/SettingBottomButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="&gt;&gt;" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

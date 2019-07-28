@@ -14,11 +14,6 @@ class StyleSettingActivity : DrawableSettingActivity() {
      */
     override fun onClick(view: View?) {
         when(view) {
-            btReturn -> {
-                mPhysicsTimer.stop()
-                Settings(applicationContext).saveStyleByIndex(StyleListIndex)
-                finish()
-            }
             btPrevious -> {
                 val style = Settings(applicationContext).getStyle(--StyleListIndex)
                 mPhysicsTimer.setStyle(style)

@@ -1,9 +1,12 @@
 package itookay.android.org
 
 import android.os.Bundle
-import android.view.View
+import android.view.MenuItem
+import android.view.Window
+import android.view.WindowManager
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
 import androidx.preference.PreferenceFragmentCompat
 
 class SettingsFragment : PreferenceFragmentCompat() {
@@ -19,7 +22,12 @@ class MainSettingActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
+        supportRequestWindowFeature(WindowCompat.FEATURE_ACTION_BAR_OVERLAY)
         setContentView(R.layout.main_settings_activity)
+
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.mainSetting, SettingsFragment())
@@ -29,7 +37,17 @@ class MainSettingActivity : AppCompatActivity() {
         MainSettingLayout = findViewById(R.id.mainSettingLayout)
     }
 
-    override fun onPause() {
-        super.onPause()
+    /**
+     *      アクションバーのボタン処理
+     */
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.getItemId()) {
+            android.R.id.home -> {
+                this.finish()
+                return true
+            }
+            else -> return super.onOptionsItemSelected(item)
+        }
     }
+
 }

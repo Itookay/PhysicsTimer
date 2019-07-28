@@ -4,16 +4,15 @@ import android.app.Activity
 import android.content.Context
 import android.graphics.Point
 import android.os.Bundle
-import android.view.SurfaceView
-import android.view.View
-import android.view.Window
-import android.view.WindowManager
+import android.view.*
 import android.widget.Button
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
 import itookay.android.org.contents.PhysicsTimer
 import itookay.android.org.contents.Scale
 import itookay.android.org.contents.Settings
 
-abstract class DrawableSettingActivity : Activity(), View.OnClickListener {
+abstract class DrawableSettingActivity : AppCompatActivity(), View.OnClickListener {
 
     abstract fun setButtonState()
 
@@ -25,11 +24,9 @@ abstract class DrawableSettingActivity : Activity(), View.OnClickListener {
     /** スタイルリスト配列インデックス */
     var StyleListIndex : Int = 0
 
-    /** リターンボタン */
-    lateinit var btReturn : Button
-    /** 次のフォントボタン */
+    /** 次ボタン */
     lateinit var btNext : Button
-    /** 前のフォントボタン */
+    /** 前ボタン */
     lateinit var btPrevious : Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,7 +34,11 @@ abstract class DrawableSettingActivity : Activity(), View.OnClickListener {
 
         window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
+        supportRequestWindowFeature(WindowCompat.FEATURE_ACTION_BAR_OVERLAY)
+
         setContentView(R.layout.drawable_setting_activity)
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         initButton()
 
         /* 設定のロード */
@@ -66,13 +67,24 @@ abstract class DrawableSettingActivity : Activity(), View.OnClickListener {
      *      ボタンの初期化
      */
     fun initButton() {
-        btReturn = findViewById(R.id.btReturnSetting)
-        btReturn.setOnClickListener(this)
-
         btNext = findViewById(R.id.btNext)
         btNext.setOnClickListener(this)
 
         btPrevious = findViewById(R.id.btPrevious)
         btPrevious.setOnClickListener(this)
+    }
+
+    /**
+     *      アクションバーのボタン処理
+     */
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.getItemId()) {
+            android.R.id.home -> {
+                mPhysicsTimer.stop()
+                this.finish()
+                return true
+            }
+            else -> return super.onOptionsItemSelected(item)
+        }
     }
 }
