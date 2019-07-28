@@ -60,12 +60,13 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
         initNumpadButtonList()
         initControlButton()
         initSurfaceView()
-        /* ------------------- */
+        /* Preference初期化 -- */
+        Settings.setContext(applicationContext)
+        /* ------------------ */
         getDisplayScale()
 
-        val setting = Settings(applicationContext)
-        val font = setting.savedFont
-        val style = setting.savedStyle;
+        val font = Settings.getSavedFont()
+        val style = Settings.getSavedStyle()
 
         mPhysicsTimer = PhysicsTimer(applicationContext)
         mPhysicsTimer.setStyle(style)
@@ -148,9 +149,8 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
             SensorMgr.registerListener(this, sensor, SensorManager.SENSOR_DELAY_UI)
         }
 
-        val setting = Settings(applicationContext)
-        val font = setting.savedFont
-        val style = setting.savedStyle
+        val font = Settings.getSavedFont()
+        val style = Settings.getSavedStyle()
         mPhysicsTimer.setFont(font)
         mPhysicsTimer.setStyle(style)
         mPhysicsTimer.invalidateDrawing()

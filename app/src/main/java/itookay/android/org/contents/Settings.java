@@ -25,7 +25,7 @@ public class Settings {
     /** preferenceキー：サウンド */
     public static String    PREFERENCE_KEY_SOUND = "prekey_sound";
 
-    private Context     mAppContext = null;
+    private static Context     mAppContext = null;
     /** フォントリスト */
     private static List<FontBaseA> mFontList = Arrays.asList(
             new NormalA(),
@@ -40,17 +40,14 @@ public class Settings {
     public static FontBase     DEFAULT_FONT = mFontList.get(0);
     public static StyleBase    DEFAULT_STYLE = mStyleList.get(1);
 
-    /**
-     *      コンストラクタ
-     */
-    public Settings(Context appContext) {
+    public static void setContext(Context appContext) {
         mAppContext = appContext;
     }
 
     /**
      *      SharedPreferenceのフォントを取得
      */
-    public FontBase getSavedFont() {
+    public static FontBase getSavedFont() {
         SharedPreferences   pref = mAppContext.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
         String              fontName = pref.getString(PREFERENCE_KEY_FONT, "");
 
@@ -65,7 +62,7 @@ public class Settings {
     /**
      *      SharedPreferenceのスタイルを取得
      */
-    public StyleBase getSavedStyle() {
+    public static StyleBase getSavedStyle() {
         SharedPreferences   pref =mAppContext.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
         String              StyleName = pref.getString(PREFERENCE_KEY_STYLE, "");
 
@@ -80,7 +77,7 @@ public class Settings {
     /**
      *      フォントを保存
      */
-    public void saveFont(String fontName) {
+    public static void saveFont(String fontName) {
         SharedPreferences   pref = mAppContext.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
         pref.edit().putString(PREFERENCE_KEY_FONT, fontName).apply();
     }
@@ -88,7 +85,7 @@ public class Settings {
     /**
      *      リストインデックスでフォントを保存
      */
-    public void saveFontByIndex(int index) {
+    public static void saveFontByIndex(int index) {
         String  fontName = mFontList.get(index).NAME;
         saveFont(fontName);
     }
@@ -96,7 +93,7 @@ public class Settings {
     /**
      *      スタイルを保存
      */
-    public void saveStyle(String styleName) {
+    public static void saveStyle(String styleName) {
         SharedPreferences   pref = mAppContext.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
         pref.edit().putString(PREFERENCE_KEY_STYLE, styleName).apply();
     }
@@ -104,7 +101,7 @@ public class Settings {
     /**
      *      リストインデックスでスタイルを保存
      */
-    public void saveStyleByIndex(int index) {
+    public static void saveStyleByIndex(int index) {
         String  style = mStyleList.get(index).NAME;
         saveStyle(style);
     }
@@ -112,7 +109,7 @@ public class Settings {
     /**
      *      リストからindex位置のフォントを取得
      */
-    public FontBase getFont(int index) {
+    public static FontBase getFont(int index) {
         if(0 <= index && index < mFontList.size()) {
             return mFontList.get(index);
         }
@@ -124,7 +121,7 @@ public class Settings {
     /**
      *      リストからindex位置のスタイルを取得
      */
-    public StyleBase getStyle(int index) {
+    public static StyleBase getStyle(int index) {
         if(0 <= index && index < mStyleList.size()) {
             return mStyleList.get(index);
         }
@@ -136,7 +133,7 @@ public class Settings {
     /**
      *      保存されたフォントのリスト上でのインデックスを返す
      */
-    public int getSavedFontIndex() {
+    public static int getSavedFontIndex() {
         int     index = 0;
         for(FontBase font : mFontList) {
             if(font.NAME.equals(getSavedFont().NAME)) {
@@ -150,7 +147,7 @@ public class Settings {
     /**
      *      保存されたスタイルのリスト上でのインデックスを返す
      */
-    public int getSavedStyleIndex() {
+    public static int getSavedStyleIndex() {
         int     index = 0;
         for(StyleBase style : mStyleList) {
             if(style.NAME.equals(getSavedStyle().NAME)) {
@@ -161,13 +158,13 @@ public class Settings {
         return -1;
     }
 
-    public void saveSound(String index) {
+    public static void saveSound(String index) {
         SharedPreferences   pref = mAppContext.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
         pref.edit().putString(PREFERENCE_KEY_SOUND, index).apply();
     }
 
-    public int getSavedSound() {
+    public static String getSavedSound() {
         SharedPreferences   pref = mAppContext.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
-        return pref.getInt(PREFERENCE_KEY_SOUND, 1);
+        return pref.getString(PREFERENCE_KEY_SOUND, "");
     }
 }

@@ -9,19 +9,20 @@ class StyleSettingActivity : DrawableSettingActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
+
     /**
      *      ボタンクリック
      */
     override fun onClick(view: View?) {
         when(view) {
             btPrevious -> {
-                val style = Settings(applicationContext).getStyle(--StyleListIndex)
+                val style = Settings.getStyle(--StyleListIndex)
                 mPhysicsTimer.setStyle(style)
                 mPhysicsTimer.invalidateDial();
                 mPhysicsTimer.invalidateDrawing()
             }
             btNext -> {
-                val style = Settings(applicationContext).getStyle(++StyleListIndex)
+                val style = Settings.getStyle(++StyleListIndex)
                 mPhysicsTimer.setStyle(style)
                 mPhysicsTimer.invalidateDial();
                 mPhysicsTimer.invalidateDrawing()
@@ -34,12 +35,11 @@ class StyleSettingActivity : DrawableSettingActivity() {
      *      Prev,Nextボタンの押下可否をセット
      */
     override fun setButtonState() {
-        val setting = Settings(applicationContext)
-        btNext.isEnabled = (setting.getStyle(StyleListIndex + 1) != null)
-        btPrevious.isEnabled = (setting.getStyle(StyleListIndex - 1) != null)
+        btNext.isEnabled = (Settings.getStyle(StyleListIndex + 1) != null)
+        btPrevious.isEnabled = (Settings.getStyle(StyleListIndex - 1) != null)
     }
 
     override fun saveSetting() {
-        Settings(applicationContext).saveStyleByIndex(StyleListIndex)
+        Settings.saveStyleByIndex(StyleListIndex)
     }
 }

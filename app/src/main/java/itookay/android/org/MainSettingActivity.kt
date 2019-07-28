@@ -19,13 +19,18 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
 
-        setSoundListPreference()
+        setSoundList()
+        loadSoundListPreference()
     }
 
+    private fun loadSoundListPreference() {
+        val listPref = findPreference<ListPreference>("sound_pattern")
+        listPref?.setDefaultValue(Settings.getSavedSound())
+    }
     /**
      *
      */
-    private fun setSoundListPreference() {
+    private fun setSoundList() {
         val ringtoneMgr = RingtoneManager(context)
         val cursor = ringtoneMgr.cursor
         val ringtoneEntries = arrayOfNulls<CharSequence>(cursor.count)
@@ -33,7 +38,8 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
         var index = 0
         while(cursor.moveToNext()) {
             ringtoneEntries[index] = cursor.getString(RingtoneManager.TITLE_COLUMN_INDEX)
-            ringtoneEntryValues[index] = cursor.getInt(RingtoneManager.ID_COLUMN_INDEX).toString()
+            ringtoneEntryValues[index] = index.toString()
+//            ringtoneEntryValues[index] = cursor.getInt(RingtoneManager.ID_COLUMN_INDEX).toString()
             index++
         }
 
@@ -45,8 +51,12 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
     }
 
     override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
-        if(newValue is String) {
-            Settings(context).saveSound(newValue)
+        when(preference?.key) {
+            "sound_pattern" -> {
+                if(newValue is String) {
+                    Settings.saveSound(newValue)
+                }
+            }
         }
         return true
     }
