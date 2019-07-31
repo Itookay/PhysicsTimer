@@ -60,8 +60,9 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
         initNumpadButtonList()
         initControlButton()
         initSurfaceView()
-        /* Preference初期化 -- */
+        /* Staticクラス初期化 -- */
         Settings.setContext(applicationContext)
+        RingtoneList.setContext(applicationContext)
         /* ------------------ */
         getDisplayScale()
 

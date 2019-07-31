@@ -68,7 +68,7 @@
         </ListPreference>
 
         <ListPreference
-            app:key="sound_pattern"
+            app:key="@string/preference_key_sound_list"
             app:title="サウンドパターン">
 
         </ListPreference>

@@ -2,6 +2,10 @@ package itookay.android.org.contents;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import itookay.android.org.R;
 import itookay.android.org.font.FontBase;
 import itookay.android.org.font.FontBaseA;
 import itookay.android.org.font.NormalA;
@@ -22,8 +26,6 @@ public class Settings {
     public static String    PREFERENCE_KEY_FONT = "prefkey_font";
     /** preferenceキー：スタイル */
     public static String    PREFERENCE_KEY_STYLE = "prefkey_style";
-    /** preferenceキー：サウンド */
-    public static String    PREFERENCE_KEY_SOUND = "prekey_sound";
 
     private static Context     mAppContext = null;
     /** フォントリスト */
@@ -37,6 +39,7 @@ public class Settings {
             new TwoRowsBigSecond(),
             new TwoRows()
     );
+    /** デフォルト値 */
     public static FontBase     DEFAULT_FONT = mFontList.get(0);
     public static StyleBase    DEFAULT_STYLE = mStyleList.get(1);
 
@@ -156,15 +159,5 @@ public class Settings {
             index++;
         }
         return -1;
-    }
-
-    public static void saveSound(String index) {
-        SharedPreferences   pref = mAppContext.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
-        pref.edit().putString(PREFERENCE_KEY_SOUND, index).apply();
-    }
-
-    public static String getSavedSound() {
-        SharedPreferences   pref = mAppContext.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
-        return pref.getString(PREFERENCE_KEY_SOUND, "");
     }
 }

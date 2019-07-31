@@ -1,60 +1,45 @@
 package itookay.android.org
 
-import android.content.Context
-import android.media.RingtoneManager
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.Window
 import android.view.WindowManager
-import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.WindowCompat
 import androidx.preference.ListPreference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.*
-import itookay.android.org.contents.Settings
+import itookay.android.org.contents.RingtoneList
 
 class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener {
+
+    private var ListPref: ListPreference? = null
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
 
-        setSoundList()
-        loadSoundListPreference()
+        setRingtonePreference()
     }
 
-    private fun loadSoundListPreference() {
-        val listPref = findPreference<ListPreference>("sound_pattern")
-        listPref?.setDefaultValue(Settings.getSavedSound())
-    }
     /**
-     *
+     *      アラームのサウンドリストEntityをセット
      */
-    private fun setSoundList() {
-        val ringtoneMgr = RingtoneManager(context)
-        val cursor = ringtoneMgr.cursor
-        val ringtoneEntries = arrayOfNulls<CharSequence>(cursor.count)
-        val ringtoneEntryValues = arrayOfNulls<CharSequence>(cursor.count)
-        var index = 0
-        while(cursor.moveToNext()) {
-            ringtoneEntries[index] = cursor.getString(RingtoneManager.TITLE_COLUMN_INDEX)
-            ringtoneEntryValues[index] = index.toString()
-//            ringtoneEntryValues[index] = cursor.getInt(RingtoneManager.ID_COLUMN_INDEX).toString()
-            index++
-        }
+    private fun setRingtonePreference() {
+        ListPref = findPreference<ListPreference>(getString(R.string.preference_key_sound_list))
+        ListPref?.entries = RingtoneList.getRingtoneEntityList()
+        ListPref?.entryValues = RingtoneList.getRingtoneEntityValueList()
+        ListPref?.setDefaultValue(RingtoneList.getDefault())
 
-        val listPref = findPreference<ListPreference>("sound_pattern")
-        listPref?.entries = ringtoneEntries
-        listPref?.entryValues = ringtoneEntryValues
+        val value = ListPref?.value
+        ListPref?.summary = RingtoneList.getRingtoneName(Integer.parseInt(value))
 
-        listPref?.setOnPreferenceChangeListener(this)
+        ListPref?.setOnPreferenceChangeListener(this)
     }
 
     override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
         when(preference?.key) {
-            "sound_pattern" -> {
+            getString(R.string.preference_key_sound_list) -> {
                 if(newValue is String) {
-                    Settings.saveSound(newValue)
+                    preference.summary = RingtoneList.getRingtoneName(Integer.parseInt(newValue))
                 }
             }
         }
