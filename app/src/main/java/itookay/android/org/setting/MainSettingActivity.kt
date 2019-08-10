@@ -1,45 +1,40 @@
-package itookay.android.org
+package itookay.android.org.setting
 
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.Window
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.preference.ListPreference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.*
-import itookay.android.org.contents.RingtoneList
 
-class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener {
+import itookay.android.org.R
 
-    private var ListPref: ListPreference? = null
+class MainSettingFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
-
-        setRingtonePreference()
+        findPreference<Preference>(getString(R.string.preference_key_ringtone_list))?.setOnPreferenceClickListener(this)
     }
 
-    /**
-     *      アラームのサウンドリストEntityをセット
-     */
-    private fun setRingtonePreference() {
-        ListPref = findPreference<ListPreference>(getString(R.string.preference_key_sound_list))
-        ListPref?.entries = RingtoneList.getRingtoneEntityList()
-        ListPref?.entryValues = RingtoneList.getRingtoneEntityValueList()
-        ListPref?.setDefaultValue(RingtoneList.getDefault())
-
-        val value = ListPref?.value
-        ListPref?.summary = RingtoneList.getRingtoneName(Integer.parseInt(value))
-
-        ListPref?.setOnPreferenceChangeListener(this)
+    override fun onPreferenceClick(preference: Preference?): Boolean {
+        when(preference?.key) {
+            getString(R.string.preference_key_ringtone_list) -> {
+                fragmentManager
+                    ?.beginTransaction()
+                    ?.add(R.id.mainSettingContainer_sub, RingtoneSettingFragment())
+                    ?.commit()
+            }
+        }
+        return true
     }
 
     override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
         when(preference?.key) {
-            getString(R.string.preference_key_sound_list) -> {
+            getString(R.string.preference_key_ringtone_list) -> {
                 if(newValue is String) {
-                    preference.summary = RingtoneList.getRingtoneName(Integer.parseInt(newValue))
+                    preference.summary = RingtoneList.getRingtoneName(context, Integer.parseInt(newValue))
+
                 }
             }
         }
@@ -58,8 +53,9 @@ class MainSettingActivity : AppCompatActivity() {
 
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.mainSetting, SettingsFragment())
+            .replace(R.id.mainSettingContainer_main, MainSettingFragment())
             .commit()
+
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 

@@ -1,15 +1,13 @@
-package itookay.android.org
+package itookay.android.org.setting
 
-import android.app.Activity
-import android.content.Context
-import android.graphics.Point
 import android.os.Bundle
 import android.view.*
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
+
+import itookay.android.org.R
 import itookay.android.org.contents.PhysicsTimer
-import itookay.android.org.contents.Scale
 import itookay.android.org.contents.Settings
 
 abstract class DrawableSettingActivity : AppCompatActivity(), View.OnClickListener {

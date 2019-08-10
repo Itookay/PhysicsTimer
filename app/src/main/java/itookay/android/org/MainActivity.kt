@@ -12,6 +12,8 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.widget.Button
 import itookay.android.org.contents.*
+import itookay.android.org.setting.MainSettingActivity
+import itookay.android.org.setting.RingtoneList
 
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -62,7 +64,6 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
         initSurfaceView()
         /* Staticクラス初期化 -- */
         Settings.setContext(applicationContext)
-        RingtoneList.setContext(applicationContext)
         /* ------------------ */
         getDisplayScale()
 
@@ -164,10 +165,6 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
      *      センサー値の変化
      */
     override fun onSensorChanged(event:SensorEvent) {
-        if(mPhysicsTimer.state != PhysicsTimer.STATE_PROCESSING) {
-            return;
-        }
-
         if(event.sensor.type == Sensor.TYPE_ACCELEROMETER) {
             val     x:Float = -event.values[0]
             val     y:Float = -event.values[1]

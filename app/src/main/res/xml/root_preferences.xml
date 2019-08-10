@@ -28,7 +28,7 @@
 
                 <intent
                     android:targetPackage="itookay.android.org"
-                    android:targetClass="itookay.android.org.StyleSettingActivity" />
+                    android:targetClass="itookay.android.org.setting.StyleSettingActivity" />
             </Preference>
 
             <Preference
@@ -37,7 +37,7 @@
 
                 <intent
                     android:targetPackage="itookay.android.org"
-                    android:targetClass="itookay.android.org.FontSettingActivity" />
+                    android:targetClass="itookay.android.org.setting.FontSettingActivity" />
             </Preference>
 
             <Preference
@@ -46,7 +46,7 @@
 
                 <intent
                     android:targetPackage="itookay.android.org"
-                    android:targetClass="itookay.android.org.StyleSettingActivity" />
+                    android:targetClass="itookay.android.org.setting.StyleSettingActivity" />
             </Preference>
 
     </PreferenceCategory>
@@ -67,11 +67,16 @@
 
         </ListPreference>
 
-        <ListPreference
-            app:key="@string/preference_key_sound_list"
+        <Preference
+            app:key="@string/preference_key_ringtone_list"
             app:title="サウンドパターン">
 
-        </ListPreference>
+            <!--
+            <intent
+                android:targetPackage="itookay.android.org"
+                android:targetClass="itookay.android.org.setting.RingtoneSettingActivity" />
+            -->
+        </Preference>
 
         <ListPreference
             app:key="vibration_pattern"

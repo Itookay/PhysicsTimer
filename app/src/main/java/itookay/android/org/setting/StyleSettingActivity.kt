@@ -1,14 +1,10 @@
-package itookay.android.org
+package itookay.android.org.setting
 
 import android.os.Bundle
 import android.view.View
 import itookay.android.org.contents.Settings
 
 class StyleSettingActivity : DrawableSettingActivity() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     /**
      *      ボタンクリック
