@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
+import android.net.Uri;
 import itookay.android.org.R;
 
 public class RingtoneList {
@@ -48,5 +49,12 @@ public class RingtoneList {
 
     public static int getDefault() {
         return -1;
+    }
+
+    public static Uri getUri(Context context, int index) {
+        RingtoneManager     ringtoneMgr = new RingtoneManager(context);
+        Cursor              cursor = ringtoneMgr.getCursor();
+        cursor.moveToPosition(index);
+        return ringtoneMgr.getRingtoneUri(cursor.getPosition());
     }
 }
