@@ -169,8 +169,8 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
             val     x:Float = -event.values[0]
             val     y:Float = -event.values[1]
 
-            mPhysicsTimer.setGravity(x, y)
-            checkOrientation(x, y)
+            //mPhysicsTimer.setGravity(x, y)
+            //checkOrientation(x, y)
         }
     }
 

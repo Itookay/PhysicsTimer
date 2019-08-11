@@ -17,6 +17,9 @@ public class DialPanel {
     /** 空白 */
     public static final int		BLANK = 140;
 
+    /** サイズ計算済み */
+    private static boolean      mSizeDefined = false;
+
     /** パネル上側の空白 */
     private static float        NORMAL_UPPER_SPACE = 0f;
     /** パネル左側の空白 */
@@ -90,6 +93,9 @@ public class DialPanel {
      *      DialPanel数字のスペースをセット
      */
     public static void setStaticNormalSpace(float normalUpper, float normalLeft, float normalCenter, float normalRight, float normalBottom) {
+        if(mSizeDefined) {
+            return;
+        }
         NORMAL_UPPER_SPACE = normalUpper;
         NORMAL_LEFT_SPACE = normalLeft;
         NORMAL_CENTER_SPACE = normalCenter;
@@ -101,6 +107,9 @@ public class DialPanel {
      *      DialPanel数字のスペースをセット
      */
     public static void setStaticSmallSpace(float smallUpper, float smallLeft, float smallCenter, float smallRight, float smallBottom) {
+        if(mSizeDefined) {
+            return;
+        }
         SMALL_UPPER_SPACE = smallUpper;
         SMALL_LEFT_SPACE = smallLeft;
         SMALL_CENTER_SPACE = smallCenter;
@@ -113,8 +122,13 @@ public class DialPanel {
      *      サイズはふつうのみ
      */
     public static void setStaticCologneSpace(float left, float right) {
+        if(mSizeDefined) {
+            return;
+        }
         COLOGNE_LEFT_SPACE = left;
         COLOGNE_RIGHT_SPACE = right;
+
+        mSizeDefined = true;
     }
 
     public void setTileBaseArray(int columnCount, int arrayCount) {

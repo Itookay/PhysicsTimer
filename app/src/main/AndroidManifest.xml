@@ -12,9 +12,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".setting.RingtoneSettingActivity"
-            android:label="@string/title_activity_ringtone_setting" />
-        <activity
             android:name=".setting.StyleSettingActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -24,8 +21,7 @@
             android:name=".setting.MainSettingActivity"
             android:label="@string/title_activity_settings" />
         <activity
-            android:name=".MainActivity"
-            android:screenOrientation="portrait">
+            android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

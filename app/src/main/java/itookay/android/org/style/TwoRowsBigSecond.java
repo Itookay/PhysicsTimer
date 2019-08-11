@@ -87,6 +87,10 @@ public class TwoRowsBigSecond extends StyleBase {
         //現在のDial原点位置
         Vec2    c = minute.getPosition();
 
+        x = (Scale.getDisplayWidthMeter() - dialWidth) / 2f;
+        y = Scale.getDisplayHeightMeter() - x;
+
+        /*
         //端末縦向き
         switch(mOrientation) {
             case PhysicsTimer.PORTRAIT:
@@ -105,6 +109,7 @@ public class TwoRowsBigSecond extends StyleBase {
             default:
                 return;
         }
+        */
 
         float   dx = x - c.x;
         float   dy = y - c.y;

@@ -317,8 +317,8 @@ public class PhysicsTimer implements TimeChangedListener {
 
         /* 共通処理 ------------------------ */
         invalidateDrawing();
-        mStyle.setOrientation(orientation);
-        mStyle.rotateDial(mDial.getDialPanelList(), deg);
+        //mStyle.setOrientation(orientation);
+        //mStyle.rotateDial(mDial.getDialPanelList(), deg);
         mOrientation = orientation;
         /* -------------------------------- */
     }

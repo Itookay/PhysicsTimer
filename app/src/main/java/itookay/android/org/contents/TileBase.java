@@ -12,6 +12,8 @@ public class TileBase {
     /** 無効なIDもしくはIndex */
     public static final int		INVALID_ID = -1;
 
+    /** サイズ計算済み */
+    private static boolean      mSizeDefined = false;
     /** ふつうタイルサイズ */
     private static float        NORMAL_SIZE = 0;
     /** ちいさいタイルサイズ */
@@ -61,6 +63,10 @@ public class TileBase {
      * @param spaceScale タイルサイズの内、どれだけをスペースにするか。スペースは左右均等になる
      */
     public static void setStaticSize(float normalTileSize, float spaceScale) {
+        if(mSizeDefined) {
+            return;
+        }
+
         NORMAL_SIZE = normalTileSize;
         NORMAL_SPACE = NORMAL_SIZE * spaceScale / 2f;
         NORMAL_ANCHOR_WIDTH = NORMAL_SIZE / 2f;
@@ -68,6 +74,8 @@ public class TileBase {
         SMALL_SIZE = normalTileSize * Tile.SMALL_RATIO;
         SMALL_SPACE = SMALL_SIZE * spaceScale / 2f;
         SMALL_ANCHOR_WIDTH = SMALL_SIZE / 2f;
+
+        mSizeDefined = true;
     }
 
     /**
