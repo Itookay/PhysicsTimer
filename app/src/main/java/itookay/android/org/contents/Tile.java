@@ -1,10 +1,9 @@
 package itookay.android.org.contents;
 
 import android.graphics.*;
-import org.jbox2d.common.Vec2;
-
 import android.content.res.Resources;
 import itookay.android.org.R;
+import org.jbox2d.common.Vec2;
 
 
 /**

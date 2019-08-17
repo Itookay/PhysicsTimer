@@ -13,7 +13,7 @@ import itookay.android.org.R
 class MainSettingFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        setPreferencesFromResource(R.xml.root_preferences, rootKey)
+        setPreferencesFromResource(R.xml.setting_activity_preferences, rootKey)
         findPreference<Preference>(getString(R.string.preference_key_ringtone_list))?.setOnPreferenceClickListener(this)
     }
 

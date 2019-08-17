@@ -17,7 +17,7 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.constraintlayout.widget.Guideline
 import itookay.android.org.contents.*
 import itookay.android.org.setting.MainSettingActivity
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.main_activity.*
 
 class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, SensorEventListener {
 
@@ -61,7 +61,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
         window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
 
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.main_activity)
 
         /* Numpadの追加 ----------------- */
 //        NumPad = layoutInflater.inflate(R.layout.numpad, null) as LinearLayout

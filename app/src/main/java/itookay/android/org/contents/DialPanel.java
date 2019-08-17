@@ -1,7 +1,6 @@
 package itookay.android.org.contents;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.jbox2d.common.Vec2;
 

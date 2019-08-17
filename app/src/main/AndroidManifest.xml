@@ -19,7 +19,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".setting.MainSettingActivity"
-            android:label="@string/title_activity_settings" />
+            android:label="@string/title_activity_setting" />
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait">

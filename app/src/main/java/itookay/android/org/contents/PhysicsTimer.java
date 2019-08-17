@@ -49,7 +49,7 @@ public class PhysicsTimer implements TimeChangedListener {
     /** R.layout.main_activityから取得したSurfaceView */
     private SurfaceView     mSurfaceViewFromLayout = null;
     /** ワールド管理 */
-    private ControlWorld	mWorld = null;
+    private ControlWorld    mControlWorld = null;
     /** フォント */
     private FontBase		mFont = null;
     /** 表示スタイル */
@@ -104,12 +104,12 @@ public class PhysicsTimer implements TimeChangedListener {
         mDial.initDialPanel();
 
         Vec2	gravity = new Vec2(0f, -10f);
-        mWorld = new ControlWorld(mAppContext, gravity, true);
-        mWorld.setStep(1f/60f, 10, 8);
-        mWorld.createWorld(mStyle.getSmallTileCount(mFont), mStyle.getNormalTileCount(mFont));
-        mWorld.setDebugDial(mDial);
+        mControlWorld = new ControlWorld(mAppContext, gravity, true);
+        mControlWorld.setStep(1f/60f, 10, 8);
+        mControlWorld.createWorld(mStyle.getSmallTileCount(mFont), mStyle.getNormalTileCount(mFont));
 
-        mMainSurface = new MainSurfaceView(mAppContext, mSurfaceViewFromLayout, mWorld);
+        mMainSurface = new MainSurfaceView(mAppContext, mSurfaceViewFromLayout, mControlWorld);
+        mMainSurface.setDebugDial(mDial);
         /* ----------------------------------------------------------------- */
     }
 
@@ -134,7 +134,7 @@ public class PhysicsTimer implements TimeChangedListener {
      */
     public void invalidateDrawing() {
         mDial.clearTime(true);
-        mWorld.clearTime();
+        mControlWorld.clearTime();
     }
 
     public void setSurfaceView(SurfaceView surfaceView) {
@@ -150,7 +150,7 @@ public class PhysicsTimer implements TimeChangedListener {
             /* グラフィカル領域にタイマー表示 */
             TimeWatchingService.setOnTimeChangedListener(this);
             mDial.setTime(mTime);
-            mWorld.invalidate(mDial);
+            mControlWorld.invalidate(mDial);
         }
         catch (Exception ex) {
         }
@@ -202,7 +202,7 @@ public class PhysicsTimer implements TimeChangedListener {
     public void stop() {
         mState = STATE_IDLING;
         TimeWatchingService.stopTimer();
-        mWorld.clearTime();
+        mControlWorld.clearTime();
         mDial.clearTime(false);
     }
 
@@ -235,7 +235,7 @@ public class PhysicsTimer implements TimeChangedListener {
             }
             else {
                 mDial.setTime(new Time(hour, minute, second));
-                mWorld.invalidate(mDial);
+                mControlWorld.invalidate(mDial);
             }
         }
         catch (Exception ex) {
@@ -243,7 +243,7 @@ public class PhysicsTimer implements TimeChangedListener {
     }
 
     public void setGravity(float x, float y) {
-        mWorld.setGravity(x, y);
+        mControlWorld.setGravity(x, y);
     }
 
     /**
@@ -251,11 +251,11 @@ public class PhysicsTimer implements TimeChangedListener {
      *      スタイルの更新時に使用する
      */
     public void invalidateDial() {
-        mWorld.destroyTiles();
+        mControlWorld.destroyTiles();
 
         mDial.setTimerSize();
         mDial.initDialPanel();
-        mWorld.createWorld(mStyle.getSmallTileCount(mFont), mStyle.getNormalTileCount(mFont));
+        mControlWorld.createWorld(mStyle.getSmallTileCount(mFont), mStyle.getNormalTileCount(mFont));
     }
 
     /**

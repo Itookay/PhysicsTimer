@@ -6,8 +6,6 @@ import java.util.Iterator;
 import itookay.android.org.style.StyleBase;
 import itookay.android.org.font.FontBase;
 
-import org.jbox2d.common.Vec2;
-
 public class Dial {
 
     /** フォント */

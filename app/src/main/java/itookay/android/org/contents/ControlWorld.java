@@ -2,7 +2,6 @@ package itookay.android.org.contents;
 
 import java.util.ArrayList;
 
-import android.graphics.*;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.*;
@@ -51,6 +50,10 @@ public class ControlWorld {
 
     World getWorld() {
         return mWorld;
+    }
+
+    BodyList getBodyList() {
+        return mBodyList;
     }
 
     /**
@@ -322,31 +325,6 @@ public class ControlWorld {
     }
 
     /**
-     * 			ボディを描画
-     */
-    void drawBodies(Canvas canvas) {
-        for(Body body : mBodyList.getList()) {
-            Vec2	pos = body.getPosition();
-            Tile    tile = (Tile)body.m_userData;
-            float   size = tile.getSize();
-            Bitmap  bitmap = tile.getBitmap();
-
-            float	scale = Scale.toPixel(size) / bitmap.getWidth();
-            Matrix matrix = new Matrix();
-            matrix.setScale(scale, scale);
-
-            float	x = Scale.toPixel(pos.x - size / 2f);
-            float	y = Scale.toPixel(pos.y - size / 2f);
-            matrix.postTranslate(x, y);
-
-            float	deg = (float)Math.toDegrees(body.getAngle());
-            matrix.preRotate(deg, bitmap.getWidth() / 2.0f, bitmap.getHeight() / 2.0f);
-
-            canvas.drawBitmap(bitmap, matrix, null);
-        }
-    }
-
-    /**
      *      ControlWorldが保持している時間情報を初期化【Dial.clearTime()も呼ぶこと】<br>
      *      ・ディスタンス・ジョイントを全消去<br>
      *      ・TileのIDをクリア<br>
@@ -360,34 +338,6 @@ public class ControlWorld {
             tile.setUniqueId(TileBase.INVALID_ID, TileBase.INVALID_ID);
             setFreeTileFilter(body);
         }
-    }
-
-    /**
-     * 			ジョイントを描画(デバッグ用)
-     */
-    public void debugDraw(Canvas canvas) {
-        Vec2	start = new Vec2();
-        Vec2	end = new Vec2();
-        Paint	paint = new Paint();
-        paint.setColor( Color.BLACK );
-        paint.setStrokeWidth( 1 );
-
-        /* TileBaseのジョイントアンカーを表示 */
-        Paint   paint2 = new Paint();
-        for(DialPanel panel : mDebugDial.getDialPanelList()) {
-            for(TileBase tileBase : panel.getTileBaseList()) {
-                paint2.setColor(Color.RED);
-                Vec2    pos1 = Scale.toPixel(tileBase.getWorldJointPos1());
-                Vec2    pos2 = Scale.toPixel(tileBase.getWorldJointPos2());
-                canvas.drawCircle(pos1.x, pos1.y, 10, paint2);
-                canvas.drawCircle(pos2.x, pos2.y, 10, paint2);
-            }
-        }
-    }
-
-    private Dial        mDebugDial = null;
-    void setDebugDial(Dial dial) {
-        mDebugDial = dial;
     }
 }
 

@@ -2,10 +2,6 @@ package itookay.android.org.contents;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import itookay.android.org.R;
 import itookay.android.org.font.FontBase;
 import itookay.android.org.font.FontBaseA;
 import itookay.android.org.font.NormalA;

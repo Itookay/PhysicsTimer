@@ -1,12 +1,12 @@
 package itookay.android.org.contents;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Matrix;
+import android.graphics.*;
 import android.os.Handler;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.Body;
 
 /**
  * 			描画用サーフェースビュー
@@ -16,7 +16,7 @@ public class MainSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     /** サーフェースホルダー */
     private SurfaceHolder	mHolder = null;
     /** ワールド管理 */
-    private ControlWorld	mWorld = null;
+    private ControlWorld    mControlWorld = null;
     /** 描画スレッド */
     private Runnable		mDrawRunnable = null;
     /** 描画用ハンドラ */
@@ -33,7 +33,7 @@ public class MainSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
         //XMLレイアウトされたSurfaceViewに描画
         mHolder = surfaceView.getHolder();
-        mWorld = world;
+        mControlWorld = world;
 
         mHandler = new Handler();
         mHolder.addCallback(this);
@@ -87,7 +87,7 @@ public class MainSurfaceView extends SurfaceView implements SurfaceHolder.Callba
      */
     public class DrawCanvas implements Runnable {
         /** 次の呼び出し時間 */
-        public final int		DELAY_TIME = Math.round(mWorld.getStep() * 1000);
+        public final int		DELAY_TIME = Math.round(mControlWorld.getStep() * 1000);
 
         @Override
         public void run() {
@@ -98,7 +98,7 @@ public class MainSurfaceView extends SurfaceView implements SurfaceHolder.Callba
          * 			描画メソッド
          */
         public void draw() {
-            mWorld.step();
+            mControlWorld.step();
 
             Canvas		canvas = mHolder.lockCanvas();
             if(canvas == null) {
@@ -118,9 +118,9 @@ public class MainSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             //背景の描画
             drawBackground(canvas);
             //ボディの描画
-            mWorld.drawBodies(canvas);
+            drawBodies(canvas);
             //デバッグ用描画
-            //mWorld.debugDraw(canvas);
+            //mControlWorld.debugDraw(canvas);
 
             mHolder.unlockCanvasAndPost(canvas);
 
@@ -137,7 +137,61 @@ public class MainSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         private void drawBackground(Canvas canvas) {
             canvas.drawColor(Color.WHITE);
         }
+
+        /**
+         * 			ボディを描画
+         */
+        void drawBodies(Canvas canvas) {
+            for(Body body : mControlWorld.getBodyList().getList()) {
+                Vec2 pos = body.getPosition();
+                Tile    tile = (Tile)body.m_userData;
+                float   size = tile.getSize();
+                Bitmap bitmap = tile.getBitmap();
+
+                float	scale = Scale.toPixel(size) / bitmap.getWidth();
+                Matrix matrix = new Matrix();
+                matrix.setScale(scale, scale);
+
+                float	x = Scale.toPixel(pos.x - size / 2f);
+                float	y = Scale.toPixel(pos.y - size / 2f);
+                matrix.postTranslate(x, y);
+
+                float	deg = (float)Math.toDegrees(body.getAngle());
+                matrix.preRotate(deg, bitmap.getWidth() / 2.0f, bitmap.getHeight() / 2.0f);
+
+                canvas.drawBitmap(bitmap, matrix, null);
+            }
+        }
+
+        /**
+         * 			ジョイントを描画(デバッグ用)
+         */
+        public void debugDraw(Canvas canvas) {
+            Vec2	start = new Vec2();
+            Vec2	end = new Vec2();
+            Paint paint = new Paint();
+            paint.setColor( Color.BLACK );
+            paint.setStrokeWidth( 1 );
+
+            /* TileBaseのジョイントアンカーを表示 */
+            Paint   paint2 = new Paint();
+            for(DialPanel panel : mDebugDial.getDialPanelList()) {
+                for(TileBase tileBase : panel.getTileBaseList()) {
+                    paint2.setColor(Color.RED);
+                    Vec2    pos1 = Scale.toPixel(tileBase.getWorldJointPos1());
+                    Vec2    pos2 = Scale.toPixel(tileBase.getWorldJointPos2());
+                    canvas.drawCircle(pos1.x, pos1.y, 10, paint2);
+                    canvas.drawCircle(pos2.x, pos2.y, 10, paint2);
+                }
+            }
+        }
     }
+
+    private Dial        mDebugDial = null;
+    void setDebugDial(Dial dial) {
+        mDebugDial = dial;
+    }
+
 }
 
 

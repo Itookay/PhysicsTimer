@@ -1,24 +1,5 @@
 <resources>
     <string name="app_name">PhysicsTimer</string>
-    <string name="title_activity_setting">Settings</string>
-
-    <!-- Preference Titles -->
-    <string name="messages_header">Messages</string>
-    <string name="sync_header">Sync</string>
-
-    <!-- Messages Preferences -->
-    <string name="signature_title">Your signature</string>
-    <string name="reply_title">Default reply action</string>
-
-    <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails</string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
-    <string name="title_activity_settings">Settings</string>
-
-    <!-- root_preference.xml key -->
-    <string name="preference_key_ringtone_list">pref_key_ringtone_list</string>
 
     <!-- Preference サウンドリスト -->
     <string name="setting_list_ringtone_no_sound">サウンドなし</string>
@@ -28,5 +9,22 @@
     <string name="shared_preference_key_font">pref_key_font</string>
     <string name="shared_preference_key_style">pref_key_style</string>
 
-    <string name="title_activity_ringtone_setting">RingtoneSettingActivity</string>
+    <!-- Activityタイトル -->
+    <string name="title_activity_setting">設定</string>
+
+    <!-- setting_activity_preference 設定タイトル -->
+    <string name="preference_category_design">アプリデザイン</string>
+    <string name="preference_category_notification">通知方法</string>
+    <string name="preference_category_background">バックグラウンド</string>
+    <string name="preference_font">フォント</string>
+    <string name="preference_style">スタイル</string>
+    <string name="preference_sound">サウンド</string>
+    <string name="preference_vibration">振動</string>
+    <string name="preference_volume">音量</string>
+    <string name="preference_notification_time">アラーム動作時間</string>
+    <string name="preference_background_notification">アプリ非表示時の通知方法</string>
+
+    <!-- setting_activity_preference プリファレンスキー -->
+    <string name="preference_key_ringtone_list">pref_key_ringtone_list</string>
+
 </resources>
