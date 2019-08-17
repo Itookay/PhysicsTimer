@@ -91,10 +91,6 @@ public class SingleRow extends StyleBase {
         //現在のDial原点位置
         Vec2 c = minute.getPosition();
 
-        x = (Scale.getDisplayWidthMeter() - dialWidth) / 2f;
-        y = Scale.getDisplayHeightMeter() * 0.7f;
-
-        /*
         //端末縦向き
         switch(mOrientation) {
             case PhysicsTimer.PORTRAIT:
@@ -113,7 +109,6 @@ public class SingleRow extends StyleBase {
             default:
                 return;
         }
-        */
 
         float   dx = x - c.x;
         float   dy = y - c.y;

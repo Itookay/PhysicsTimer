@@ -50,9 +50,13 @@ public class Dial {
      *          TileとDialPanelのサイズも代入。
      */
     public void setTimerSize() {
-        float displayWidth = Scale.getDisplayWidthMeter();
+        /* 端末方向に関わらず短い方の幅を基準にする */
+        float   width = Scale.getDisplayWidthMeter();
+        float   height = Scale.getDisplayHeightMeter();
+        float   standardWidth = height > width ? width : height;
+
         /* DialPanel一枚(数字2文字)が4セクションとしてセクションのサイズを計算 */
-        float   timerWidth = displayWidth * mStyle.getDialWidthRatio();
+        float   timerWidth = standardWidth * mStyle.getDialWidthRatio();
         float   sectionSize = timerWidth / mStyle.getSection();
         float   dialPanelSize = sectionSize * 4;
 

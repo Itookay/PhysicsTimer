@@ -117,6 +117,10 @@ public class PhysicsTimer implements TimeChangedListener {
         return mState;
     }
 
+    public int getOrientation() {
+        return mOrientation;
+    }
+
     /**
      *      タイマーをサービスで起動する<br>デフォルトではtrue
      * @param bindService falseでサービスなし
@@ -317,8 +321,8 @@ public class PhysicsTimer implements TimeChangedListener {
 
         /* 共通処理 ------------------------ */
         invalidateDrawing();
-        //mStyle.setOrientation(orientation);
-        //mStyle.rotateDial(mDial.getDialPanelList(), deg);
+        mStyle.setOrientation(orientation);
+        mStyle.rotateDial(mDial.getDialPanelList(), deg);
         mOrientation = orientation;
         /* -------------------------------- */
     }

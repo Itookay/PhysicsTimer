@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/Numpad_land_right"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btNum3"
+            style="@style/NumpadButton"
+            android:background="@drawable/numpad_state"
+            android:text="3" />
+
+        <Button
+            android:id="@+id/btNum2"
+            style="@style/NumpadButton"
+            android:background="@drawable/numpad_state"
+            android:text="2" />
+
+        <Button
+            android:id="@+id/btNum1"
+            style="@style/NumpadButton"
+            android:background="@drawable/numpad_state"
+            android:text="1" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btNum6"
+            style="@style/NumpadButton"
+            android:background="@drawable/numpad_state"
+            android:text="6" />
+
+        <Button
+            android:id="@+id/btNum5"
+            style="@style/NumpadButton"
+            android:background="@drawable/numpad_state"
+            android:text="5" />
+
+        <Button
+            android:id="@+id/btNum4"
+            style="@style/NumpadButton"
+            android:background="@drawable/numpad_state"
+            android:text="4" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btNum9"
+            style="@style/NumpadButton"
+            android:background="@drawable/numpad_state"
+            android:text="9" />
+
+        <Button
+            android:id="@+id/btNum8"
+            style="@style/NumpadButton"
+            android:background="@drawable/numpad_state"
+            android:text="8" />
+
+        <Button
+            android:id="@+id/btNum7"
+            style="@style/NumpadButton"
+            android:background="@drawable/numpad_state"
+            android:text="7" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btSpace1"
+            style="@style/NumpadButton"
+            android:background="@drawable/numpad_state"
+            android:visibility="invisible" />
+
+        <Button
+            android:id="@+id/btNum0"
+            style="@style/NumpadButton"
+            android:background="@drawable/numpad_state"
+            android:text="0" />
+
+        <Button
+            android:id="@+id/btSpace2"
+            style="@style/NumpadButton"
+            android:background="@drawable/numpad_state"
+            android:visibility="invisible" />
+
+    </LinearLayout>
+
+</LinearLayout>

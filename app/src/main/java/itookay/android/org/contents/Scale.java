@@ -69,15 +69,21 @@ public class Scale {
      * 			メートルでの画面高さをセット
      * @param displayWidthPixel     画面幅
      * @param displayHeightPixel    画面高さ
-     * @param heightInMeter         画面高さのメートル値
+     * @param defaultScaleInMeter   画面高さのメートル値
      */
-    public static void setDisplay(int displayWidthPixel, int displayHeightPixel, int heightInMeter) {
+    public static void setDisplay(int displayWidthPixel, int displayHeightPixel, int defaultScaleInMeter) {
         mDisplayWidthPixel = displayWidthPixel;
         mDisplayHeightPixel = displayHeightPixel;
 
         float		ratio = mDisplayWidthPixel / mDisplayHeightPixel;
-        mDisplayWidthMeter = heightInMeter * ratio;
-        mDisplayHeightMeter = heightInMeter;
+        if(mDisplayHeightPixel > mDisplayWidthPixel) {
+            mDisplayWidthMeter = defaultScaleInMeter * ratio;
+            mDisplayHeightMeter = defaultScaleInMeter;
+        }
+        else {
+            mDisplayHeightMeter = defaultScaleInMeter / ratio;
+            mDisplayWidthMeter = defaultScaleInMeter;
+        }
 
         mRatio = mDisplayHeightPixel / mDisplayHeightMeter;
     }

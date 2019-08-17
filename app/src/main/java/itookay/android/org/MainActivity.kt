@@ -11,10 +11,12 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.widget.Button
+import android.widget.LinearLayout
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
+import androidx.constraintlayout.widget.Guideline
 import itookay.android.org.contents.*
 import itookay.android.org.setting.MainSettingActivity
-import itookay.android.org.setting.RingtoneList
-
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, SensorEventListener {
@@ -27,13 +29,15 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
     /**  */
     private lateinit var mPhysicsTimer : PhysicsTimer
     /** NumPadボタンリスト */
-    lateinit var NumpadButtonList : List<Button>
+    private lateinit var NumpadButtonList : List<Button>
     /** 設定ボタン */
-    lateinit var btSetting : Button
+    private lateinit var btSetting : Button
     /** タイマーストップ表示ボタン */
-    lateinit var btStopTimer : Button
+    private lateinit var btStopTimer : Button
     /** サーフェースビュー */
-    lateinit var svMain : SurfaceView
+    private lateinit var svMain : SurfaceView
+    /**  */
+    private var NumPad : LinearLayout? = null
 
     /** 直前にドラッグしていた番号 */
     private var PreviousDraggingNumber : Int = INVALID_TIME
@@ -58,13 +62,17 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
         requestWindowFeature(Window.FEATURE_NO_TITLE)
 
         setContentView(R.layout.activity_main)
-        /* ビューの初期化 ------ */
-        initNumpadButtonList()
+
+        /* Numpadの追加 ----------------- */
+//        NumPad = layoutInflater.inflate(R.layout.numpad, null) as LinearLayout
+//        val constraintLayout = findViewById<ConstraintLayout>(R.id.MainConstraintLayout)
+//        constraintLayout.addView(NumPad)
+        /* ビューの初期化 ---------------- */
         initControlButton()
         initSurfaceView()
-        /* Staticクラス初期化 -- */
+        /* Staticクラス初期化 ------------ */
         Settings.setContext(applicationContext)
-        /* ------------------ */
+        /* ----------------------------- */
         getDisplayScale()
 
         val font = Settings.getSavedFont()
@@ -79,7 +87,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
 
         /* ForegroundServiceが起動中 --------------- */
         if(TimeWatchingService.isAlive()) {
-            numpadVisivility(false)
+            numpadVisibility(false)
             settingButtonVisibility(false)
             stopTimerButtonVisibility(true)
             mPhysicsTimer.resume()
@@ -122,9 +130,9 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
 
     private fun getDisplayScale() {
         val windowManager = applicationContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        val disp = windowManager.defaultDisplay
+        val display = windowManager.defaultDisplay
         val size = Point()
-        disp.getSize(size)
+        display.getSize(size)
 
         Scale.setDisplay(size.x, size.y, Scale.DISPLAY_HEIGHT_IN_METER)
     }
@@ -169,8 +177,13 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
             val     x:Float = -event.values[0]
             val     y:Float = -event.values[1]
 
-            //mPhysicsTimer.setGravity(x, y)
-            //checkOrientation(x, y)
+            mPhysicsTimer.setGravity(x, y)
+
+            val orientation = getOrientation(x, y)
+            if(orientation != mPhysicsTimer.orientation) {
+                mPhysicsTimer.orientation = orientation
+                setNumpadConstraint(orientation)
+            }
         }
     }
 
@@ -184,30 +197,75 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
     /**
      *      端末向きを検出してDialの向きを変える
      */
-    private fun checkOrientation(X:Float, Y:Float) {
+    private fun getOrientation(X:Float, Y:Float) : Int {
         val gravity = ControlWorld.GRAVITY / 2f;
+        var orientation = PhysicsTimer.PORTRAIT
 
         if(-gravity < X && X < gravity){
             //通常の向き
             if(Y < 0) {
-                mPhysicsTimer.setOrientation(PhysicsTimer.PORTRAIT)
+                orientation = PhysicsTimer.PORTRAIT
             }
             //端末上側が下を向いている
             if(Y > 0) {
                 //ひっくり返したら通常の向きにする
-                mPhysicsTimer.setOrientation(PhysicsTimer.PORTRAIT)
+                orientation = PhysicsTimer.PORTRAIT
             }
         }
         else if(-gravity < Y && Y < gravity) {
             //端末左側が下を向いている
             if(X < 0) {
-                mPhysicsTimer.setOrientation(PhysicsTimer.LEFT_LANDSCAPE)
+                orientation = PhysicsTimer.LEFT_LANDSCAPE
             }
             //端末右側が下を向いている
             if(X > 0) {
-                mPhysicsTimer.setOrientation(PhysicsTimer.RIGHT_LANDSCAPE)
+                orientation = PhysicsTimer.RIGHT_LANDSCAPE
             }
         }
+
+        return orientation
+    }
+
+    private fun setNumpadConstraint(orientation:Int) {
+        val constraintLayout = findViewById<ConstraintLayout>(R.id.MainConstraintLayout)
+        val constraintSet = ConstraintSet()
+        val upperGuideline = findViewById<Guideline>(R.id.numpadGuidelineUpper)
+        val bottomGuideline = findViewById<Guideline>(R.id.numpadGuidelineBottom)
+
+        constraintSet.clone(constraintLayout)
+        if(NumPad != null) {
+            constraintLayout.removeViewInLayout(NumPad)
+        }
+
+        when(orientation) {
+            PhysicsTimer.PORTRAIT -> {
+                NumPad = layoutInflater.inflate(R.layout.numpad, null) as LinearLayout
+                constraintLayout.addView(NumPad,1)
+                constraintSet.connect((NumPad as LinearLayout).id, ConstraintSet.TOP, bottomGuideline.id, ConstraintSet.TOP)
+                constraintSet.connect((NumPad as LinearLayout).id, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT)
+                constraintSet.connect((NumPad as LinearLayout).id, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT)
+                constraintSet.connect((NumPad as LinearLayout).id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+            }
+            PhysicsTimer.RIGHT_LANDSCAPE -> {
+                NumPad = layoutInflater.inflate(R.layout.numpad_land_right, null) as LinearLayout
+                constraintLayout.addView(NumPad, 1)
+                constraintSet.connect((NumPad as LinearLayout).id, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
+                constraintSet.connect((NumPad as LinearLayout).id, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT)
+                constraintSet.connect((NumPad as LinearLayout).id, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT)
+                constraintSet.connect((NumPad as LinearLayout).id, ConstraintSet.BOTTOM, numpadGuidelineUpper.id, ConstraintSet.BOTTOM)
+            }
+            PhysicsTimer.LEFT_LANDSCAPE -> {
+                NumPad = layoutInflater.inflate(R.layout.numpad_land_left, null) as LinearLayout
+                constraintLayout.addView(NumPad ,1)
+                constraintSet.connect((NumPad as LinearLayout).id, ConstraintSet.TOP, bottomGuideline.id, ConstraintSet.TOP)
+                constraintSet.connect((NumPad as LinearLayout).id, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT)
+                constraintSet.connect((NumPad as LinearLayout).id, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT)
+                constraintSet.connect((NumPad as LinearLayout).id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+            }
+        }
+
+        constraintSet.applyTo(constraintLayout)
+        initNumpadButtonList()
     }
 
     /*
@@ -231,7 +289,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
     override fun onTouch(view: View?, event: MotionEvent?): Boolean {
         if(mPhysicsTimer.state == PhysicsTimer.STATE_FINISHED) {
             mPhysicsTimer.stop()
-            numpadVisivility(true)
+            numpadVisibility(true)
             settingButtonVisibility(true)
             return true;
         }
@@ -259,7 +317,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
                 mPhysicsTimer.start()
 
                 //Numpadを非表示
-                numpadVisivility(false)
+                numpadVisibility(false)
                 //タイマーストップボタンを表示
                 stopTimerButtonVisibility(true)
                 //設定ボタンを非表示
@@ -315,7 +373,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
                 startActivity(intent)
             }
             btStopTimer -> {
-                numpadVisivility(true)
+                numpadVisibility(true)
                 stopTimerButtonVisibility(false)
                 settingButtonVisibility(true)
                 mPhysicsTimer.stop()
@@ -326,12 +384,12 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
     /*
      *          Numpadの表示・非表示
      */
-    fun numpadVisivility(visivility: Boolean) {
-        if(visivility) {
-            NumPad.visibility = View.VISIBLE
+    fun numpadVisibility(visibility: Boolean) {
+        if(visibility) {
+            NumPad?.visibility = View.VISIBLE
         }
         else {
-            NumPad.visibility = View.INVISIBLE
+            NumPad?.visibility = View.INVISIBLE
         }
     }
 
