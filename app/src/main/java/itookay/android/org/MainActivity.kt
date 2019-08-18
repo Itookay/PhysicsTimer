@@ -15,9 +15,9 @@ import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.constraintlayout.widget.Guideline
+
 import itookay.android.org.contents.*
 import itookay.android.org.setting.MainSettingActivity
-import kotlinx.android.synthetic.main.main_activity.*
 
 class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, SensorEventListener {
 
@@ -64,9 +64,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
         setContentView(R.layout.main_activity)
 
         /* Numpadの追加 ----------------- */
-//        NumPad = layoutInflater.inflate(R.layout.numpad, null) as LinearLayout
-//        val constraintLayout = findViewById<ConstraintLayout>(R.id.MainConstraintLayout)
-//        constraintLayout.addView(NumPad)
+          // Numpadの初期化は(センサー値によって)端末の方向が判明した時に行う
         /* ビューの初期化 ---------------- */
         initControlButton()
         initSurfaceView()
@@ -252,7 +250,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
                 constraintSet.connect((NumPad as LinearLayout).id, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
                 constraintSet.connect((NumPad as LinearLayout).id, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT)
                 constraintSet.connect((NumPad as LinearLayout).id, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT)
-                constraintSet.connect((NumPad as LinearLayout).id, ConstraintSet.BOTTOM, numpadGuidelineUpper.id, ConstraintSet.BOTTOM)
+                constraintSet.connect((NumPad as LinearLayout).id, ConstraintSet.BOTTOM, upperGuideline.id, ConstraintSet.BOTTOM)
             }
             PhysicsTimer.LEFT_LANDSCAPE -> {
                 NumPad = layoutInflater.inflate(R.layout.numpad_land_left, null) as LinearLayout

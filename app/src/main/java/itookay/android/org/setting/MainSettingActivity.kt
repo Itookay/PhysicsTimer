@@ -1,9 +1,11 @@
 package itookay.android.org.setting
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.Window
 import android.view.WindowManager
+import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.*
@@ -14,16 +16,15 @@ class MainSettingFragment : PreferenceFragmentCompat(), Preference.OnPreferenceC
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.setting_activity_preferences, rootKey)
-        findPreference<Preference>(getString(R.string.preference_key_ringtone_list))?.setOnPreferenceClickListener(this)
+        findPreference<Preference>(getString(R.string.preference_key_ringtone_list))?.onPreferenceClickListener =this
     }
 
     override fun onPreferenceClick(preference: Preference?): Boolean {
         when(preference?.key) {
             getString(R.string.preference_key_ringtone_list) -> {
-                fragmentManager
-                    ?.beginTransaction()
-                    ?.add(R.id.mainSettingContainer_sub, RingtoneSettingFragment())
-                    ?.commit()
+                /* ワイド画面用のXMLレイアウトがロードされていればフラグメントで表示 */
+                val isDualPane = activity?.findViewById<FrameLayout>(R.id.mainSettingContainer_sub) != null
+                showRingtoneList(isDualPane)
             }
         }
         return true
@@ -40,6 +41,23 @@ class MainSettingFragment : PreferenceFragmentCompat(), Preference.OnPreferenceC
         }
         return true
     }
+
+    /**
+     *      サウンドリスト表示
+     */
+    private fun showRingtoneList(isDualPane:Boolean) {
+        if(isDualPane) {
+            fragmentManager
+                ?.beginTransaction()
+                ?.add(R.id.mainSettingContainer_sub, RingtoneListFragment())
+                ?.commit()
+        }
+        else {
+            val intent = Intent()
+            intent.setClass(activity, RingtoneListActivity::class.java)
+            startActivity(intent)
+        }
+    }
 }
 
 class MainSettingActivity : AppCompatActivity() {
@@ -53,7 +71,7 @@ class MainSettingActivity : AppCompatActivity() {
 
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.mainSettingContainer_main, MainSettingFragment())
+            .replace(R.id.mainSettingContainer, MainSettingFragment())
             .commit()
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -63,12 +81,12 @@ class MainSettingActivity : AppCompatActivity() {
      *      アクションバーのボタン処理
      */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.getItemId()) {
+        when (item.itemId) {
             android.R.id.home -> {
                 this.finish()
                 return true
             }
-            else -> return super.onOptionsItemSelected(item)
         }
+        return super.onOptionsItemSelected(item)
     }
 }

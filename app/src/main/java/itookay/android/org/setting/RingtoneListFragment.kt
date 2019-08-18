@@ -10,15 +10,14 @@ import android.widget.ArrayAdapter
 import android.widget.ListView
 import androidx.fragment.app.ListFragment
 
-class RingtoneSettingFragment : ListFragment(), AdapterView.OnItemClickListener {
+class RingtoneListFragment : ListFragment(), AdapterView.OnItemClickListener {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val adapter = ArrayAdapter<String>(context, android.R.layout.simple_list_item_single_choice, RingtoneList.getRingtoneList(context))
-        listAdapter = adapter
+        listAdapter = ArrayAdapter<String>(context, android.R.layout.simple_list_item_single_choice, RingtoneList.getRingtoneList(context))
         listView.choiceMode = ListView.CHOICE_MODE_SINGLE
-        listView.setOnItemClickListener(this)
+        listView.onItemClickListener = this
     }
 
     override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
