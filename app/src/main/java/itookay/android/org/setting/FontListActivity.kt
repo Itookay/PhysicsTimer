@@ -11,19 +11,20 @@ import android.widget.ArrayAdapter
 import android.widget.ListView
 import itookay.android.org.R
 
-class RingtoneListActivity : AppCompatActivity() {
+class FontListActivity : AppCompatActivity(), AdapterView.OnItemClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
-        setContentView(R.layout.ringtone_list_activity)
+        setContentView(R.layout.font_list_activity)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val listView = findViewById<ListView>(R.id.ringtoneListView)
-        listView.adapter = ArrayAdapter<String>(applicationContext, android.R.layout.simple_list_item_single_choice, RingtoneList.getRingtoneList(applicationContext))
+        val listView = findViewById<ListView>(R.id.fontListView)
+        listView.adapter = FontListAdapter(this, resources)
         listView.choiceMode = ListView.CHOICE_MODE_SINGLE
+        listView.onItemClickListener = this
     }
 
     /**
@@ -37,5 +38,15 @@ class RingtoneListActivity : AppCompatActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        var index = 0
+        if(position == 0) {
+            return
+        }
+        else {
+            index = position - 1
+        }
     }
 }

@@ -28,7 +28,7 @@
 
         <Button
             android:id="@+id/btPrevious"
-            style="@style/SettingBottomButtonStyle"
+            style="@style/SettingButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -36,7 +36,7 @@
 
         <Button
             android:id="@+id/btNext"
-            style="@style/SettingBottomButtonStyle"
+            style="@style/SettingButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="&gt;&gt;" />

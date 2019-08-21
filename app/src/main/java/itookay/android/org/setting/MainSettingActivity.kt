@@ -17,14 +17,21 @@ class MainSettingFragment : PreferenceFragmentCompat(), Preference.OnPreferenceC
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.setting_activity_preferences, rootKey)
         findPreference<Preference>(getString(R.string.preference_key_ringtone_list))?.onPreferenceClickListener =this
+        findPreference<Preference>(getString(R.string.preference_key_font_list))?.onPreferenceClickListener = this
     }
 
     override fun onPreferenceClick(preference: Preference?): Boolean {
+        //ワイド画面用のXMLレイアウトがロードされていればフラグメントで表示
+        val isDualPane = activity?.findViewById<FrameLayout>(R.id.mainSettingContainer_sub) != null
+
         when(preference?.key) {
+            //サウンドリスト
             getString(R.string.preference_key_ringtone_list) -> {
-                /* ワイド画面用のXMLレイアウトがロードされていればフラグメントで表示 */
-                val isDualPane = activity?.findViewById<FrameLayout>(R.id.mainSettingContainer_sub) != null
                 showRingtoneList(isDualPane)
+            }
+            //フォントリスト
+            getString(R.string.preference_key_font_list) -> {
+                showFontList(isDualPane)
             }
         }
         return true
@@ -58,8 +65,29 @@ class MainSettingFragment : PreferenceFragmentCompat(), Preference.OnPreferenceC
             startActivity(intent)
         }
     }
+
+    /**
+     *      フォントリスト表示
+     */
+    private fun showFontList(isDualPane: Boolean) {
+        if(isDualPane) {
+            fragmentManager
+                ?.beginTransaction()
+                ?.add(R.id.mainSettingContainer_sub, FontListFragment())
+                ?.commit()
+        }
+        else {
+            val intent = Intent()
+            intent.setClass(activity, FontListActivity::class.java)
+            startActivity(intent)
+        }
+    }
 }
 
+/**
+ *      MainSettingActivity
+ *      起動直後にフラグメントを表示し処理する
+ */
 class MainSettingActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

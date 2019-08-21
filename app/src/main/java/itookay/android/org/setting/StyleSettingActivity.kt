@@ -1,8 +1,6 @@
 package itookay.android.org.setting
 
-import android.os.Bundle
 import android.view.View
-import itookay.android.org.contents.Settings
 
 class StyleSettingActivity : DrawableSettingActivity() {
 
@@ -36,6 +34,6 @@ class StyleSettingActivity : DrawableSettingActivity() {
     }
 
     override fun saveSetting() {
-        Settings.saveStyleByIndex(StyleListIndex)
+        Settings.saveStyleByIndex(applicationContext, StyleListIndex)
     }
 }

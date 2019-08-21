@@ -22,14 +22,10 @@
         app:key="design_category"
         app:title="@string/preference_category_design">
 
+        <!-- フォントリスト -->
         <Preference
-            app:key="activity"
-            app:title="@string/preference_font">
-
-            <intent
-                android:targetPackage="itookay.android.org"
-                android:targetClass="itookay.android.org.setting.FontSettingActivity" />
-        </Preference>
+            app:key="@string/preference_key_font_list"
+            app:title="@string/preference_font"/>
 
         <Preference
             app:key="activity"
@@ -46,10 +42,10 @@
         app:key="notification_category"
         app:title="@string/preference_category_notification">
 
+        <!-- サウンドリスト -->
         <Preference
             app:key="@string/preference_key_ringtone_list"
-            app:title="@string/preference_sound">
-        </Preference>
+            app:title="@string/preference_sound"/>
 
         <ListPreference
             app:key="sound_volume"

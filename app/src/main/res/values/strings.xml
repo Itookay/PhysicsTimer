@@ -26,5 +26,9 @@
 
     <!-- setting_activity_preference プリファレンスキー -->
     <string name="preference_key_ringtone_list">pref_key_ringtone_list</string>
+    <string name="preference_key_font_list">pref_key_font_list</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

@@ -1,4 +1,4 @@
-package itookay.android.org.contents;
+package itookay.android.org.setting;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -23,7 +23,6 @@ public class Settings {
     /** preferenceキー：スタイル */
     public static String    PREFERENCE_KEY_STYLE = "prefkey_style";
 
-    private static Context     mAppContext = null;
     /** フォントリスト */
     private static List<FontBaseA> mFontList = Arrays.asList(
             new NormalA(),
@@ -36,21 +35,21 @@ public class Settings {
             new TwoRows()
     );
     /** デフォルト値 */
-    public static FontBase     DEFAULT_FONT = mFontList.get(0);
+    public static FontBaseA    DEFAULT_FONT = mFontList.get(0);
     public static StyleBase    DEFAULT_STYLE = mStyleList.get(1);
 
-    public static void setContext(Context appContext) {
-        mAppContext = appContext;
+    public static List<FontBaseA> getFontList() {
+        return mFontList;
     }
 
     /**
      *      SharedPreferenceのフォントを取得
      */
-    public static FontBase getSavedFont() {
-        SharedPreferences   pref = mAppContext.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
+    public static FontBaseA getSavedFont(Context context) {
+        SharedPreferences   pref = context.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
         String              fontName = pref.getString(PREFERENCE_KEY_FONT, "");
 
-        for(FontBase font : mFontList) {
+        for(FontBaseA font : mFontList) {
             if(fontName.equals(font.NAME)) {
                 return font;
             }
@@ -61,8 +60,8 @@ public class Settings {
     /**
      *      SharedPreferenceのスタイルを取得
      */
-    public static StyleBase getSavedStyle() {
-        SharedPreferences   pref =mAppContext.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
+    public static StyleBase getSavedStyle(Context context) {
+        SharedPreferences   pref = context.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
         String              StyleName = pref.getString(PREFERENCE_KEY_STYLE, "");
 
         for(StyleBase style : mStyleList) {
@@ -76,33 +75,33 @@ public class Settings {
     /**
      *      フォントを保存
      */
-    public static void saveFont(String fontName) {
-        SharedPreferences   pref = mAppContext.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
+    public static void saveFont(Context context, String fontName) {
+        SharedPreferences   pref = context.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
         pref.edit().putString(PREFERENCE_KEY_FONT, fontName).apply();
     }
 
     /**
      *      リストインデックスでフォントを保存
      */
-    public static void saveFontByIndex(int index) {
+    public static void saveFontByIndex(Context context, int index) {
         String  fontName = mFontList.get(index).NAME;
-        saveFont(fontName);
+        saveFont(context, fontName);
     }
 
     /**
      *      スタイルを保存
      */
-    public static void saveStyle(String styleName) {
-        SharedPreferences   pref = mAppContext.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
+    public static void saveStyle(Context context, String styleName) {
+        SharedPreferences   pref = context.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
         pref.edit().putString(PREFERENCE_KEY_STYLE, styleName).apply();
     }
 
     /**
      *      リストインデックスでスタイルを保存
      */
-    public static void saveStyleByIndex(int index) {
+    public static void saveStyleByIndex(Context context, int index) {
         String  style = mStyleList.get(index).NAME;
-        saveStyle(style);
+        saveStyle(context, style);
     }
 
     /**
@@ -132,10 +131,10 @@ public class Settings {
     /**
      *      保存されたフォントのリスト上でのインデックスを返す
      */
-    public static int getSavedFontIndex() {
+    public static int getSavedFontIndex(Context context) {
         int     index = 0;
         for(FontBase font : mFontList) {
-            if(font.NAME.equals(getSavedFont().NAME)) {
+            if(font.NAME.equals(getSavedFont(context).NAME)) {
                 return index;
             }
             index++;
@@ -146,10 +145,10 @@ public class Settings {
     /**
      *      保存されたスタイルのリスト上でのインデックスを返す
      */
-    public static int getSavedStyleIndex() {
+    public static int getSavedStyleIndex(Context context) {
         int     index = 0;
         for(StyleBase style : mStyleList) {
-            if(style.NAME.equals(getSavedStyle().NAME)) {
+            if(style.NAME.equals(getSavedStyle(context).NAME)) {
                 return index;
             }
             index++;

@@ -18,6 +18,7 @@ import androidx.constraintlayout.widget.Guideline
 
 import itookay.android.org.contents.*
 import itookay.android.org.setting.MainSettingActivity
+import itookay.android.org.setting.Settings
 
 class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, SensorEventListener {
 
@@ -68,13 +69,11 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
         /* ビューの初期化 ---------------- */
         initControlButton()
         initSurfaceView()
-        /* Staticクラス初期化 ------------ */
-        Settings.setContext(applicationContext)
         /* ----------------------------- */
         getDisplayScale()
 
-        val font = Settings.getSavedFont()
-        val style = Settings.getSavedStyle()
+        val font = Settings.getSavedFont(applicationContext)
+        val style = Settings.getSavedStyle(applicationContext)
 
         mPhysicsTimer = PhysicsTimer(applicationContext)
         mPhysicsTimer.setStyle(style)
@@ -157,8 +156,8 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
             SensorMgr.registerListener(this, sensor, SensorManager.SENSOR_DELAY_UI)
         }
 
-        val font = Settings.getSavedFont()
-        val style = Settings.getSavedStyle()
+        val font = Settings.getSavedFont(applicationContext)
+        val style = Settings.getSavedStyle(applicationContext)
         mPhysicsTimer.setFont(font)
         mPhysicsTimer.setStyle(style)
         mPhysicsTimer.invalidateDrawing()

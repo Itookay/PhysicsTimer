@@ -12,7 +12,7 @@ public abstract class FontBase implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/** フォント名 */
-	public String		NAME = null;
+	public static String		NAME = null;
 
 	public int[]		NONE = null;
 	public int[]		ONE = null;

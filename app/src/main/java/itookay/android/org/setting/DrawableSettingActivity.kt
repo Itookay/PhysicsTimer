@@ -8,7 +8,6 @@ import androidx.core.view.WindowCompat
 
 import itookay.android.org.R
 import itookay.android.org.contents.PhysicsTimer
-import itookay.android.org.contents.Settings
 
 abstract class DrawableSettingActivity : AppCompatActivity(), View.OnClickListener {
 
@@ -43,11 +42,11 @@ abstract class DrawableSettingActivity : AppCompatActivity(), View.OnClickListen
         initButton()
 
         /* 設定のロード */
-        val font = Settings.getSavedFont()
-        val style = Settings.getSavedStyle()
+        val font = Settings.getSavedFont(applicationContext)
+        val style = Settings.getSavedStyle(applicationContext)
 
-        FontListIndex = Settings.getSavedFontIndex()
-        StyleListIndex = Settings.getSavedStyleIndex()
+        FontListIndex = Settings.getSavedFontIndex(applicationContext)
+        StyleListIndex = Settings.getSavedStyleIndex(applicationContext)
 
         setButtonState()
 
