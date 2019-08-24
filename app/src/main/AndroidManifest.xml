@@ -17,9 +17,6 @@
             android:name=".setting.StyleSettingActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".setting.FontSettingActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".setting.MainSettingActivity"
             android:label="@string/title_activity_setting" />
         <activity
