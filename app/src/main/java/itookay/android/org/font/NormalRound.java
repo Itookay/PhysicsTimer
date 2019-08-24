@@ -1,10 +1,10 @@
 package itookay.android.org.font;
 
-public class NormalRoundA extends FontBase {
+public class NormalRound extends FontBase {
 
     private static final long serialVersionUID = 1L;
 
-    public NormalRoundA() {
+    public NormalRound() {
         NAME = "Normal Round A";
 
         COLUMN_COUNT = 4;

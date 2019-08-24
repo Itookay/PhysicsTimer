@@ -1,11 +1,11 @@
 package itookay.android.org.font;
 
-public class NormalB extends FontBase {
+public class RegularRound extends FontBase {
 
     private static final long serialVersionUID = 1L;
 
-    public NormalB() {
-        NAME = "Normal B";
+    public RegularRound() {
+        NAME = "Normal Round B";
 
         COLUMN_COUNT = 4;
         SEPARATE_COLUMN_COUNT = 1;
@@ -13,17 +13,17 @@ public class NormalB extends FontBase {
         ARRAY_SIZE = COLUMN_COUNT * ROW_COUNT;
 
         int[]	zero =
-                {	1, 1, 1, 1,
+                {	0, 1, 1, 0,
                     1, 0, 0, 1,
                     1, 0, 0, 1,
                     1, 0, 0, 1,
                     1, 0, 0, 1,
                     1, 0, 0, 1,
-                    1, 1, 1, 1	};
+                    0, 1, 1, 0	};
         ZERO = zero.clone();
 
         int[]	one =
-                {	0, 1, 1, 0,
+                {	0, 0, 1, 0,
                     0, 0, 1, 0,
                     0, 0, 1, 0,
                     0, 0, 1, 0,
@@ -33,57 +33,57 @@ public class NormalB extends FontBase {
         ONE = one.clone();
 
         int[]	two =
-                {	1, 1, 1, 1,
+                {	1, 1, 1, 0,
                     0, 0, 0, 1,
                     0, 0, 0, 1,
-                    1, 1, 1, 1,
+                    0, 1, 1, 0,
                     1, 0, 0, 0,
                     1, 0, 0, 0,
-                    1, 1, 1, 1 };
+                    0, 1, 1, 1 };
         TWO = two.clone();
 
         int[]	three=
-                {	1, 1, 1, 1,
+                {	1, 1, 1, 0,
                     0, 0, 0, 1,
                     0, 0, 0, 1,
-                    1, 1, 1, 1,
+                    1, 1, 1, 0,
                     0, 0, 0, 1,
                     0, 0, 0, 1,
-                    1, 1, 1, 1	};
+                    1, 1, 1, 0	};
         THREE = three.clone();
 
         int[]	four =
                 {	1, 0, 0, 1,
                     1, 0, 0, 1,
                     1, 0, 0, 1,
-                    1, 1, 1, 1,
+                    0, 1, 1, 1,
                     0, 0, 0, 1,
                     0, 0, 0, 1,
                     0, 0, 0, 1	};
         FOUR = four.clone();
 
         int[]	five =
-                {	1, 1, 1, 1,
+                {	0, 1, 1, 1,
                     1, 0, 0, 0,
                     1, 0, 0, 0,
-                    1, 1, 1, 1,
+                    0, 1, 1, 0,
                     0, 0, 0, 1,
                     0, 0, 0, 1,
-                    1, 1, 1, 1	};
+                    1, 1, 1, 0	};
         FIVE = five.clone();
 
         int[]	six =
-                {	1, 1, 1, 1,
+                {	0, 1, 1, 1,
                     1, 0, 0, 0,
                     1, 0, 0, 0,
-                    1, 1, 1, 1,
+                    1, 1, 1, 0,
                     1, 0, 0, 1,
                     1, 0, 0, 1,
-                    1, 1, 1, 1	};
+                    0, 1, 1, 0	};
         SIX = six.clone();
 
         int[]	seven =
-                {	1, 1, 1, 1,
+                {	1, 1, 1, 0,
                     0, 0, 0, 1,
                     0, 0, 0, 1,
                     0, 0, 0, 1,
@@ -93,20 +93,20 @@ public class NormalB extends FontBase {
         SEVEN = seven.clone();
 
         int[]	eight =
-                {	1, 1, 1, 1,
+                {	0, 1, 1, 0,
                     1, 0, 0, 1,
                     1, 0, 0, 1,
-                    1, 1, 1, 1,
+                    0, 1, 1, 0,
                     1, 0, 0, 1,
                     1, 0, 0, 1,
-                    1, 1, 1, 1	};
+                    0, 1, 1, 0	};
         EIGHT = eight.clone();
 
         int[]	nine =
-                {	1, 1, 1, 1,
+                {	0, 1, 1, 0,
                     1, 0, 0, 1,
                     1, 0, 0, 1,
-                    1, 1, 1, 1,
+                    0, 1, 1, 1,
                     0, 0, 0, 1,
                     0, 0, 0, 1,
                     0, 0, 0, 1	};

@@ -4,14 +4,10 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import itookay.android.org.R;
-import itookay.android.org.font.FontBase;
-import itookay.android.org.font.NormalA;
-import itookay.android.org.font.NormalRoundA;
 
 /**
  *          フォントをまとめちゃってるクラス
@@ -22,10 +18,10 @@ public class Fonts {
 
     private static List<FontBase> fontList() {
         return Arrays.asList(
-            new NormalA(),
-            new NormalRoundA(),
-            new NormalB(),
-            new NormalRoundB()
+            new Normal(),
+            new NormalRound(),
+            new Regular(),
+            new RegularRound()
         );
     }
 
