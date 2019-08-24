@@ -5,7 +5,7 @@ public class RegularRound extends FontBase {
     private static final long serialVersionUID = 1L;
 
     public RegularRound() {
-        NAME = "Normal Round B";
+        NAME = "Regular Round";
 
         COLUMN_COUNT = 4;
         SEPARATE_COLUMN_COUNT = 1;

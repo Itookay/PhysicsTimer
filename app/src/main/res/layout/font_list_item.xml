@@ -33,7 +33,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="80dp"
                 android:scaleType="fitStart"
-                app:srcCompat="@drawable/normal_a"
+                app:srcCompat="@drawable/normal"
                 android:contentDescription="Font image"/>
 
         </LinearLayout>

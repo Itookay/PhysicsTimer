@@ -21,16 +21,22 @@ public class Fonts {
             new Normal(),
             new NormalRound(),
             new Regular(),
-            new RegularRound()
+            new RegularRound(),
+            new Wide(),
+            new WideCorner(),
+            new SnowMan()
         );
     }
 
     private static List<Bitmap> fontBitmapList(Resources res) {
         return Arrays.asList(
-            BitmapFactory.decodeResource(res, R.drawable.normal_a),
-            BitmapFactory.decodeResource(res, R.drawable.normal_round_a),
-            BitmapFactory.decodeResource(res, R.drawable.normal_b),
-            BitmapFactory.decodeResource(res, R.drawable.normal_round_b)
+            BitmapFactory.decodeResource(res, R.drawable.normal),
+            BitmapFactory.decodeResource(res, R.drawable.normal_round),
+            BitmapFactory.decodeResource(res, R.drawable.regular),
+            BitmapFactory.decodeResource(res, R.drawable.regular_round),
+            BitmapFactory.decodeResource(res, R.drawable.wide),
+            BitmapFactory.decodeResource(res, R.drawable.wide_corner),
+                BitmapFactory.decodeResource(res, R.drawable.snowman)
         );
     }
 

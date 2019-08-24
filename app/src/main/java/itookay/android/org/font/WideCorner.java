@@ -1,11 +1,11 @@
 package itookay.android.org.font;
 
-public class Wide extends FontBase {
+public class WideCorner extends FontBase {
 
     private static final long serialVersionUID = 1L;
 
-    public Wide() {
-        NAME = "Wide";
+    public WideCorner() {
+        NAME = "Wide Corner";
 
         COLUMN_COUNT = 6;
         SEPARATE_COLUMN_COUNT = 1;
@@ -13,17 +13,17 @@ public class Wide extends FontBase {
         ARRAY_SIZE = COLUMN_COUNT * ROW_COUNT;
 
         int[]	zero =
-                {	0, 1, 1, 1, 1, 0,
+                {	1, 1, 1, 1, 1, 1,
                     1, 0, 0, 0, 0, 1,
                     1, 0, 0, 0, 0, 1,
                     1, 0, 0, 0, 0, 1,
                     1, 0, 0, 0, 0, 1,
                     1, 0, 0, 0, 0, 1,
-                    0, 1, 1, 1, 1, 0 };
+                    1, 1, 1, 1, 1, 1 };
         ZERO = zero.clone();
 
         int[]	one =
-                {	0, 0, 1, 0, 0, 0,
+                {	0, 0, 1, 1, 0, 0,
                     0, 0, 0, 1, 0, 0,
                     0, 0, 0, 1, 0, 0,
                     0, 0, 0, 1, 0, 0,
@@ -33,7 +33,7 @@ public class Wide extends FontBase {
         ONE = one.clone();
 
         int[]	two =
-                {	0, 1, 1, 1, 1, 0,
+                {	1, 1, 1, 1, 1, 1,
                     1, 0, 0, 0, 0, 1,
                     0, 0, 0, 0, 0, 1,
                     0, 0, 0, 0, 1, 0,
@@ -43,13 +43,13 @@ public class Wide extends FontBase {
         TWO = two.clone();
 
         int[]	three=
-                {	0, 1, 1, 1, 1, 0,
+                {	1, 1, 1, 1, 1, 1,
                     1, 0, 0, 0, 0, 1,
                     0, 0, 0, 0, 0, 1,
                     0, 0, 1, 1, 1, 0,
                     0, 0, 0, 0, 0, 1,
                     1, 0, 0, 0, 0, 1,
-                    0, 1, 1, 1, 1, 0 };
+                    1, 1, 1, 1, 1, 1 };
         THREE = three.clone();
 
         int[]	four =
@@ -63,27 +63,27 @@ public class Wide extends FontBase {
         FOUR = four.clone();
 
         int[]	five =
-                {	0, 1, 1, 1, 1, 0,
+                {	1, 1, 1, 1, 1, 1,
                     1, 0, 0, 0, 0, 1,
                     1, 0, 0, 0, 0, 0,
-                    0, 1, 1, 1, 1, 0,
+                    1, 1, 1, 1, 1, 1,
                     0, 0, 0, 0, 0, 1,
                     1, 0, 0, 0, 0, 1,
-                    0, 1, 1, 1, 1, 0 };
+                    1, 1, 1, 1, 1, 1 };
         FIVE = five.clone();
 
         int[]	six =
-                {	0, 1, 1, 1, 1, 0,
+                {	1, 1, 1, 1, 1, 1,
                     1, 0, 0, 0, 0, 1,
                     1, 0, 0, 0, 0, 0,
-                    1, 1, 1, 1, 1, 0,
+                    1, 1, 1, 1, 1, 1,
                     1, 0, 0, 0, 0, 1,
                     1, 0, 0, 0, 0, 1,
-                    0, 1, 1, 1, 1, 0 };
+                    1, 1, 1, 1, 1, 1 };
         SIX = six.clone();
 
         int[]	seven =
-                {	1, 1, 1, 1, 1, 0,
+                {	1, 1, 1, 1, 1, 1,
                     0, 0, 0, 0, 0, 1,
                     0, 0, 0, 0, 0, 1,
                     0, 0, 0, 0, 1, 0,
@@ -93,23 +93,23 @@ public class Wide extends FontBase {
         SEVEN = seven.clone();
 
         int[]	eight =
-                {	0, 1, 1, 1, 1, 0,
+                {	1, 1, 1, 1, 1, 1,
                     1, 0, 0, 0, 0, 1,
                     1, 0, 0, 0, 0, 1,
-                    0, 1, 1, 1, 1, 0,
+                    1, 1, 1, 1, 1, 1,
                     1, 0, 0, 0, 0, 1,
                     1, 0, 0, 0, 0, 1,
-                    0, 1, 1, 1, 1, 0 };
+                    1, 1, 1, 1, 1, 1 };
         EIGHT = eight.clone();
 
         int[]	nine =
-                {	0, 1, 1, 1, 1, 0,
+                {	1, 1, 1, 1, 1, 1,
                     1, 0, 0, 0, 0, 1,
                     1, 0, 0, 0, 0, 1,
-                    0, 1, 1, 1, 1, 0,
+                    1, 1, 1, 1, 1, 1,
                     0, 0, 0, 0, 0, 1,
                     1, 0, 0, 0, 0, 1,
-                    0, 1, 1, 1, 1, 0 };
+                    1, 1, 1, 1, 1, 1 };
         NINE = nine.clone();
 
         int[]	none =

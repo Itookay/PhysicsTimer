@@ -5,7 +5,7 @@ public class Normal extends FontBase {
 	private static final long serialVersionUID = 1L;
 
 	public Normal() {
-		NAME = "Normal A";
+		NAME = "Normal";
 
 		COLUMN_COUNT = 4;
 		SEPARATE_COLUMN_COUNT = 1;

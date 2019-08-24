@@ -259,7 +259,7 @@ public class Dial {
         int[]	b = mFont.getNumber(num[1]);
 
         int     column = mFont.getOneNumberColumnCount();
-        return conbine(a, b, column, column);
+        return combine(a, b, column, column);
     }
 
     /*
@@ -296,7 +296,7 @@ public class Dial {
      * 			引数の配列を[array1 array2]の並びで1つの配列に結合<br>
      * 			配列の行数は同じであること
      */
-    public int[] conbine( int[] array1, int[] array2, int columnCount1, int columnCount2 ) {
+    public int[] combine(int[] array1, int[] array2, int columnCount1, int columnCount2 ) {
 
         int[]	ret = new int[ array1.length + array2.length ];
         int		len = ret.length;
