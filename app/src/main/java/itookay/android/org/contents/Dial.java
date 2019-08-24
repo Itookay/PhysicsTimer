@@ -74,7 +74,7 @@ public class Dial {
         bottom *= scale;
         DialPanel.setStaticSmallSpace(upper, left, center, right, bottom);
 
-        //DialPanelスペースサイズからスペースサイズを除く
+        //DialPanelサイズからスペースサイズを除く
         float       dialPanelSizeWithoutSpace = dialPanelSize - dialPanelSpace;
         //タイル一枚のサイズ
         float   normalTileSize = dialPanelSizeWithoutSpace / mFont.getTwoNumbersColumnsCount();

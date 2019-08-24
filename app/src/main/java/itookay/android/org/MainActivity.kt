@@ -263,6 +263,10 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
 
         constraintSet.applyTo(constraintLayout)
         initNumpadButtonList()
+
+        if(TimeWatchingService.isAlive()) {
+            numpadVisibility(false);
+        }
     }
 
     /*

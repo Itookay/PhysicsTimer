@@ -20,8 +20,6 @@ public class Tile {
     /** ふつうサイズのタイルに対してちいさいのの比 */
     public static final float  SMALL_RATIO = 0.7f;
 
-    /** サイズ計算済み */
-    private static boolean      mSizeDefined = false;
     /** ふつうタイルサイズ */
     private static float        NORMAL_SIZE = 0f;
     /** ちいさいタイルサイズ */
@@ -76,10 +74,6 @@ public class Tile {
      * @param spaceScale タイルサイズの内、どれだけをスペースにするか。スペースは左右均等になる
      */
     static void setStaticSize(float normalTileSize, float spaceScale) {
-        if(mSizeDefined) {
-            return;
-        }
-
         NORMAL_SIZE = normalTileSize;
         NORMAL_SPACE = NORMAL_SIZE * spaceScale / 2f;
         NORMAL_ANCHOR_WIDTH = NORMAL_SIZE / 2f;
@@ -87,8 +81,6 @@ public class Tile {
         SMALL_SIZE = normalTileSize * SMALL_RATIO;
         SMALL_SPACE = SMALL_SIZE * spaceScale / 2f;
         SMALL_ANCHOR_WIDTH = SMALL_SIZE / 2f;
-
-        mSizeDefined = true;
     }
 
     /**

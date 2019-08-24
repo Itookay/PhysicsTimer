@@ -76,6 +76,7 @@ public class PhysicsTimer implements TimeChangedListener {
         mStyle = style;
         if(mDial != null) {
             mDial.setStyle(mStyle);
+            mDial.setTimerSize();
         }
     }
 
