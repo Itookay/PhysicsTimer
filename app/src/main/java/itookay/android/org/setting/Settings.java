@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import itookay.android.org.font.FontBase;
 import itookay.android.org.font.FontBase;
+import itookay.android.org.font.Fonts;
 import itookay.android.org.font.NormalA;
 import itookay.android.org.font.NormalRoundA;
 import itookay.android.org.style.SingleRow;
@@ -23,11 +24,6 @@ public class Settings {
     /** preferenceキー：スタイル */
     public static String    PREFERENCE_KEY_STYLE = "prefkey_style";
 
-    /** フォントリスト */
-    private static List<FontBase> mFontList = Arrays.asList(
-            new NormalA(),
-            new NormalRoundA()
-    );
     /** スタイルリスト */
     private static List<StyleBase> mStyleList = Arrays.asList(
             new SingleRow(),
@@ -35,12 +31,7 @@ public class Settings {
             new TwoRows()
     );
     /** デフォルト値 */
-    public static FontBase    DEFAULT_FONT = mFontList.get(0);
     public static StyleBase    DEFAULT_STYLE = mStyleList.get(1);
-
-    public static List<FontBase> getFontList() {
-        return mFontList;
-    }
 
     /**
      *      SharedPreferenceのフォントを取得
@@ -49,12 +40,12 @@ public class Settings {
         SharedPreferences   pref = context.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
         String              fontName = pref.getString(PREFERENCE_KEY_FONT, "");
 
-        for(FontBase font : mFontList) {
+        for(FontBase font : Fonts.getList()) {
             if(fontName.equals(font.NAME)) {
                 return font;
             }
         }
-        return DEFAULT_FONT;
+        return Fonts.getDefault();
     }
 
     /**
@@ -84,8 +75,7 @@ public class Settings {
      *      リストインデックスでフォントを保存
      */
     public static void saveFontByIndex(Context context, int index) {
-        String  fontName = mFontList.get(index).NAME;
-        saveFont(context, fontName);
+        saveFont(context, Fonts.getName(index));
     }
 
     /**
@@ -105,18 +95,6 @@ public class Settings {
     }
 
     /**
-     *      リストからindex位置のフォントを取得
-     */
-    public static FontBase getFont(int index) {
-        if(0 <= index && index < mFontList.size()) {
-            return mFontList.get(index);
-        }
-        else {
-            return null;
-        }
-    }
-
-    /**
      *      リストからindex位置のスタイルを取得
      */
     public static StyleBase getStyle(int index) {
@@ -132,14 +110,15 @@ public class Settings {
      *      保存されたフォントのリスト上でのインデックスを返す
      */
     public static int getSavedFontIndex(Context context) {
-        int     index = 0;
-        for(FontBase font : mFontList) {
-            if(font.NAME.equals(getSavedFont(context).NAME)) {
+        int         index = 0;
+        String      name = getSavedFont(context).NAME;
+        for(FontBase font : Fonts.getList()) {
+            if(font.NAME.equals(name)) {
                 return index;
             }
             index++;
         }
-        return -1;
+        return Fonts.getDefaultIndex();
     }
 
     /**

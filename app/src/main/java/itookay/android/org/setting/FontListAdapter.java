@@ -9,24 +9,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import itookay.android.org.R;
-import itookay.android.org.font.NormalA;
-import itookay.android.org.font.NormalRoundA;
+import itookay.android.org.font.Fonts;
 
 public class FontListAdapter extends BaseAdapter {
 
-    private final int   mFontCount = Settings.getFontList().size();
+    private final int   mFontCount = Fonts.getList().size();
 
-    private String[]    mFontNameList = new String[mFontCount];
-    private Bitmap[]    mFontBitmapList = new Bitmap[mFontCount];
     private LayoutInflater  mInflater = null;
-    private String          mSelectedFontName = "";
     private RadioButton[]   mRadioButtons = new RadioButton[mFontCount];
+    private Resources       mResources = null;
+    private Context         mContext = null;
 
     public FontListAdapter(Context context, Resources res) {
         mInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        mFontBitmapList[0] = BitmapFactory.decodeResource(res, R.drawable.normal_a);
-        mFontBitmapList[1] = BitmapFactory.decodeResource(res, R.drawable.normal_round_a);
+        mResources = res;
+        mContext = context;
     }
 
     @Override
@@ -36,7 +33,7 @@ public class FontListAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        return mFontBitmapList[position];
+        return Fonts.getBitmap(mResources, position);
     }
 
     @Override
@@ -51,28 +48,33 @@ public class FontListAdapter extends BaseAdapter {
         ImageView       imageView = itemView.findViewById(R.id.ivFont);
         RadioButton     radioButton = itemView.findViewById(R.id.rbFont);
 
-        textView.setText(mFontNameList[position]);
-        imageView.setImageBitmap(mFontBitmapList[position]);
+        textView.setText(Fonts.getName(position));
+        imageView.setImageBitmap(Fonts.getBitmap(mResources, position));
 
         /*
-         *      onClickedクラス
+         *      リストアイテムのonClickedクラス
          */
         class onClicked implements View.OnClickListener {
             @Override
             public void onClick(View v) {
-                mSelectedFontName = mFontNameList[position];
+                //全てのラジオボタンのチェックを外す
                 for(RadioButton radio : mRadioButtons) {
                     radio.setChecked(false);
                 }
-                mRadioButtons[position].setChecked(true);
-            }
 
+                mRadioButtons[position].setChecked(true);
+                Settings.saveFontByIndex(mContext, position);
+            }
         }
 
         radioButton.setOnClickListener(new onClicked());
         imageView.setOnClickListener(new onClicked());
 
         mRadioButtons[position] = radioButton;
+        //Preferenceから復元
+        if(position == Settings.getSavedFontIndex(mContext)) {
+            mRadioButtons[position].setChecked(true);
+        }
 
         return itemView;
     }

@@ -7,6 +7,7 @@ import android.view.Window
 import android.view.WindowManager
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.ListFragment
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.*
 
@@ -24,14 +25,23 @@ class MainSettingFragment : PreferenceFragmentCompat(), Preference.OnPreferenceC
         //ワイド画面用のXMLレイアウトがロードされていればフラグメントで表示
         val isDualPane = activity?.findViewById<FrameLayout>(R.id.mainSettingContainer_sub) != null
 
+        /* (表示しているのがあれば)フラグメントを削除 */
+        val fragment = fragmentManager?.findFragmentById(R.id.mainSettingContainer_sub)
+        if(fragment != null) {
+            fragmentManager
+                ?.beginTransaction()
+                ?.remove(fragment)
+                ?.commit()
+        }
+
         when(preference?.key) {
             //サウンドリスト
             getString(R.string.preference_key_ringtone_list) -> {
-                showRingtoneList(isDualPane)
+                showSubContainerList(isDualPane, RingtoneListActivity::class.java, RingtoneListFragment())
             }
             //フォントリスト
             getString(R.string.preference_key_font_list) -> {
-                showFontList(isDualPane)
+                showSubContainerList(isDualPane, FontListActivity::class.java, FontListFragment())
             }
         }
         return true
@@ -50,35 +60,18 @@ class MainSettingFragment : PreferenceFragmentCompat(), Preference.OnPreferenceC
     }
 
     /**
-     *      サウンドリスト表示
+     *      サブコンテナにフラグメント表示
      */
-    private fun showRingtoneList(isDualPane:Boolean) {
+    private fun showSubContainerList(isDualPane: Boolean, cls: Class<*>, listFragment: ListFragment) {
         if(isDualPane) {
             fragmentManager
                 ?.beginTransaction()
-                ?.add(R.id.mainSettingContainer_sub, RingtoneListFragment())
+                ?.add(R.id.mainSettingContainer_sub, listFragment)
                 ?.commit()
         }
         else {
             val intent = Intent()
-            intent.setClass(activity, RingtoneListActivity::class.java)
-            startActivity(intent)
-        }
-    }
-
-    /**
-     *      フォントリスト表示
-     */
-    private fun showFontList(isDualPane: Boolean) {
-        if(isDualPane) {
-            fragmentManager
-                ?.beginTransaction()
-                ?.add(R.id.mainSettingContainer_sub, FontListFragment())
-                ?.commit()
-        }
-        else {
-            val intent = Intent()
-            intent.setClass(activity, FontListActivity::class.java)
+            intent.setClass(activity, cls)
             startActivity(intent)
         }
     }

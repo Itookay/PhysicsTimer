@@ -14,7 +14,7 @@ public abstract class FontBase implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/** フォント名 */
-	public static String		NAME = null;
+	public String		NAME = null;
 
 	int[]		ONE = null;
 	int[]		TWO= null;

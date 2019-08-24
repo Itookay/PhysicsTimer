@@ -15,7 +15,9 @@ class FontListFragment : ListFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        listAdapter = FontListAdapter(activity, resources)
+        val adapter = FontListAdapter(activity, resources)
+        listAdapter = adapter
         listView.choiceMode = ListView.CHOICE_MODE_SINGLE
+        listView.setSelection(Settings.getSavedFontIndex(context))
     }
 }

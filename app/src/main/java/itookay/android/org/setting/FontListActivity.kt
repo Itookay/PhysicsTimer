@@ -3,15 +3,14 @@ package itookay.android.org.setting
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
-import android.view.View
 import android.view.Window
 import android.view.WindowManager
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.ListView
 import itookay.android.org.R
 
-class FontListActivity : AppCompatActivity(), AdapterView.OnItemClickListener {
+class FontListActivity : AppCompatActivity() {
+
+    lateinit var mAdapter : FontListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,9 +21,9 @@ class FontListActivity : AppCompatActivity(), AdapterView.OnItemClickListener {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val listView = findViewById<ListView>(R.id.fontListView)
-        listView.adapter = FontListAdapter(this, resources)
+        mAdapter = FontListAdapter(this, resources)
+        listView.adapter = mAdapter
         listView.choiceMode = ListView.CHOICE_MODE_SINGLE
-        listView.onItemClickListener = this
     }
 
     /**
@@ -38,15 +37,5 @@ class FontListActivity : AppCompatActivity(), AdapterView.OnItemClickListener {
             }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        var index = 0
-        if(position == 0) {
-            return
-        }
-        else {
-            index = position - 1
-        }
     }
 }
