@@ -22,15 +22,19 @@ public class Fonts {
 
     private static List<FontBase> fontList() {
         return Arrays.asList(
-                new NormalA(),
-                new NormalRoundA()
+            new NormalA(),
+            new NormalRoundA(),
+            new NormalB(),
+            new NormalRoundB()
         );
     }
 
     private static List<Bitmap> fontBitmapList(Resources res) {
         return Arrays.asList(
-                BitmapFactory.decodeResource(res, R.drawable.normal_a),
-                BitmapFactory.decodeResource(res, R.drawable.normal_round_a)
+            BitmapFactory.decodeResource(res, R.drawable.normal_a),
+            BitmapFactory.decodeResource(res, R.drawable.normal_round_a),
+            BitmapFactory.decodeResource(res, R.drawable.normal_b),
+            BitmapFactory.decodeResource(res, R.drawable.normal_round_b)
         );
     }
 
