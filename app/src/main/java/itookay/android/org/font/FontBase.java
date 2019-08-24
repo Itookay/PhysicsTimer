@@ -1,5 +1,7 @@
 package itookay.android.org.font;
 
+import itookay.android.org.contents.DialPanel;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -14,34 +16,28 @@ public abstract class FontBase implements Serializable {
 	/** フォント名 */
 	public static String		NAME = null;
 
-	public int[]		NONE = null;
-	public int[]		ONE = null;
-	public int[]		TWO= null;
-	public int[]		THREE = null;
-	public int[]		FOUR = null;
-	public int[]		FIVE = null;
-	public int[]		SIX = null;
-	public int[]		SEVEN = null;
-	public int[]		EIGHT = null;
-	public int[]		NINE = null;
-	public int[]		ZERO = null;
-	/** 区切りなし */
-	public int[]		BLANK = null;
+	int[]		ONE = null;
+	int[]		TWO= null;
+	int[]		THREE = null;
+	int[]		FOUR = null;
+	int[]		FIVE = null;
+	int[]		SIX = null;
+	int[]		SEVEN = null;
+	int[]		EIGHT = null;
+	int[]		NINE = null;
+	int[]		ZERO = null;
+	int[]		NONE = null;
+
+	int		COLUMN_COUNT = -1;
+	int		SEPARATE_COLUMN_COUNT = -1;
+	int		ROW_COUNT = -1;
+	int		ARRAY_SIZE = COLUMN_COUNT * ROW_COUNT;
+
 	/** 時と分の区切り */
 	public int[]		COLOGNE = null;
-	/** 分と秒の区切り */
-	public int[]		DOT = null;
 
 	/** フォント配列を入れるリスト */
 	protected ArrayList<int[]>	fontArray = new ArrayList<int[]>();
-	/** 数字1文字分の配列のカラム数を取得 */
-	public abstract int getOneNumberColumnCount();
-	/** 数字2文字分の配列のカラムを取得 */
-	public abstract	int	getTwoNumbersColumnsCount();
-	/** DialPanel 1枚に必要なタイルのカラム数を取得<br>数字・コロンで適切な数を取得。DialPanel.MINUTE, SECOND, COLOGNE */
-	public abstract int getDialPanelColumnCount(int format);
-	/** DialPanel 1枚に必要なタイルの数を取得<br>数字・コロンで適切な数を取得。DialPanel.MINUTE, SECOND, COLOGNE */
-	public abstract int getDialPanelArrayCount(int format);
 
 	public FontBase() {
 	}
@@ -66,39 +62,41 @@ public abstract class FontBase implements Serializable {
 	}
 
 	/**
-	 * 			ドット（セパレート）を取得
+	 * 		数字1文字分のカラム数を返す
 	 */
-	public int[] getDot() {
-		return DOT;
+	public int getOneNumberColumnCount() {
+		return COLUMN_COUNT;
 	}
 
 	/**
-	 * 			空白のセパレート（セパレートなし）を取得
+	 * 		数字2文字分のカラム数を返す
 	 */
-	public int[] getBlankSeparate() {
-		return BLANK;
+	public int getTwoNumbersColumnsCount() {
+		return COLUMN_COUNT * 2;
 	}
 
-	/**
-	 * 			数字1文字あたりの平均必要タイル数を取得
-	 */
-	public int getAverageTileCount() {
-		Iterator<int[]>  it = fontArray.iterator();
-		int[]	font = null;
-		int		count = 0;
-		int		length = 0;
-		while( it.hasNext() == true ) {
-			font = it.next();
-			length = font.length;
-
-			for( int i = 0; i < length; i++ ) {
-				if( font[i] == 1 ) {
-					count++;
-				}
-			}
+	public int getDialPanelColumnCount(int format) {
+		if(format == DialPanel.MINUTE || format == DialPanel.SECOND) {
+			return COLUMN_COUNT * 2;
 		}
+		else if(format == DialPanel.COLOGNE) {
+			return SEPARATE_COLUMN_COUNT;
+		}
+		else {
+			return 0;
+		}
+	}
 
-		return count / fontArray.size();
+	public int getDialPanelArrayCount(int format) {
+		if(format == DialPanel.MINUTE || format == DialPanel.SECOND) {
+			return ARRAY_SIZE * 2;
+		}
+		else if(format == DialPanel.COLOGNE) {
+			return SEPARATE_COLUMN_COUNT * ROW_COUNT;
+		}
+		else {
+			return 0;
+		}
 	}
 }
 

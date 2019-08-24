@@ -287,10 +287,8 @@ public class Dial {
         switch (separator) {
             case DialPanel.COLOGNE :
                 return mFont.COLOGNE;
-            case DialPanel.BLANK :
-                return mFont.BLANK;
             default :
-                return mFont.BLANK;
+                return mFont.COLOGNE;
         }
     }
 

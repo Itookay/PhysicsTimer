@@ -3,7 +3,7 @@ package itookay.android.org.setting;
 import android.content.Context;
 import android.content.SharedPreferences;
 import itookay.android.org.font.FontBase;
-import itookay.android.org.font.FontBaseA;
+import itookay.android.org.font.FontBase;
 import itookay.android.org.font.NormalA;
 import itookay.android.org.font.NormalRoundA;
 import itookay.android.org.style.SingleRow;
@@ -24,7 +24,7 @@ public class Settings {
     public static String    PREFERENCE_KEY_STYLE = "prefkey_style";
 
     /** フォントリスト */
-    private static List<FontBaseA> mFontList = Arrays.asList(
+    private static List<FontBase> mFontList = Arrays.asList(
             new NormalA(),
             new NormalRoundA()
     );
@@ -35,21 +35,21 @@ public class Settings {
             new TwoRows()
     );
     /** デフォルト値 */
-    public static FontBaseA    DEFAULT_FONT = mFontList.get(0);
+    public static FontBase    DEFAULT_FONT = mFontList.get(0);
     public static StyleBase    DEFAULT_STYLE = mStyleList.get(1);
 
-    public static List<FontBaseA> getFontList() {
+    public static List<FontBase> getFontList() {
         return mFontList;
     }
 
     /**
      *      SharedPreferenceのフォントを取得
      */
-    public static FontBaseA getSavedFont(Context context) {
+    public static FontBase getSavedFont(Context context) {
         SharedPreferences   pref = context.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
         String              fontName = pref.getString(PREFERENCE_KEY_FONT, "");
 
-        for(FontBaseA font : mFontList) {
+        for(FontBase font : mFontList) {
             if(fontName.equals(font.NAME)) {
                 return font;
             }
