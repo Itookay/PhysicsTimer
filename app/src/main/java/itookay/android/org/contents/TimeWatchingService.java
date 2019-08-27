@@ -41,12 +41,17 @@ public class TimeWatchingService extends Service {
     private static boolean         mIsAlive = false;
     /** コールバック有効 */
     private static boolean         mCallbackAvailability = true;
-    /** 通知 */
-    private Notification    mNotification = null;
     /** サービスの停止 */
     private static boolean         mStopService = false;
     /** ForegroundServiceで起動するか */
     private boolean         mBindService = true;
+
+    /** 通知 */
+//    private Notification    mNotification = null;
+    /** 通知チャンネルID */
+    private String          mChannelId = "";
+    /**  */
+    private int             mNotificationId = 1;
 
     @Nullable
     @Override
@@ -56,7 +61,6 @@ public class TimeWatchingService extends Service {
 
     @Override
     public void onCreate() {
-
     }
 
     @Override
@@ -65,9 +69,8 @@ public class TimeWatchingService extends Service {
         setTime(info.Time);
 
         /* 通知を表示 */
-        String      channelId = "PhysicsTimer_Channel";
-        setNotificationChannel(channelId);
-        mNotification = getNotification(channelId);
+        mChannelId = "PhysicsTimer_Channel";
+        setNotificationChannel();
 
         startTimer(true);
 
@@ -79,28 +82,39 @@ public class TimeWatchingService extends Service {
         removeCallback();
     }
 
-    public void setNotificationChannel(String channelId) {
-        NotificationManager     notificationMgr = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+    public void setNotificationChannel() {
+        NotificationManager     notificationMgr = getSystemService(NotificationManager.class);
         String      name = "Physics Timer Notification Channel";
         String      description = "It is Physics Timer Notification.";
-        if(notificationMgr.getNotificationChannel(channelId) != null) {
-            NotificationChannel     channel = new NotificationChannel(channelId, name, NotificationManager.IMPORTANCE_DEFAULT);
+        if(notificationMgr.getNotificationChannel(mChannelId) == null) {
+            NotificationChannel     channel = new NotificationChannel(mChannelId, name, NotificationManager.IMPORTANCE_LOW);
             channel.setDescription(description);
+            //通知時に無音化(変更にはアプリの再インストールor新しいチャンネルID必要)
+            channel.setSound(null, null);
             notificationMgr.createNotificationChannel(channel);
         }
     }
 
-    public Notification getNotification(String channelId) {
+    /**
+     *      Notificationを表示
+     * @param title タイトル
+     * @param text タイマーカウントを表示
+     * @return
+     */
+    public Notification setNotification(String title, String text) {
         /* 通知をタップした時に起動するActivity */
         Intent      intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent   pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId)
-                .setContentTitle("Physics Timer Title")
-                .setContentText("タイマー動作中です。")
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setContentIntent(pendingIntent);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, mChannelId)
+            .setContentTitle(title)
+            .setContentText(text)
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setContentIntent(pendingIntent)
+            //音・振動による通知は最初のみ
+            .setOnlyAlertOnce(true);
+
         return builder.build();
     }
 
@@ -127,11 +141,13 @@ public class TimeWatchingService extends Service {
         mBindService = bindService;
         mCallbackAvailability = true;
         if(mObserver != null) {
+            if(mBindService) {
+                String      title = getText(R.string.notification_title).toString();
+                startForeground(1, setNotification(title, ""));
+            }
+
             mRunnable.run();
             mIsAlive = true;
-            if(mBindService) {
-                startForeground(1, mNotification);
-            }
         }
     }
 
@@ -168,6 +184,13 @@ public class TimeWatchingService extends Service {
                 if(mCallbackAvailability) {
                     mObserver.onTimeChanged(0, mMinute, mSecond);
                 }
+
+                /* Notificationの更新 */
+                String      title = getString(R.string.notification_title).toString();
+                String      text = getString(R.string.notification_text) + " " + Integer.toString(mMinute) + ":" + Integer.toString(mSecond);
+                NotificationManager     notificationMgr = getSystemService(NotificationManager.class);
+                notificationMgr.notify(mNotificationId, setNotification(title, text));
+
                 mHandler.postDelayed(mRunnable, DELAY_TIME);
             }
         }

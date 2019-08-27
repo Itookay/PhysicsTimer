@@ -34,6 +34,6 @@ class StyleSettingActivity : DrawableSettingActivity() {
     }
 
     override fun saveSetting() {
-        Settings.saveStyleByIndex(applicationContext, StyleListIndex)
+        Settings.saveStyleIndex(applicationContext, StyleListIndex)
     }
 }

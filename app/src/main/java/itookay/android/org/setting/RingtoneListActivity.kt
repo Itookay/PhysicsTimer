@@ -1,5 +1,6 @@
 package itookay.android.org.setting
 
+import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
@@ -11,7 +12,10 @@ import android.widget.ArrayAdapter
 import android.widget.ListView
 import itookay.android.org.R
 
-class RingtoneListActivity : AppCompatActivity() {
+class RingtoneListActivity : AppCompatActivity(), AdapterView.OnItemClickListener {
+
+    /** サウンド再生用のMediaPlayer */
+    private var mMediaPlayer : MediaPlayer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,6 +28,29 @@ class RingtoneListActivity : AppCompatActivity() {
         val listView = findViewById<ListView>(R.id.ringtoneListView)
         listView.adapter = ArrayAdapter<String>(applicationContext, android.R.layout.simple_list_item_single_choice, RingtoneList.getRingtoneList(applicationContext))
         listView.choiceMode = ListView.CHOICE_MODE_SINGLE
+        listView.onItemClickListener = this
+        val index = Settings.getSavedRingtoneIndex(applicationContext)
+        listView.setItemChecked(index, true)
+    }
+
+    override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        var index = 0
+        if(position == 0) {
+            return
+        }
+        else {
+            index = position - 1
+        }
+
+        //他のサウンドを再生中なら停止
+        if(mMediaPlayer != null) {
+            mMediaPlayer?.stop()
+        }
+
+        Settings.saveRingtoneIndex(applicationContext, index)
+
+        mMediaPlayer = RingtoneList.getMediaPlayer(applicationContext, index, false)
+        mMediaPlayer?.start()
     }
 
     /**
@@ -37,5 +64,11 @@ class RingtoneListActivity : AppCompatActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        mMediaPlayer?.stop()
     }
 }

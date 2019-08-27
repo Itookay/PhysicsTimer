@@ -20,6 +20,8 @@ public class Settings {
     public static String    PREFERENCE_KEY_FONT = "prefkey_font";
     /** preferenceキー：スタイル */
     public static String    PREFERENCE_KEY_STYLE = "prefkey_style";
+    /** preferenceキー：サウンド */
+    public static String    PREFERENCE_KEY_RINGTONE = "prefkey_ringtone";
 
     /** スタイルリスト */
     private static List<StyleBase> mStyleList = Arrays.asList(
@@ -31,7 +33,7 @@ public class Settings {
     public static StyleBase    DEFAULT_STYLE = mStyleList.get(1);
 
     /**
-     *      SharedPreferenceのフォントを取得
+     *      フォントを取得
      */
     public static FontBase getSavedFont(Context context) {
         SharedPreferences   pref = context.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
@@ -46,7 +48,7 @@ public class Settings {
     }
 
     /**
-     *      SharedPreferenceのスタイルを取得
+     *      スタイルを取得
      */
     public static StyleBase getSavedStyle(Context context) {
         SharedPreferences   pref = context.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
@@ -61,6 +63,14 @@ public class Settings {
     }
 
     /**
+     *      サウンドを取得
+     */
+    public static int getSavedRingtoneIndex(Context context) {
+        SharedPreferences   pref = context.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
+        return pref.getInt(PREFERENCE_KEY_RINGTONE, RingtoneList.getDefault());
+    }
+
+    /**
      *      フォントを保存
      */
     public static void saveFont(Context context, String fontName) {
@@ -69,9 +79,9 @@ public class Settings {
     }
 
     /**
-     *      リストインデックスでフォントを保存
+     *      フォントのインデックスを保存
      */
-    public static void saveFontByIndex(Context context, int index) {
+    public static void saveFontIndex(Context context, int index) {
         saveFont(context, Fonts.getName(index));
     }
 
@@ -84,9 +94,17 @@ public class Settings {
     }
 
     /**
-     *      リストインデックスでスタイルを保存
+     *      サウンドのインデックスを保存
      */
-    public static void saveStyleByIndex(Context context, int index) {
+    public static void saveRingtoneIndex(Context context, int index) {
+        SharedPreferences   pref = context.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
+        pref.edit().putInt(PREFERENCE_KEY_RINGTONE, index).apply();
+    }
+
+    /**
+     *      スタイルのインデックスを保存
+     */
+    public static void saveStyleIndex(Context context, int index) {
         String  style = mStyleList.get(index).NAME;
         saveStyle(context, style);
     }

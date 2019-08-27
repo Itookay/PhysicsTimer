@@ -2,8 +2,6 @@ package itookay.android.org.setting;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,7 +61,7 @@ public class FontListAdapter extends BaseAdapter {
                 }
 
                 mRadioButtons[position].setChecked(true);
-                Settings.saveFontByIndex(mContext, position);
+                Settings.saveFontIndex(mContext, position);
             }
         }
 

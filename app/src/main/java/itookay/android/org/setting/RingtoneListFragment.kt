@@ -3,7 +3,6 @@ package itookay.android.org.setting
 import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -12,12 +11,17 @@ import androidx.fragment.app.ListFragment
 
 class RingtoneListFragment : ListFragment(), AdapterView.OnItemClickListener {
 
+    /** サウンド再生用のMediaPlayer */
+    private var mMediaPlayer : MediaPlayer? = null
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
         listAdapter = ArrayAdapter<String>(context, android.R.layout.simple_list_item_single_choice, RingtoneList.getRingtoneList(context))
         listView.choiceMode = ListView.CHOICE_MODE_SINGLE
         listView.onItemClickListener = this
+        val index = Settings.getSavedRingtoneIndex(context)
+        listView.setItemChecked(index, true)
     }
 
     override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -29,18 +33,20 @@ class RingtoneListFragment : ListFragment(), AdapterView.OnItemClickListener {
             index = position - 1
         }
 
-        val uri = RingtoneList.getUri(context, index)
-        val mediaPlayer = MediaPlayer()
+        //他のサウンドを再生中なら停止
+        if(mMediaPlayer != null) {
+            mMediaPlayer?.stop()
+        }
 
-        val audioAttr = AudioAttributes.Builder()
-            .setUsage(AudioAttributes.USAGE_NOTIFICATION)
-            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-            .build()
+        Settings.saveRingtoneIndex(context, index)
 
-        mediaPlayer.setDataSource(context, uri)
-        mediaPlayer.setAudioAttributes(audioAttr)
-        mediaPlayer.isLooping = false
-        mediaPlayer.prepare()
-        mediaPlayer.start()
+        mMediaPlayer = RingtoneList.getMediaPlayer(context, index, false)
+        mMediaPlayer?.start()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        mMediaPlayer?.stop()
     }
 }

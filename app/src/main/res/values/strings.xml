@@ -28,7 +28,7 @@
     <string name="preference_key_ringtone_list">pref_key_ringtone_list</string>
     <string name="preference_key_font_list">pref_key_font_list</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
+    <!-- Notification -->
+    <string name="notification_title">タイマー動作中</string>
+    <string name="notification_text">残り >></string>
 </resources>
