@@ -1,11 +1,14 @@
 package itookay.android.org.setting
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.Window
 import android.view.WindowManager
 import android.widget.FrameLayout
+import android.widget.NumberPicker
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.ListFragment
 import androidx.preference.PreferenceFragmentCompat
@@ -19,6 +22,7 @@ class MainSettingFragment : PreferenceFragmentCompat(), Preference.OnPreferenceC
         setPreferencesFromResource(R.xml.setting_activity_preferences, rootKey)
         findPreference<Preference>(getString(R.string.preference_key_ringtone_list))?.onPreferenceClickListener =this
         findPreference<Preference>(getString(R.string.preference_key_font_list))?.onPreferenceClickListener = this
+        findPreference<Preference>(getString(R.string.preference_key_alarm_active_time))?.onPreferenceClickListener = this
     }
 
     override fun onPreferenceClick(preference: Preference?): Boolean {
@@ -42,6 +46,10 @@ class MainSettingFragment : PreferenceFragmentCompat(), Preference.OnPreferenceC
             //フォントリスト
             getString(R.string.preference_key_font_list) -> {
                 showSubContainerList(isDualPane, FontListActivity::class.java, FontListFragment())
+            }
+            //タイマー動作時間
+            getString(R.string.preference_key_alarm_active_time) -> {
+                showAlarmActiveTimeDialog()
             }
         }
         return true
@@ -75,6 +83,29 @@ class MainSettingFragment : PreferenceFragmentCompat(), Preference.OnPreferenceC
             startActivity(intent)
         }
     }
+
+    /**
+     *      アラーム動作時間セットダイアログの表示
+     */
+    private fun showAlarmActiveTimeDialog() {
+        val view = activity?.layoutInflater?.inflate(R.layout.alarm_active_time_dialog, null)
+        val numberPicker = view?.findViewById<NumberPicker>(R.id.npSecond)
+        numberPicker?.maxValue = 60
+        numberPicker?.minValue = 1
+        numberPicker?.value = Settings.getSavedAlarmTime(context)
+
+        AlertDialog.Builder(requireContext())
+            .setView(view)
+            .setPositiveButton(R.string.ok){ dialog, which ->
+                Settings.saveAlarmTime(context, numberPicker?.value as Int)
+            }
+            .setNegativeButton(R.string.cancel){ dialog, which ->
+                dialog.cancel()
+            }
+            .setTitle(R.string.alarm_active_time_dialog_title)
+            .show()
+    }
+
 }
 
 /**

@@ -48,19 +48,14 @@
             app:title="@string/preference_sound"/>
 
         <ListPreference
-            app:key="sound_volume"
-            app:title="@string/preference_volume">
-        </ListPreference>
-
-        <ListPreference
             app:key="vibration_pattern"
             app:title="@string/preference_vibration">
         </ListPreference>
 
-        <ListPreference
-            app:key="alarm_time"
-            app:title="@string/preference_notification_time">
-        </ListPreference>
+        <!-- アラーム動作時間 -->
+        <Preference
+            app:key="@string/preference_key_alarm_active_time"
+            app:title="@string/preference_alarm_active_time"/>
 
 
     </PreferenceCategory>

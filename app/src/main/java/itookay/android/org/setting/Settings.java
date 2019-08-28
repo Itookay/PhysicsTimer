@@ -22,6 +22,8 @@ public class Settings {
     public static String    PREFERENCE_KEY_STYLE = "prefkey_style";
     /** preferenceキー：サウンド */
     public static String    PREFERENCE_KEY_RINGTONE = "prefkey_ringtone";
+    /** preferenceキー：アラーム動作時間 */
+    public static String    PREFERENCE_KEY_ALARM_TIME = "prefkey_alarm_time";
 
     /** スタイルリスト */
     private static List<StyleBase> mStyleList = Arrays.asList(
@@ -70,6 +72,10 @@ public class Settings {
         return pref.getInt(PREFERENCE_KEY_RINGTONE, RingtoneList.getDefault());
     }
 
+    public static int getSavedAlarmTime(Context context) {
+        SharedPreferences   pref = context.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
+        return pref.getInt(PREFERENCE_KEY_ALARM_TIME, 1);
+    }
     /**
      *      フォントを保存
      */
@@ -107,6 +113,11 @@ public class Settings {
     public static void saveStyleIndex(Context context, int index) {
         String  style = mStyleList.get(index).NAME;
         saveStyle(context, style);
+    }
+
+    public static void saveAlarmTime(Context context, int value) {
+        SharedPreferences   pref = context.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
+        pref.edit().putInt(PREFERENCE_KEY_ALARM_TIME, value).apply();
     }
 
     /**

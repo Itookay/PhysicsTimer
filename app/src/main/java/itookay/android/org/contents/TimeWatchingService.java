@@ -46,8 +46,6 @@ public class TimeWatchingService extends Service {
     /** ForegroundServiceで起動するか */
     private boolean         mBindService = true;
 
-    /** 通知 */
-//    private Notification    mNotification = null;
     /** 通知チャンネルID */
     private String          mChannelId = "";
     /**  */
@@ -84,8 +82,8 @@ public class TimeWatchingService extends Service {
 
     public void setNotificationChannel() {
         NotificationManager     notificationMgr = getSystemService(NotificationManager.class);
-        String      name = "Physics Timer Notification Channel";
-        String      description = "It is Physics Timer Notification.";
+        String      name = getString(R.string.notification_channel_name);
+        String      description = "";
         if(notificationMgr.getNotificationChannel(mChannelId) == null) {
             NotificationChannel     channel = new NotificationChannel(mChannelId, name, NotificationManager.IMPORTANCE_LOW);
             channel.setDescription(description);

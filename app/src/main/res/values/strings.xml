@@ -1,13 +1,16 @@
 <resources>
     <string name="app_name">PhysicsTimer</string>
+    <string name="ok">OK</string>
+    <string name="cancel">キャンセル</string>
 
     <!-- Preference サウンドリスト -->
     <string name="setting_list_ringtone_no_sound">サウンドなし</string>
 
-    <!-- Settingクラス SharedPreference key -->
-    <string name="shared_preference_file_name">setting.pref</string>
-    <string name="shared_preference_key_font">pref_key_font</string>
-    <string name="shared_preference_key_style">pref_key_style</string>
+    <!-- SettingActivity Preference key -->
+    <string name="preference_file_name">setting.pref</string>
+    <string name="preference_key_font">pref_key_font</string>
+    <string name="preference_key_style">pref_key_style</string>
+    <string name="preference_key_alarm_active_time">pref_key_alarm</string>
 
     <!-- Activityタイトル -->
     <string name="title_activity_setting">設定</string>
@@ -20,9 +23,12 @@
     <string name="preference_style">スタイル</string>
     <string name="preference_sound">サウンド</string>
     <string name="preference_vibration">振動</string>
-    <string name="preference_volume">音量</string>
-    <string name="preference_notification_time">アラーム動作時間</string>
+    <string name="preference_alarm_active_time">アラーム動作時間</string>
     <string name="preference_background_notification">アプリ非表示時の通知方法</string>
+
+    <!-- SettingActivity アラーム動作時間ダイアログ -->
+    <string name="alarm_active_time_dialog_unit">秒</string>
+    <string name="alarm_active_time_dialog_title">アラーム動作時間</string>
 
     <!-- setting_activity_preference プリファレンスキー -->
     <string name="preference_key_ringtone_list">pref_key_ringtone_list</string>
@@ -31,4 +37,5 @@
     <!-- Notification -->
     <string name="notification_title">タイマー動作中</string>
     <string name="notification_text">残り >></string>
+    <string name="notification_channel_name">タイマー動作中の通知</string>
 </resources>
