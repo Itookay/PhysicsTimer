@@ -184,10 +184,12 @@ public class TimeWatchingService extends Service {
                 }
 
                 /* Notificationの更新 */
-                String      title = getString(R.string.notification_title).toString();
-                String      text = getString(R.string.notification_text) + " " + Integer.toString(mMinute) + ":" + Integer.toString(mSecond);
-                NotificationManager     notificationMgr = getSystemService(NotificationManager.class);
-                notificationMgr.notify(mNotificationId, setNotification(title, text));
+                if(mBindService) {
+                    String title = getString(R.string.notification_title).toString();
+                    String text = getString(R.string.notification_text) + " " + Integer.toString(mMinute) + ":" + Integer.toString(mSecond);
+                    NotificationManager notificationMgr = getSystemService(NotificationManager.class);
+                    notificationMgr.notify(mNotificationId, setNotification(title, text));
+                }
 
                 mHandler.postDelayed(mRunnable, DELAY_TIME);
             }

@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
     package="itookay.android.org">
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
         android:allowBackup="true"
@@ -11,14 +13,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".setting.FontListActivity"></activity>
+
+        <service android:name=".contents.TimeWatchingService" />
+
+        <activity android:name=".setting.FontListActivity" />
+
         <activity android:name=".setting.RingtoneListActivity" />
+
+        <activity android:name=".setting.VibrationListActivity" />
+
         <activity
             android:name=".setting.StyleSettingActivity"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".setting.MainSettingActivity"
             android:label="@string/title_activity_setting" />
+
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait">
@@ -29,7 +40,6 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".contents.TimeWatchingService" />
     </application>
 
 </manifest>

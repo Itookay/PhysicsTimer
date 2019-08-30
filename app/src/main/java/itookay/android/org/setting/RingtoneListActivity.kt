@@ -22,7 +22,7 @@ class RingtoneListActivity : AppCompatActivity(), AdapterView.OnItemClickListene
 
         window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
-        setContentView(R.layout.ringtone_list_activity)
+        setContentView(R.layout.ringtone_list)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val listView = findViewById<ListView>(R.id.ringtoneListView)

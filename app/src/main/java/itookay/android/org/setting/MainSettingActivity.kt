@@ -1,6 +1,5 @@
 package itookay.android.org.setting
 
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
@@ -16,13 +15,15 @@ import androidx.preference.*
 
 import itookay.android.org.R
 
-class MainSettingFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
+class MainSettingFragment : PreferenceFragmentCompat(), Preference.OnPreferenceClickListener {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.setting_activity_preferences, rootKey)
+
         findPreference<Preference>(getString(R.string.preference_key_ringtone_list))?.onPreferenceClickListener =this
         findPreference<Preference>(getString(R.string.preference_key_font_list))?.onPreferenceClickListener = this
         findPreference<Preference>(getString(R.string.preference_key_alarm_active_time))?.onPreferenceClickListener = this
+        findPreference<Preference>(getString(R.string.preference_key_vibration))?.onPreferenceClickListener = this;
     }
 
     override fun onPreferenceClick(preference: Preference?): Boolean {
@@ -51,17 +52,9 @@ class MainSettingFragment : PreferenceFragmentCompat(), Preference.OnPreferenceC
             getString(R.string.preference_key_alarm_active_time) -> {
                 showAlarmActiveTimeDialog()
             }
-        }
-        return true
-    }
-
-    override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
-        when(preference?.key) {
-            getString(R.string.preference_key_ringtone_list) -> {
-                if(newValue is String) {
-                    preference.summary = RingtoneList.getRingtoneName(context, Integer.parseInt(newValue))
-
-                }
+            //バイブレーションリスト
+            getString(R.string.preference_key_vibration) -> {
+                showSubContainerList(isDualPane, VibrationListActivity::class.java, VibrationListFragment())
             }
         }
         return true

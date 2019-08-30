@@ -43,7 +43,7 @@ abstract class DrawableSettingActivity : AppCompatActivity(), View.OnClickListen
 
         /* 設定のロード */
         val font = Settings.getSavedFont(applicationContext)
-        val style = Settings.getSavedStyle(applicationContext)
+        val style = Settings.getStyle(applicationContext)
 
         FontListIndex = Settings.getSavedFontIndex(applicationContext)
         StyleListIndex = Settings.getSavedStyleIndex(applicationContext)

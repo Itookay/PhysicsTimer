@@ -24,6 +24,8 @@ public class Settings {
     public static String    PREFERENCE_KEY_RINGTONE = "prefkey_ringtone";
     /** preferenceキー：アラーム動作時間 */
     public static String    PREFERENCE_KEY_ALARM_TIME = "prefkey_alarm_time";
+    /** preferenceキー：バイブレーション */
+    public static String    PREFERENCE_KEY_VIBRATION = "prefkey_alarm_vibration";
 
     /** スタイルリスト */
     private static List<StyleBase> mStyleList = Arrays.asList(
@@ -38,7 +40,7 @@ public class Settings {
      *      フォントを取得
      */
     public static FontBase getSavedFont(Context context) {
-        SharedPreferences   pref = context.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
+        SharedPreferences   pref = getSharedPreference(context);
         String              fontName = pref.getString(PREFERENCE_KEY_FONT, "");
 
         for(FontBase font : Fonts.getList()) {
@@ -50,90 +52,7 @@ public class Settings {
     }
 
     /**
-     *      スタイルを取得
-     */
-    public static StyleBase getSavedStyle(Context context) {
-        SharedPreferences   pref = context.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
-        String              StyleName = pref.getString(PREFERENCE_KEY_STYLE, "");
-
-        for(StyleBase style : mStyleList) {
-            if(StyleName.equals(style.NAME)) {
-                return style;
-            }
-        }
-        return DEFAULT_STYLE;
-    }
-
-    /**
-     *      サウンドを取得
-     */
-    public static int getSavedRingtoneIndex(Context context) {
-        SharedPreferences   pref = context.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
-        return pref.getInt(PREFERENCE_KEY_RINGTONE, RingtoneList.getDefault());
-    }
-
-    public static int getSavedAlarmTime(Context context) {
-        SharedPreferences   pref = context.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
-        return pref.getInt(PREFERENCE_KEY_ALARM_TIME, 1);
-    }
-    /**
-     *      フォントを保存
-     */
-    public static void saveFont(Context context, String fontName) {
-        SharedPreferences   pref = context.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
-        pref.edit().putString(PREFERENCE_KEY_FONT, fontName).apply();
-    }
-
-    /**
-     *      フォントのインデックスを保存
-     */
-    public static void saveFontIndex(Context context, int index) {
-        saveFont(context, Fonts.getName(index));
-    }
-
-    /**
-     *      スタイルを保存
-     */
-    public static void saveStyle(Context context, String styleName) {
-        SharedPreferences   pref = context.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
-        pref.edit().putString(PREFERENCE_KEY_STYLE, styleName).apply();
-    }
-
-    /**
-     *      サウンドのインデックスを保存
-     */
-    public static void saveRingtoneIndex(Context context, int index) {
-        SharedPreferences   pref = context.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
-        pref.edit().putInt(PREFERENCE_KEY_RINGTONE, index).apply();
-    }
-
-    /**
-     *      スタイルのインデックスを保存
-     */
-    public static void saveStyleIndex(Context context, int index) {
-        String  style = mStyleList.get(index).NAME;
-        saveStyle(context, style);
-    }
-
-    public static void saveAlarmTime(Context context, int value) {
-        SharedPreferences   pref = context.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
-        pref.edit().putInt(PREFERENCE_KEY_ALARM_TIME, value).apply();
-    }
-
-    /**
-     *      リストからindex位置のスタイルを取得
-     */
-    public static StyleBase getStyle(int index) {
-        if(0 <= index && index < mStyleList.size()) {
-            return mStyleList.get(index);
-        }
-        else {
-            return null;
-        }
-    }
-
-    /**
-     *      保存されたフォントのリスト上でのインデックスを返す
+     *      フォントのリスト上でのインデックスを取得
      */
     public static int getSavedFontIndex(Context context) {
         int         index = 0;
@@ -148,16 +67,124 @@ public class Settings {
     }
 
     /**
-     *      保存されたスタイルのリスト上でのインデックスを返す
+     *      スタイルを取得
+     */
+    public static StyleBase getStyle(Context context) {
+        SharedPreferences   pref = getSharedPreference(context);
+        String              StyleName = pref.getString(PREFERENCE_KEY_STYLE, "");
+
+        for(StyleBase style : mStyleList) {
+            if(StyleName.equals(style.NAME)) {
+                return style;
+            }
+        }
+        return DEFAULT_STYLE;
+    }
+
+    /**
+     *      サウンドを取得
+     */
+    public static int getSavedRingtoneIndex(Context context) {
+        SharedPreferences   pref = getSharedPreference(context);
+        return pref.getInt(PREFERENCE_KEY_RINGTONE, RingtoneList.getDefault());
+    }
+
+    /**
+     *      アラーム動作時間を取得
+     */
+    public static int getSavedAlarmTime(Context context) {
+        SharedPreferences   pref = getSharedPreference(context);
+        return pref.getInt(PREFERENCE_KEY_ALARM_TIME, 1);
+    }
+
+    /**
+     *      スタイルを取得
+     */
+    public static StyleBase getStyle(int index) {
+        if(0 <= index && index < mStyleList.size()) {
+            return mStyleList.get(index);
+        }
+        else {
+            return null;
+        }
+    }
+
+    /**
+     *      スタイルのリスト上でのインデックスを取得
      */
     public static int getSavedStyleIndex(Context context) {
         int     index = 0;
         for(StyleBase style : mStyleList) {
-            if(style.NAME.equals(getSavedStyle(context).NAME)) {
+            if(style.NAME.equals(getStyle(context).NAME)) {
                 return index;
             }
             index++;
         }
         return -1;
+    }
+
+    /**
+     *      バイブレーションを取得
+     */
+    public static int getSavedVibrationIndex(Context context) {
+        SharedPreferences   pref = getSharedPreference(context);
+        return pref.getInt(PREFERENCE_KEY_VIBRATION, 1);
+    }
+
+    /**
+     *      フォントを保存
+     */
+    public static void saveFont(Context context, String fontName) {
+        SharedPreferences   pref = getSharedPreference(context);
+        pref.edit().putString(PREFERENCE_KEY_FONT, fontName).apply();
+    }
+
+    /**
+     *      フォントのインデックスを保存
+     */
+    public static void saveFontIndex(Context context, int index) {
+        saveFont(context, Fonts.getName(index));
+    }
+
+    /**
+     *      スタイルを保存
+     */
+    public static void saveStyle(Context context, String styleName) {
+        SharedPreferences   pref = getSharedPreference(context);
+        pref.edit().putString(PREFERENCE_KEY_STYLE, styleName).apply();
+    }
+
+    /**
+     *      サウンドのインデックスを保存
+     */
+    public static void saveRingtoneIndex(Context context, int index) {
+        SharedPreferences   pref = getSharedPreference(context);
+        pref.edit().putInt(PREFERENCE_KEY_RINGTONE, index).apply();
+    }
+
+    /**
+     *      スタイルのインデックスを保存
+     */
+    public static void saveStyleIndex(Context context, int index) {
+        String  style = mStyleList.get(index).NAME;
+        saveStyle(context, style);
+    }
+
+    public static void saveAlarmTime(Context context, int value) {
+        SharedPreferences   pref = getSharedPreference(context);
+        pref.edit().putInt(PREFERENCE_KEY_ALARM_TIME, value).apply();
+    }
+
+    /**
+     *      バイブレーションを保存
+     * @param context
+     */
+    public static void saveVibration(Context context, int index) {
+        SharedPreferences   pref = getSharedPreference(context);
+        pref.edit().putInt(PREFERENCE_KEY_VIBRATION, index).apply();
+    }
+
+    private static SharedPreferences getSharedPreference(Context context) {
+        return context.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
     }
 }

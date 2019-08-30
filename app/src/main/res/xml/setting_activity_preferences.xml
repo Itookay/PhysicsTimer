@@ -47,10 +47,11 @@
             app:key="@string/preference_key_ringtone_list"
             app:title="@string/preference_sound"/>
 
-        <ListPreference
-            app:key="vibration_pattern"
+        <!-- バイブレーションパターン -->
+        <Preference
+            app:key="@string/preference_key_vibration"
             app:title="@string/preference_vibration">
-        </ListPreference>
+        </Preference>
 
         <!-- アラーム動作時間 -->
         <Preference

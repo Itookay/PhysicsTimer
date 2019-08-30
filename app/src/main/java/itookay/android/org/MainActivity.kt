@@ -73,7 +73,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
         getDisplayScale()
 
         val font = Settings.getSavedFont(applicationContext)
-        val style = Settings.getSavedStyle(applicationContext)
+        val style = Settings.getStyle(applicationContext)
 
         mPhysicsTimer = PhysicsTimer(applicationContext)
         mPhysicsTimer.setStyle(style)
@@ -157,7 +157,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
         }
 
         val font = Settings.getSavedFont(applicationContext)
-        val style = Settings.getSavedStyle(applicationContext)
+        val style = Settings.getStyle(applicationContext)
         mPhysicsTimer.setFont(font)
         mPhysicsTimer.setStyle(style)
         mPhysicsTimer.invalidateDrawing()
