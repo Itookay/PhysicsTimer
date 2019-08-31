@@ -20,16 +20,16 @@
 
     <PreferenceCategory
         app:key="design_category"
-        app:title="@string/preference_category_design">
+        app:title="@string/preference_category_title_design">
 
         <!-- フォントリスト -->
         <Preference
             app:key="@string/preference_key_font_list"
-            app:title="@string/preference_font"/>
+            app:title="@string/preference_title_font"/>
 
         <Preference
             app:key="activity"
-            app:title="@string/preference_style">
+            app:title="@string/preference_title_style">
 
             <intent
                 android:targetPackage="itookay.android.org"
@@ -40,36 +40,40 @@
 
     <PreferenceCategory
         app:key="notification_category"
-        app:title="@string/preference_category_notification">
+        app:title="@string/preference_category_title_notification">
 
         <!-- サウンドリスト -->
         <Preference
             app:key="@string/preference_key_ringtone_list"
-            app:title="@string/preference_sound"/>
+            app:title="@string/preference_title_sound"/>
 
         <!-- バイブレーションパターン -->
         <Preference
             app:key="@string/preference_key_vibration"
-            app:title="@string/preference_vibration">
+            app:title="@string/preference_title_vibration">
         </Preference>
 
         <!-- アラーム動作時間 -->
         <Preference
             app:key="@string/preference_key_alarm_active_time"
-            app:title="@string/preference_alarm_active_time"/>
-
+            app:title="@string/preference_title_alarm_active_time"/>
 
     </PreferenceCategory>
 
     <PreferenceCategory
         app:key="background_category"
-        app:title="@string/preference_category_background">
+        app:title="@string/preference_category_title_background">
 
-        <ListPreference
-            app:key="background_notification"
-            app:title="@string/preference_background_notification">
+        <Preference
+            app:key="@string/preference_key_background_notification"
+            app:title="@string/preference_title_background_notification">
+        </Preference>
 
-        </ListPreference>
+        <SwitchPreferenceCompat
+            app:key="@string/preference_key_keep_screen_on"
+            app:title="@string/preference_title_keep_screen_on"
+            app:defaultValue="true">
+        </SwitchPreferenceCompat>
 
     </PreferenceCategory>
 

@@ -26,6 +26,12 @@ public class Settings {
     public static String    PREFERENCE_KEY_ALARM_TIME = "prefkey_alarm_time";
     /** preferenceキー：バイブレーション */
     public static String    PREFERENCE_KEY_VIBRATION = "prefkey_alarm_vibration";
+    /** preferenceキー：フォアグランドにして通知 */
+    private static String   PREFERENCE_KEY_NOTIFICATION_FOREGROUND = "prefkey_notification_foreground";
+    /** preferenceキー：サウンドで通知 */
+    private static String   PREFERENCE_KEY_NOTIFICATION_SOUND = "prefkey_notification_sound";
+    /** preferenceキー：バイブレーションで通知 */
+    private static String   PREFERENCE_KEY_NOTIFICATION_VIBRATION = "prefkey_notification_vibration";
 
     /** スタイルリスト */
     private static List<StyleBase> mStyleList = Arrays.asList(
@@ -132,6 +138,20 @@ public class Settings {
     }
 
     /**
+     *      バックグラウンド時の通知方法を取得
+     * @return ダイアログのチェックボックスの上から順番にint配列で返す。
+     */
+    public static boolean[] getSavedBackgroundNotificationAction(Context context) {
+        SharedPreferences   pref = getSharedPreference(context);
+        boolean     action1 = pref.getBoolean(PREFERENCE_KEY_NOTIFICATION_FOREGROUND, false);
+        boolean     action2 = pref.getBoolean(PREFERENCE_KEY_NOTIFICATION_SOUND, false);
+        boolean     action3 = pref.getBoolean(PREFERENCE_KEY_NOTIFICATION_VIBRATION, true);
+        boolean[]   action = {action1, action2, action3};
+
+        return action;
+    }
+
+    /**
      *      フォントを保存
      */
     public static void saveFont(Context context, String fontName) {
@@ -182,6 +202,18 @@ public class Settings {
     public static void saveVibration(Context context, int index) {
         SharedPreferences   pref = getSharedPreference(context);
         pref.edit().putInt(PREFERENCE_KEY_VIBRATION, index).apply();
+    }
+
+    /**
+     *      バックグラウンド時の通知方法を保存
+     * @param context コンテキスト
+     * @param values ダイアログのチェックボックスの上から順番にint配列で渡す
+     */
+    public static void saveBackgroundNotificationAction(Context context, boolean[] values) {
+        SharedPreferences   pref = getSharedPreference(context);
+        pref.edit().putBoolean(PREFERENCE_KEY_NOTIFICATION_FOREGROUND, values[0]).apply();
+        pref.edit().putBoolean(PREFERENCE_KEY_NOTIFICATION_SOUND, values[1]).apply();
+        pref.edit().putBoolean(PREFERENCE_KEY_NOTIFICATION_VIBRATION, values[2]).apply();
     }
 
     private static SharedPreferences getSharedPreference(Context context) {

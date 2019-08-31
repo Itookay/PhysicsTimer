@@ -24,6 +24,7 @@ class MainSettingFragment : PreferenceFragmentCompat(), Preference.OnPreferenceC
         findPreference<Preference>(getString(R.string.preference_key_font_list))?.onPreferenceClickListener = this
         findPreference<Preference>(getString(R.string.preference_key_alarm_active_time))?.onPreferenceClickListener = this
         findPreference<Preference>(getString(R.string.preference_key_vibration))?.onPreferenceClickListener = this;
+        findPreference<Preference>(getString(R.string.preference_key_background_notification))?.onPreferenceClickListener = this;
     }
 
     override fun onPreferenceClick(preference: Preference?): Boolean {
@@ -58,7 +59,7 @@ class MainSettingFragment : PreferenceFragmentCompat(), Preference.OnPreferenceC
             }
             //アプリ非表示時の通知方法
             getString(R.string.preference_key_background_notification) -> {
-
+                SetBackgroundNotificationDialog(context).show();
             }
         }
         return true

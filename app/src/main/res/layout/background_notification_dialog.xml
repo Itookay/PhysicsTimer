@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <Switch
+        android:id="@+id/swBackgroundAction1"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_weight="1"
+        android:text="@string/set_alarm_active_dialog_item_1" />
+
+    <Switch
+        android:id="@+id/swBackgroundAction2"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_weight="1"
+        android:text="@string/set_alarm_active_dialog_item_2" />
+
+    <Switch
+        android:id="@+id/swBackgroundAction3"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_weight="1"
+        android:checked="true"
+        android:text="@string/set_alarm_active_dialog_item_3" />
+
+</LinearLayout>

@@ -6,27 +6,29 @@
     <!-- Preference サウンドリスト -->
     <string name="setting_list_ringtone_no_sound">サウンドなし</string>
 
-    <!-- SettingActivity Preference key -->
+    <!-- Activityタイトル -->
+    <string name="title_activity_setting">設定</string>
+
+    <!-- setting_activity_preference プリファレンスキー -->
     <string name="preference_file_name">setting.pref</string>
     <string name="preference_key_font">pref_key_font</string>
     <string name="preference_key_style">pref_key_style</string>
     <string name="preference_key_alarm_active_time">pref_key_alarm</string>
     <string name="preference_key_vibration">pref_key_vibration</string>
     <string name="preference_key_background_notification">pref_key_background_notification</string>
-
-    <!-- Activityタイトル -->
-    <string name="title_activity_setting">設定</string>
+    <string name="preference_key_keep_screen_on">pref_key_keep_screen_on</string>
 
     <!-- setting_activity_preference 設定タイトル -->
-    <string name="preference_category_design">アプリデザイン</string>
-    <string name="preference_category_notification">通知方法</string>
-    <string name="preference_category_background">バックグラウンド</string>
-    <string name="preference_font">フォント</string>
-    <string name="preference_style">スタイル</string>
-    <string name="preference_sound">サウンド</string>
-    <string name="preference_vibration">バイブレーション</string>
-    <string name="preference_alarm_active_time">アラーム動作時間</string>
-    <string name="preference_background_notification">アプリ非表示時の通知方法</string>
+    <string name="preference_category_title_design">アプリデザイン</string>
+    <string name="preference_category_title_notification">通知方法</string>
+    <string name="preference_category_title_background">その他の設定</string>
+    <string name="preference_title_font">フォント</string>
+    <string name="preference_title_style">スタイル</string>
+    <string name="preference_title_sound">サウンド</string>
+    <string name="preference_title_vibration">バイブレーション</string>
+    <string name="preference_title_alarm_active_time">アラーム動作時間</string>
+    <string name="preference_title_background_notification">アプリ非表示時の通知方法</string>
+    <string name="preference_title_keep_screen_on">ディスプレイを消灯しない</string>
 
     <!-- SettingActivity アラーム動作時間ダイアログ -->
     <string name="alarm_active_time_dialog_unit">秒</string>
@@ -45,6 +47,14 @@
 
     <!-- Notification -->
     <string name="notification_title">タイマー動作中</string>
-    <string name="notification_text">残り >></string>
+    <string name="notification_text">残り </string>
     <string name="notification_channel_name">タイマー動作中の通知</string>
+
+    <!-- アラーム動作時間ダイアログ -->
+    <string name="set_alarm_active_dialog_overview">
+        アプリの画面が表示されていない状態でのタイマー終了時の通知方法を設定します。
+    </string>
+    <string name="set_alarm_active_dialog_item_1">アプリをフォアグランドにして通知</string>
+    <string name="set_alarm_active_dialog_item_2">サウンドで通知</string>
+    <string name="set_alarm_active_dialog_item_3">バイブレーションで通知</string>
 </resources>

@@ -60,6 +60,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
 
         setContentView(R.layout.main_activity)
