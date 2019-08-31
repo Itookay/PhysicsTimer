@@ -50,11 +50,15 @@ class MainSettingFragment : PreferenceFragmentCompat(), Preference.OnPreferenceC
             }
             //タイマー動作時間
             getString(R.string.preference_key_alarm_active_time) -> {
-                showAlarmActiveTimeDialog()
+                SetAlarmActiveTimeDialog(context).show()
             }
             //バイブレーションリスト
             getString(R.string.preference_key_vibration) -> {
                 showSubContainerList(isDualPane, VibrationListActivity::class.java, VibrationListFragment())
+            }
+            //アプリ非表示時の通知方法
+            getString(R.string.preference_key_background_notification) -> {
+
             }
         }
         return true
@@ -76,29 +80,6 @@ class MainSettingFragment : PreferenceFragmentCompat(), Preference.OnPreferenceC
             startActivity(intent)
         }
     }
-
-    /**
-     *      アラーム動作時間セットダイアログの表示
-     */
-    private fun showAlarmActiveTimeDialog() {
-        val view = activity?.layoutInflater?.inflate(R.layout.alarm_active_time_dialog, null)
-        val numberPicker = view?.findViewById<NumberPicker>(R.id.npSecond)
-        numberPicker?.maxValue = 60
-        numberPicker?.minValue = 1
-        numberPicker?.value = Settings.getSavedAlarmTime(context)
-
-        AlertDialog.Builder(requireContext())
-            .setView(view)
-            .setPositiveButton(R.string.ok){ dialog, which ->
-                Settings.saveAlarmTime(context, numberPicker?.value as Int)
-            }
-            .setNegativeButton(R.string.cancel){ dialog, which ->
-                dialog.cancel()
-            }
-            .setTitle(R.string.alarm_active_time_dialog_title)
-            .show()
-    }
-
 }
 
 /**

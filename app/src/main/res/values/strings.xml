@@ -12,6 +12,7 @@
     <string name="preference_key_style">pref_key_style</string>
     <string name="preference_key_alarm_active_time">pref_key_alarm</string>
     <string name="preference_key_vibration">pref_key_vibration</string>
+    <string name="preference_key_background_notification">pref_key_background_notification</string>
 
     <!-- Activityタイトル -->
     <string name="title_activity_setting">設定</string>
