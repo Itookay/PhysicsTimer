@@ -15,23 +15,23 @@ import java.util.List;
 public class Settings {
 
     /** SharedPreferenceファイル名 */
-    public static String    PREFERENCE_FILE_NAME = "pref";
+    public static String    PREFERENCE_FILE_NAME = "physics_timer.preference";
     /** preferenceキー：フォント */
-    public static String    PREFERENCE_KEY_FONT = "prefkey_font";
+    public static String    PREFERENCE_KEY_FONT = "preference_key_font";
     /** preferenceキー：スタイル */
-    public static String    PREFERENCE_KEY_STYLE = "prefkey_style";
+    public static String    PREFERENCE_KEY_STYLE = "preference_key_style";
     /** preferenceキー：サウンド */
-    public static String    PREFERENCE_KEY_RINGTONE = "prefkey_ringtone";
+    public static String    PREFERENCE_KEY_RINGTONE = "preference_key_ringtone";
     /** preferenceキー：アラーム動作時間 */
-    public static String    PREFERENCE_KEY_ALARM_TIME = "prefkey_alarm_time";
+    public static String    PREFERENCE_KEY_ALARM_TIME = "preference_key_alarm_time";
     /** preferenceキー：バイブレーション */
-    public static String    PREFERENCE_KEY_VIBRATION = "prefkey_alarm_vibration";
+    public static String    PREFERENCE_KEY_VIBRATION = "preference_key_alarm_vibration";
     /** preferenceキー：フォアグランドにして通知 */
-    private static String   PREFERENCE_KEY_NOTIFICATION_FOREGROUND = "prefkey_notification_foreground";
+    private static String   PREFERENCE_KEY_NOTIFICATION_FOREGROUND = "preference_key_notification_foreground";
     /** preferenceキー：サウンドで通知 */
-    private static String   PREFERENCE_KEY_NOTIFICATION_SOUND = "prefkey_notification_sound";
+    private static String   PREFERENCE_KEY_NOTIFICATION_SOUND = "preference_key_notification_sound";
     /** preferenceキー：バイブレーションで通知 */
-    private static String   PREFERENCE_KEY_NOTIFICATION_VIBRATION = "prefkey_notification_vibration";
+    private static String   PREFERENCE_KEY_NOTIFICATION_VIBRATION = "preference_key_notification_vibration";
 
     /** スタイルリスト */
     private static List<StyleBase> mStyleList = Arrays.asList(

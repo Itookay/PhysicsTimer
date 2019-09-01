@@ -22,7 +22,7 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:text="@string/alarm_active_time_dialog_unit"
-        android:textSize="36dp"
+        android:textSize="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
         app:layout_constraintStart_toEndOf="@+id/npSecond"

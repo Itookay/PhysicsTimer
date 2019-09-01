@@ -31,8 +31,8 @@ public class SetBackgroundNotificationDialog implements DialogInterface.OnClickL
 
         boolean[]       values = Settings.getSavedBackgroundNotificationAction(mContext);
         mSwitch1.setChecked(values[0]);
-        mSwitch3.setChecked(values[1]);
-        mSwitch2.setChecked(values[2]);
+        mSwitch2.setChecked(values[1]);
+        mSwitch3.setChecked(values[2]);
 
         new AlertDialog.Builder(mContext)
                 .setView(view)
