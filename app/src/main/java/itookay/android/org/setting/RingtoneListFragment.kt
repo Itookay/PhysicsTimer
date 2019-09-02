@@ -34,14 +34,13 @@ class RingtoneListFragment : ListFragment(), AdapterView.OnItemClickListener {
         }
 
         //他のサウンドを再生中なら停止
-        if(mMediaPlayer != null) {
-            mMediaPlayer?.stop()
+        if(RingtoneList.isPlaying()) {
+            RingtoneList.stop()
         }
 
         Settings.saveRingtoneIndex(context, index)
 
-        mMediaPlayer = RingtoneList.getMediaPlayer(context, index, false)
-        mMediaPlayer?.start()
+        RingtoneList.start(context, index, false)
     }
 
     override fun onDestroy() {

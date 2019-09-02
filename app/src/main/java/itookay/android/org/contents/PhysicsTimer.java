@@ -1,6 +1,8 @@
 package itookay.android.org.contents;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.SurfaceView;
 
@@ -232,7 +234,8 @@ public class PhysicsTimer implements TimeChangedListener {
         try {
             if(second == TimeWatchingService.TIMER_FINISHED) {
                 mState = STATE_FINISHED;
-                //何もしない
+
+                showDialog();
             }
             else {
                 mDial.setTime(new Time(hour, minute, second));
@@ -240,7 +243,24 @@ public class PhysicsTimer implements TimeChangedListener {
             }
         }
         catch (Exception ex) {
+            ex.getMessage();
         }
+    }
+
+    private void showDialog() {
+        String mes = TimeWatchingService.showPassedTime();
+
+        new AlertDialog.Builder(mAppContext)
+                .setTitle("title")
+                .setMessage(mes)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
+                .show();
+
     }
 
     public void setGravity(float x, float y) {

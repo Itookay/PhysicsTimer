@@ -43,14 +43,13 @@ class RingtoneListActivity : AppCompatActivity(), AdapterView.OnItemClickListene
         }
 
         //他のサウンドを再生中なら停止
-        if(mMediaPlayer != null) {
-            mMediaPlayer?.stop()
+        if(RingtoneList.isPlaying()) {
+            RingtoneList.stop();
         }
 
         Settings.saveRingtoneIndex(applicationContext, index)
 
-        mMediaPlayer = RingtoneList.getMediaPlayer(applicationContext, index, false)
-        mMediaPlayer?.start()
+        RingtoneList.start(applicationContext, index, false)
     }
 
     /**

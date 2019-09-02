@@ -66,11 +66,12 @@
         app:key="background_category"
         app:title="@string/preference_category_title_background">
 
-        <!-- バックグラウンド動作時の通知 -->
+        <!-- バックグラウンド動作時の通知
         <Preference
             app:key="@string/preference_key_background_notification"
             app:title="@string/preference_title_background_notification">
         </Preference>
+        -->
 
         <!-- ディスプレイを消灯しない -->
         <SwitchPreferenceCompat

@@ -13,9 +13,16 @@ public class SetBackgroundNotificationDialog implements DialogInterface.OnClickL
 
     private Context         mContext = null;
 
-    Switch      mSwitch1 = null;
-    Switch      mSwitch2 = null;
-    Switch      mSwitch3 = null;
+    /** フォアグランドにして通知の配列インデックス */
+    public static final int     FOREGROUND_ALERT_INDEX = 0;
+    /** サウンドで通知の配列インデックス */
+    public static final int     SOUND_ALERT_INDEX = 1;
+    /** バイブレーションで通知の配列インデックス */
+    public static final int     VIBRATION_ALERT_INDEX = 2;
+
+    private Switch      mSwitch1 = null;
+    private Switch      mSwitch2 = null;
+    private Switch      mSwitch3 = null;
 
     public SetBackgroundNotificationDialog(Context context) {
         mContext = context;
@@ -30,9 +37,9 @@ public class SetBackgroundNotificationDialog implements DialogInterface.OnClickL
         mSwitch3 = view.findViewById(R.id.swBackgroundAction3);
 
         boolean[]       values = Settings.getSavedBackgroundNotificationAction(mContext);
-        mSwitch1.setChecked(values[0]);
-        mSwitch2.setChecked(values[1]);
-        mSwitch3.setChecked(values[2]);
+        mSwitch1.setChecked(values[FOREGROUND_ALERT_INDEX]);
+        mSwitch2.setChecked(values[SOUND_ALERT_INDEX]);
+        mSwitch3.setChecked(values[VIBRATION_ALERT_INDEX]);
 
         new AlertDialog.Builder(mContext)
                 .setView(view)

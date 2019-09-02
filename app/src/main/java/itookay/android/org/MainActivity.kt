@@ -1,6 +1,7 @@
 package itookay.android.org
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -19,6 +20,10 @@ import androidx.constraintlayout.widget.Guideline
 import itookay.android.org.contents.*
 import itookay.android.org.setting.MainSettingActivity
 import itookay.android.org.setting.Settings
+import androidx.core.content.ContextCompat.getSystemService
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+
+
 
 class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, SensorEventListener {
 
@@ -72,11 +77,12 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
         initSurfaceView()
         /* ----------------------------- */
         getDisplayScale()
+        TimeWatchingService.setContext(applicationContext);
 
         val font = Settings.getSavedFont(applicationContext)
         val style = Settings.getStyle(applicationContext)
 
-        mPhysicsTimer = PhysicsTimer(applicationContext)
+        mPhysicsTimer = PhysicsTimer(this)
         mPhysicsTimer.setStyle(style)
         mPhysicsTimer.setFont(font);
         val surfaceView = findViewById<SurfaceView>(R.id.svMain)
@@ -186,10 +192,6 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
     }
 
     /**
@@ -379,6 +381,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
                 stopTimerButtonVisibility(false)
                 settingButtonVisibility(true)
                 mPhysicsTimer.stop()
+                TimeWatchingService.stopAlert();
             }
         }
     }

@@ -16,6 +16,8 @@ public class RingtoneList {
 
     /** デフォルトサウンド */
     private static final int       DEFAULT_RINGTONE_INDEX = 0;
+    /**  */
+    private static MediaPlayer     mMediaPlayer = null;
 
     public static String[] getRingtoneList(Context context) {
         RingtoneManager ringtoneMgr = new RingtoneManager(context);
@@ -68,12 +70,13 @@ public class RingtoneList {
     }
 
     /**
-     *      indexのサウンドのMediaPlayerをすぐにstart()を呼べる状態で取得
-     * @param context
-     * @param index
+     *      indexのサウンドを再生
+     * @param context コンテキスト
+     * @param index リストのインデックス
+     * @param repeat リピートするか
      * @throws IOException
      */
-    public static MediaPlayer getMediaPlayer(Context context, int index, boolean isLooping) throws IOException {
+    public static void start(Context context, int index, boolean repeat) throws IOException {
         Uri     uri = RingtoneList.getUri(context, index);
 
         AudioAttributes audioAttr = new AudioAttributes.Builder()
@@ -81,11 +84,22 @@ public class RingtoneList {
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                 .build();
 
-        MediaPlayer     mediaPlayer = new MediaPlayer();
-        mediaPlayer.setDataSource(context, uri);
-        mediaPlayer.setAudioAttributes(audioAttr);
-        mediaPlayer.setLooping(isLooping);
-        mediaPlayer.prepare();
-        return mediaPlayer;
+        mMediaPlayer = new MediaPlayer();
+        mMediaPlayer.setDataSource(context, uri);
+        mMediaPlayer.setAudioAttributes(audioAttr);
+        mMediaPlayer.setLooping(repeat);
+        mMediaPlayer.prepare();
+        mMediaPlayer.start();
+    }
+
+    /**
+     *      サウンドを停止
+     */
+    public static void stop() {
+        mMediaPlayer.stop();
+    }
+
+    public static boolean isPlaying() {
+        return mMediaPlayer.isPlaying();
     }
 }

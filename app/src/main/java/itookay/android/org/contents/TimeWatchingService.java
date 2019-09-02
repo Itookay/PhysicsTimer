@@ -3,20 +3,29 @@ package itookay.android.org.contents;
 import android.app.*;
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.IBinder;
+import android.util.Log;
+
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+
+import java.time.LocalDateTime;
+
 import itookay.android.org.MainActivity;
 import itookay.android.org.R;
+import itookay.android.org.setting.RingtoneList;
+import itookay.android.org.setting.SetBackgroundNotificationDialog;
+import itookay.android.org.setting.Settings;
+import itookay.android.org.setting.VibrationList;
 
 /**
  *      ForeGroundServiceで時間の経過を監視し単位秒ごとに通知する
  */
 public class TimeWatchingService extends Service {
 
-    /** アプリケーションコンテキスト */
-    private Context mAppContext = null;
+    private static Context  mContext = null;
 
     /** 次にハンドラをpostする時間 */
     protected final int		DELAY_TIME = 1000;
@@ -50,6 +59,18 @@ public class TimeWatchingService extends Service {
     private String          mChannelId = "";
     /**  */
     private int             mNotificationId = 1;
+
+    /** 誤差修正用DateTime：秒 */
+    private int             mSecondInStart = 0;
+    /** 誤差修正用DateTime：ミリ秒 */
+    private int             mMicroSecondInStart = 0;
+
+    /** デバッグ用 */
+    private static LocalDateTime mStartTime = null;
+
+    public static void setContext(Context context) {
+        mContext = context;
+    }
 
     @Nullable
     @Override
@@ -144,9 +165,33 @@ public class TimeWatchingService extends Service {
                 startForeground(1, setNotification(title, ""));
             }
 
+            /* 誤差調整用 */
+            mSecondInStart = getNowSecond();
+            mMicroSecondInStart = getNowMicroSecond();
+            /* デバッグ用 */
+            mStartTime = LocalDateTime.now();
+
+
             mRunnable.run();
             mIsAlive = true;
         }
+    }
+
+    /**
+     *      現在時刻の秒を取得
+     */
+    private int getNowSecond() {
+        return LocalDateTime.now().getSecond();
+    }
+
+    /**
+     *      現在時刻のミリ秒を取得
+     * @return
+     */
+    private int getNowMicroSecond() {
+        int     nanoSecond = LocalDateTime.now().getNano();
+        float   microSecond = nanoSecond / (1000 * 1000);
+        return Math.round(microSecond);
     }
 
     /**
@@ -174,9 +219,8 @@ public class TimeWatchingService extends Service {
             if(!forward()) {
                 removeCallback();
                 //secondにTIMER_FINISHEDを渡して終了を通知
-                if(mCallbackAvailability) {
-                    mObserver.onTimeChanged(0, 0, TIMER_FINISHED);
-                }
+                mObserver.onTimeChanged(0, 0, TIMER_FINISHED);
+                startAlert();
             }
             else {
                 if(mCallbackAvailability) {
@@ -191,10 +235,65 @@ public class TimeWatchingService extends Service {
                     notificationMgr.notify(mNotificationId, setNotification(title, text));
                 }
 
-                mHandler.postDelayed(mRunnable, DELAY_TIME);
+                /* 時間調整あり */
+                int     delayTime = getNextDelayTime();
+                mHandler.postDelayed(mRunnable, delayTime);
+                /* 時間調整なし */
+//                mHandler.postDelayed(mRunnable, DELAY_TIME);
             }
         }
     };
+
+    /**
+     *      誤差を調整したHandler呼び出しミリ秒を取得
+     */
+    private int getNextDelayTime() {
+        int     secondInNow = getNowSecond();
+        int     microSecondInNow = getNowMicroSecond();
+        int     diff_second = secondInNow - mSecondInStart;
+
+        int     diffMicroSecond = 0;
+        switch(diff_second) {
+            case 0:
+                diffMicroSecond = 1 - microSecondInNow + mMicroSecondInStart;
+                break;
+            case 1:
+                diffMicroSecond = - (microSecondInNow - mMicroSecondInStart);
+                break;
+            case 2:
+                diffMicroSecond = - (1 - mMicroSecondInStart + microSecondInNow);
+                break;
+            default:
+                diffMicroSecond = 0;
+        }
+
+        mSecondInStart = secondInNow;
+        mMicroSecondInStart = microSecondInNow;
+
+        Log.d("DELAY", Integer.toString(diffMicroSecond));
+
+        return DELAY_TIME + diffMicroSecond;
+    }
+
+    /**
+     *      デバッグ用
+     */
+    public static String showPassedTime() {
+        int startHour = mStartTime.getHour();
+        int startMinute = mStartTime.getMinute();
+        int startSecond = mStartTime.getSecond();
+        int startMicroSecond = Math.round(mStartTime.getNano() / (1000 * 1000));
+
+        int nowHour = LocalDateTime.now().getHour();
+        int nowMinute = LocalDateTime.now().getMinute();
+        int nowSecond = LocalDateTime.now().getSecond();
+        int nowMicroSecond = Math.round(LocalDateTime.now().getNano() / (1000 * 1000));
+
+        String start = startHour + ":" + startMinute + ":" + startSecond + "." + startMicroSecond + System.getProperty("line.separator");
+        String now = nowHour + ":" + nowMinute + ":" + nowSecond + "." + nowMicroSecond;
+
+        return start + now;
+    }
 
     /**
      *      コールバックとサービスの停止
@@ -239,5 +338,29 @@ public class TimeWatchingService extends Service {
             }
         }
         return true;
+    }
+
+    /**
+     *      サウンドとバイブレーションでアラート
+     */
+    private void startAlert() {
+        int     soundIndex = Settings.getSavedRingtoneIndex(mContext);
+        int     vibrationIndex = Settings.getSavedVibrationIndex(mContext);
+
+        try {
+            RingtoneList.start(mContext, soundIndex, true);
+        }
+        catch(Exception e) {
+        }
+
+        VibrationList.vibrate(mContext, vibrationIndex, VibrationList.REPEAT);
+    }
+
+    /**
+     *      アラートを停止
+     */
+    public static void stopAlert() {
+        RingtoneList.stop();
+        VibrationList.stop();
     }
 }
