@@ -96,7 +96,9 @@ public class RingtoneList {
      *      サウンドを停止
      */
     public static void stop() {
-        mMediaPlayer.stop();
+        if(mMediaPlayer != null) {
+            mMediaPlayer.stop();
+        }
     }
 
     public static boolean isPlaying() {

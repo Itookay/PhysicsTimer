@@ -3,10 +3,8 @@ package itookay.android.org.contents;
 import android.app.*;
 import android.content.Context;
 import android.content.Intent;
-import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.IBinder;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -16,7 +14,6 @@ import java.time.LocalDateTime;
 import itookay.android.org.MainActivity;
 import itookay.android.org.R;
 import itookay.android.org.setting.RingtoneList;
-import itookay.android.org.setting.SetBackgroundNotificationDialog;
 import itookay.android.org.setting.Settings;
 import itookay.android.org.setting.VibrationList;
 
@@ -46,8 +43,6 @@ public class TimeWatchingService extends Service {
     private int	            mSecond = -1;
     /** 総秒数 */
     private int	            mActualSeconds = -1;
-    /** タイマー動作中 */
-    private static boolean         mIsAlive = false;
     /** コールバック有効 */
     private static boolean         mCallbackAvailability = true;
     /** サービスの停止 */
@@ -56,9 +51,11 @@ public class TimeWatchingService extends Service {
     private boolean         mBindService = true;
 
     /** 通知チャンネルID */
-    private String          mChannelId = "";
-    /**  */
-    private int             mNotificationId = 1;
+    private String          mProcessingChannelId = "";
+    private String          mEndChannelId = "";
+    /** 通知ID */
+    private static final int       PROCESSING_NOTIFICATION_ID = 1001;
+    private static final int       END_NOTIFICATION_ID = 1002;
 
     /** 誤差修正用DateTime：秒 */
     private int             mSecondInStart = 0;
@@ -88,7 +85,7 @@ public class TimeWatchingService extends Service {
         setTime(info.Time);
 
         /* 通知を表示 */
-        mChannelId = "PhysicsTimer_Channel";
+        mProcessingChannelId = mContext.getString(R.string.notification_channel_timer_processing_id);
         setNotificationChannel();
 
         startTimer(true);
@@ -101,14 +98,30 @@ public class TimeWatchingService extends Service {
         removeCallback();
     }
 
+    /**
+     *      Notificationチャンネルの設定
+     */
     public void setNotificationChannel() {
         NotificationManager     notificationMgr = getSystemService(NotificationManager.class);
-        String      name = getString(R.string.notification_channel_name);
+
+        /* タイマー動作中の通知(フォアグラウンドサービス用) */
+        String      name = getString(R.string.notification_channel_timer_processing_name);
         String      description = "";
-        if(notificationMgr.getNotificationChannel(mChannelId) == null) {
-            NotificationChannel     channel = new NotificationChannel(mChannelId, name, NotificationManager.IMPORTANCE_LOW);
+        if(notificationMgr.getNotificationChannel(mProcessingChannelId) == null) {
+            //(変更にはアプリの再インストールor新しいチャンネルID必要)
+            NotificationChannel     channel = new NotificationChannel(mProcessingChannelId, name, NotificationManager.IMPORTANCE_LOW);
             channel.setDescription(description);
-            //通知時に無音化(変更にはアプリの再インストールor新しいチャンネルID必要)
+            channel.setSound(null, null);
+            notificationMgr.createNotificationChannel(channel);
+        }
+
+        /* タイマー終了時の通知 */
+        name = getString(R.string.notification_channel_timer_end_name);
+        description = "";
+        if(notificationMgr.getNotificationChannel(mEndChannelId) == null) {
+            //(変更にはアプリの再インストールor新しいチャンネルID必要)
+            NotificationChannel     channel = new NotificationChannel(mEndChannelId, name, NotificationManager.IMPORTANCE_HIGH);
+            channel.setDescription(description);
             channel.setSound(null, null);
             notificationMgr.createNotificationChannel(channel);
         }
@@ -120,13 +133,13 @@ public class TimeWatchingService extends Service {
      * @param text タイマーカウントを表示
      * @return
      */
-    public Notification setNotification(String title, String text) {
+    private Notification setNotification(String channelId, String title, String text) {
         /* 通知をタップした時に起動するActivity */
         Intent      intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent   pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, mChannelId)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId)
             .setContentTitle(title)
             .setContentText(text)
             .setSmallIcon(R.mipmap.ic_launcher)
@@ -138,17 +151,10 @@ public class TimeWatchingService extends Service {
     }
 
     /**
-     *      タイマー起動中か
-     */
-    public static boolean isAlive() {
-        return mIsAlive;
-    }
-
-    /**
      *      (タイマー起動中なら)タイマーの停止
      */
     public static void stopTimer() {
-        if(mIsAlive) {
+        if(PhysicsTimer.getState() == PhysicsTimer.STATE_PROCESSING) {
             mStopService = true;
         }
     }
@@ -161,8 +167,8 @@ public class TimeWatchingService extends Service {
         mCallbackAvailability = true;
         if(mObserver != null) {
             if(mBindService) {
-                String      title = getText(R.string.notification_title).toString();
-                startForeground(1, setNotification(title, ""));
+                String      title = getText(R.string.notification_timer_processing_title).toString();
+                startForeground(PROCESSING_NOTIFICATION_ID, setNotification(mProcessingChannelId, title, ""));
             }
 
             /* 誤差調整用 */
@@ -173,7 +179,7 @@ public class TimeWatchingService extends Service {
 
 
             mRunnable.run();
-            mIsAlive = true;
+            PhysicsTimer.setState(PhysicsTimer.STATE_PROCESSING);
         }
     }
 
@@ -186,7 +192,6 @@ public class TimeWatchingService extends Service {
 
     /**
      *      現在時刻のミリ秒を取得
-     * @return
      */
     private int getNowMicroSecond() {
         int     nanoSecond = LocalDateTime.now().getNano();
@@ -195,7 +200,7 @@ public class TimeWatchingService extends Service {
     }
 
     /**
-     * 			スタート時間をセット
+     * 		スタート時間をセット
      */
     public void setTime(Time time) {
         mMinute = time.getMinute();
@@ -206,12 +211,15 @@ public class TimeWatchingService extends Service {
         mActualSeconds = mMinute * 60 + mSecond;
     }
 
-    /** 時間監視スレッド */
+    /**
+     *      時間監視スレッド
+     */
     protected Runnable		mRunnable = new Runnable() {
         @Override
         public void run() {
             if(mStopService) {
                 removeCallback();
+                cancelNotification();
                 mStopService = false;
                 return;
             }
@@ -220,7 +228,16 @@ public class TimeWatchingService extends Service {
                 removeCallback();
                 //secondにTIMER_FINISHEDを渡して終了を通知
                 mObserver.onTimeChanged(0, 0, TIMER_FINISHED);
-                startAlert();
+
+                startAlarm();
+
+                NotificationManager     notificationMgr = mContext.getSystemService(NotificationManager.class);
+                /* タイマー終了の通知 */
+                String  title = mContext.getString(R.string.notification_timer_end_title);
+                Notification    notification = setNotification(mEndChannelId, title, "");
+                notificationMgr.notify(END_NOTIFICATION_ID, notification);
+                /* タイマー動作中の通知を削除 */
+                cancelNotification();
             }
             else {
                 if(mCallbackAvailability) {
@@ -229,17 +246,14 @@ public class TimeWatchingService extends Service {
 
                 /* Notificationの更新 */
                 if(mBindService) {
-                    String title = getString(R.string.notification_title).toString();
-                    String text = getString(R.string.notification_text) + " " + Integer.toString(mMinute) + ":" + Integer.toString(mSecond);
+                    String title = getString(R.string.notification_timer_processing_title).toString();
+                    String text = getString(R.string.notification_timer_processing_text) + " " + Integer.toString(mMinute) + ":" + Integer.toString(mSecond);
                     NotificationManager notificationMgr = getSystemService(NotificationManager.class);
-                    notificationMgr.notify(mNotificationId, setNotification(title, text));
+                    notificationMgr.notify(PROCESSING_NOTIFICATION_ID, setNotification(mProcessingChannelId, title, text));
                 }
 
-                /* 時間調整あり */
                 int     delayTime = getNextDelayTime();
                 mHandler.postDelayed(mRunnable, delayTime);
-                /* 時間調整なし */
-//                mHandler.postDelayed(mRunnable, DELAY_TIME);
             }
         }
     };
@@ -264,13 +278,12 @@ public class TimeWatchingService extends Service {
                 diffMicroSecond = - (1 - mMicroSecondInStart + microSecondInNow);
                 break;
             default:
-                diffMicroSecond = 0;
         }
 
         mSecondInStart = secondInNow;
         mMicroSecondInStart = microSecondInNow;
 
-        Log.d("DELAY", Integer.toString(diffMicroSecond));
+//        Log.d("DELAY", Integer.toString(diffMicroSecond));
 
         return DELAY_TIME + diffMicroSecond;
     }
@@ -278,6 +291,7 @@ public class TimeWatchingService extends Service {
     /**
      *      デバッグ用
      */
+    /*
     public static String showPassedTime() {
         int startHour = mStartTime.getHour();
         int startMinute = mStartTime.getMinute();
@@ -294,6 +308,7 @@ public class TimeWatchingService extends Service {
 
         return start + now;
     }
+    */
 
     /**
      *      コールバックとサービスの停止
@@ -304,7 +319,7 @@ public class TimeWatchingService extends Service {
                 stopForeground(true);
             }
             mHandler.removeCallbacks(mRunnable);
-            mIsAlive = false;
+            PhysicsTimer.setState(PhysicsTimer.STATE_FINISHED);
         }
     }
 
@@ -343,7 +358,7 @@ public class TimeWatchingService extends Service {
     /**
      *      サウンドとバイブレーションでアラート
      */
-    private void startAlert() {
+    private void startAlarm() {
         int     soundIndex = Settings.getSavedRingtoneIndex(mContext);
         int     vibrationIndex = Settings.getSavedVibrationIndex(mContext);
 
@@ -357,10 +372,15 @@ public class TimeWatchingService extends Service {
     }
 
     /**
-     *      アラートを停止
+     *      アラームを停止
      */
-    public static void stopAlert() {
+    public static void stopAlarm() {
         RingtoneList.stop();
         VibrationList.stop();
+    }
+
+    public static void cancelNotification() {
+        NotificationManager     notificationMgr = mContext.getSystemService(NotificationManager.class);
+        notificationMgr.cancel(PROCESSING_NOTIFICATION_ID);
     }
 }

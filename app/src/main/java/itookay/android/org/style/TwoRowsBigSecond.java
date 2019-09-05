@@ -90,7 +90,7 @@ public class TwoRowsBigSecond extends StyleBase {
         //端末縦向き
         switch(mOrientation) {
             case PhysicsTimer.PORTRAIT:
-            case PhysicsTimer.UPSIDEDOWN:
+            case PhysicsTimer.UPSIDE_DOWN:
                 x = (Scale.getDisplayWidthMeter() - dialWidth) / 2f;
                 y = Scale.getDisplayHeightMeter() - x;
                 break;

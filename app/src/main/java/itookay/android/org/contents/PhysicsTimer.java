@@ -1,8 +1,6 @@
 package itookay.android.org.contents;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.SurfaceView;
 
@@ -29,13 +27,13 @@ public class PhysicsTimer implements TimeChangedListener {
     /** 端末向き：端末右が上 */
     public static final int     RIGHT_LANDSCAPE = 70;
     /** 端末向き：端末下が上 */
-    public static final int     UPSIDEDOWN = 80;
+    public static final int     UPSIDE_DOWN = 80;
 
     /** タイマーが稼働中 */
     public static final int     STATE_PROCESSING = 1001;
     /** タイマーが終了してNumpad画面に戻るのを待っている */
     public static final int     STATE_FINISHED = 1002;
-    /** 待機中 */
+    /** Numpadを表示して待機中 */
     public static final int     STATE_IDLING = 1003;
 
     /** TimeWatchingServiceインテントキー */
@@ -65,7 +63,7 @@ public class PhysicsTimer implements TimeChangedListener {
     /** タイマータイム */
     private Time            mTime = null;
     /** 現在の状態 */
-    private int             mState = STATE_IDLING;
+    private static int      mState = STATE_IDLING;
 
     /**
      * 			コンストラクタ
@@ -116,8 +114,12 @@ public class PhysicsTimer implements TimeChangedListener {
         /* ----------------------------------------------------------------- */
     }
 
-    public int getState() {
+    public static int getState() {
         return mState;
+    }
+
+    public static void setState(int state) {
+        mState = state;
     }
 
     public int getOrientation() {
@@ -203,10 +205,13 @@ public class PhysicsTimer implements TimeChangedListener {
      *          タイマーを強制終了
      */
     public void stop() {
-        mState = STATE_IDLING;
         TimeWatchingService.stopTimer();
         mControlWorld.clearTime();
         mDial.clearTime(false);
+        mTime = new Time();
+
+        //
+        mState = STATE_IDLING;
     }
 
     /**
@@ -234,8 +239,6 @@ public class PhysicsTimer implements TimeChangedListener {
         try {
             if(second == TimeWatchingService.TIMER_FINISHED) {
                 mState = STATE_FINISHED;
-
-                showDialog();
             }
             else {
                 mDial.setTime(new Time(hour, minute, second));
@@ -247,6 +250,7 @@ public class PhysicsTimer implements TimeChangedListener {
         }
     }
 
+    /*
     private void showDialog() {
         String mes = TimeWatchingService.showPassedTime();
 
@@ -262,6 +266,7 @@ public class PhysicsTimer implements TimeChangedListener {
                 .show();
 
     }
+    */
 
     public void setGravity(float x, float y) {
         mControlWorld.setGravity(x, y);
@@ -281,7 +286,7 @@ public class PhysicsTimer implements TimeChangedListener {
 
     /**
      *      端末向きをセット
-     * @param orientation PhysicsTimer.PORTRAIT, LEFT_LANDSCAPE, RIGHT_LANDSCAPE, UPSIDEDOWN
+     * @param orientation PhysicsTimer.PORTRAIT, LEFT_LANDSCAPE, RIGHT_LANDSCAPE, UPSIDE_DOWN
      */
     public void setOrientation(int orientation) {
         if(mOrientation == orientation) {
@@ -298,7 +303,7 @@ public class PhysicsTimer implements TimeChangedListener {
                     case RIGHT_LANDSCAPE:
                         deg = -90f;
                         break;
-                    case UPSIDEDOWN:
+                    case UPSIDE_DOWN:
                         break;
                 }
                 break;
@@ -309,7 +314,7 @@ public class PhysicsTimer implements TimeChangedListener {
                         break;
                     case RIGHT_LANDSCAPE:
                         break;
-                    case UPSIDEDOWN:
+                    case UPSIDE_DOWN:
                         deg = -90f;
                         break;
                 }
@@ -321,12 +326,12 @@ public class PhysicsTimer implements TimeChangedListener {
                     case PORTRAIT:
                         deg = 90f;
                         break;
-                    case UPSIDEDOWN:
+                    case UPSIDE_DOWN:
                         deg = 90f;
                         break;
                 }
                 break;
-            case UPSIDEDOWN:
+            case UPSIDE_DOWN:
                 switch(mOrientation) {
                     case LEFT_LANDSCAPE:
                         deg = 90f;

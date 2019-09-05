@@ -42,10 +42,17 @@
     <string name="vibration_item_4">パターン3</string>
     <string name="vibration_item_5">パターン4</string>
 
-    <!-- Notification -->
-    <string name="notification_title">タイマー動作中</string>
-    <string name="notification_text">残り </string>
-    <string name="notification_channel_name">タイマー動作中の通知</string>
+    <!-- Notification タイマー中 -->
+    <string name="notification_channel_timer_processing_id">NotificationChannel_TimerProcessing</string>
+    <string name="notification_channel_timer_processing_name">タイマー動作中の通知</string>
+    <string name="notification_timer_processing_title">タイマー動作中</string>
+    <string name="notification_timer_processing_text">残り </string>
+
+    <!-- Notification タイマー終了 -->
+    <string name="notification_channel_timer_end_id">NotificationChannel_TimerEnd</string>
+    <string name="notification_channel_timer_end_name">タイマー終了時の通知</string>
+    <string name="notification_timer_end_title">タイマーが終了しました。</string>
+    <string name="notification_timer_end_text"></string>
 
     <!-- アラーム動作時間ダイアログ -->
     <string name="set_alarm_active_dialog_overview">

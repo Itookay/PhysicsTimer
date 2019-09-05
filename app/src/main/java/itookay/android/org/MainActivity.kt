@@ -1,7 +1,6 @@
 package itookay.android.org
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -20,9 +19,6 @@ import androidx.constraintlayout.widget.Guideline
 import itookay.android.org.contents.*
 import itookay.android.org.setting.MainSettingActivity
 import itookay.android.org.setting.Settings
-import androidx.core.content.ContextCompat.getSystemService
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-
 
 
 class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, SensorEventListener {
@@ -33,7 +29,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
     private val INVALID_TIME = 0
 
     /**  */
-    private lateinit var mPhysicsTimer : PhysicsTimer
+    private lateinit var physicsTimer : PhysicsTimer
     /** NumPadボタンリスト */
     private lateinit var NumpadButtonList : List<Button>
     /** 設定ボタン */
@@ -82,19 +78,19 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
         val font = Settings.getSavedFont(applicationContext)
         val style = Settings.getStyle(applicationContext)
 
-        mPhysicsTimer = PhysicsTimer(this)
-        mPhysicsTimer.setStyle(style)
-        mPhysicsTimer.setFont(font);
+        physicsTimer = PhysicsTimer(this)
+        physicsTimer.setStyle(style)
+        physicsTimer.setFont(font);
         val surfaceView = findViewById<SurfaceView>(R.id.svMain)
-        mPhysicsTimer.setSurfaceView(surfaceView)
-        mPhysicsTimer.init()
+        physicsTimer.setSurfaceView(surfaceView)
+        physicsTimer.init()
 
         /* ForegroundServiceが起動中 --------------- */
-        if(TimeWatchingService.isAlive()) {
+        if(PhysicsTimer.getState() == PhysicsTimer.STATE_PROCESSING) {
             numpadVisibility(false)
             settingButtonVisibility(false)
             stopTimerButtonVisibility(true)
-            mPhysicsTimer.resume()
+            physicsTimer.resume()
         }
         /* ---------------------------------------- */
     }
@@ -148,7 +144,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
         super.onPause()
 
         SensorMgr.unregisterListener(this)
-        mPhysicsTimer.pause()
+        physicsTimer.pause()
     }
 
     /*
@@ -165,12 +161,20 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
 
         val font = Settings.getSavedFont(applicationContext)
         val style = Settings.getStyle(applicationContext)
-        mPhysicsTimer.setFont(font)
-        mPhysicsTimer.setStyle(style)
-        mPhysicsTimer.invalidateDrawing()
-        mPhysicsTimer.invalidateDial()
+        physicsTimer.setFont(font)
+        physicsTimer.setStyle(style)
+        physicsTimer.invalidateDrawing()
+        physicsTimer.invalidateDial()
 
-        mPhysicsTimer.resume()
+        //タイマーの再開
+        physicsTimer.resume()
+
+        //タイマー終了後、サウンドとバイブレーションで通知中の場合
+        if(PhysicsTimer.getState() == PhysicsTimer.STATE_FINISHED) {
+            TimeWatchingService.stopAlarm()
+            TimeWatchingService.cancelNotification()
+            physicsTimer.stop()
+        }
     }
 
     /**
@@ -181,11 +185,11 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
             val     x:Float = -event.values[0]
             val     y:Float = -event.values[1]
 
-            mPhysicsTimer.setGravity(x, y)
+            physicsTimer.setGravity(x, y)
 
             val orientation = getOrientation(x, y)
-            if(orientation != mPhysicsTimer.orientation) {
-                mPhysicsTimer.orientation = orientation
+            if(orientation != physicsTimer.orientation) {
+                physicsTimer.orientation = orientation
                 setNumpadConstraint(orientation)
             }
         }
@@ -267,7 +271,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
         constraintSet.applyTo(constraintLayout)
         initNumpadButtonList()
 
-        if(TimeWatchingService.isAlive()) {
+        if(PhysicsTimer.getState() == PhysicsTimer.STATE_PROCESSING) {
             numpadVisibility(false);
         }
     }
@@ -275,7 +279,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
     /*
      *      選択されたボタンから数字を取得
      */
-    fun getSelectedButtonNumber(view: View?) : Int {
+    private fun getSelectedButtonNumber(view: View?) : Int {
         var     index = 0;
         for(button in NumpadButtonList) {
             if(button.id == view?.id) {
@@ -291,13 +295,13 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
      *      タッチイベント
      */
     override fun onTouch(view: View?, event: MotionEvent?): Boolean {
-        if(mPhysicsTimer.state == PhysicsTimer.STATE_FINISHED) {
-            mPhysicsTimer.stop()
+        if(PhysicsTimer.getState() == PhysicsTimer.STATE_FINISHED) {
+            physicsTimer.stop()
             numpadVisibility(true)
             settingButtonVisibility(true)
             return true;
         }
-        if(mPhysicsTimer.state == PhysicsTimer.STATE_PROCESSING) {
+        if(PhysicsTimer.getState() == PhysicsTimer.STATE_PROCESSING) {
             return false
         }
 
@@ -312,13 +316,14 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
                 FirstSelectedNumber = getSelectedButtonNumber(button)
                 ActionDownPoint = PointF(event.rawX, event.rawY)
 
-                mPhysicsTimer.setTime(0, FirstSelectedNumber, 0)
+                physicsTimer.setTime(0, FirstSelectedNumber, 0)
+//                physicsTimer.setTime(0, 0, 2)
 
                 button.performClick()
                 button.isPressed = true
             }
             MotionEvent.ACTION_UP -> {
-                mPhysicsTimer.start()
+                physicsTimer.start()
 
                 //Numpadを非表示
                 numpadVisibility(false)
@@ -343,14 +348,14 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
                 if(currentDraggingNumber == FirstSelectedNumber) {
                     time = FirstSelectedNumber.toString() + FirstSelectedNumber.toString()
                     PreviousDraggingNumber = currentDraggingNumber
-                    mPhysicsTimer.setTime(0, time.toInt(), 0)
+                    physicsTimer.setTime(0, time.toInt(), 0)
                 }
                 //2桁目以降をドラッグ
                 else {
                     if(currentDraggingNumber != PreviousDraggingNumber) {
                         time = FirstSelectedNumber.toString() + currentDraggingNumber.toString()
                         PreviousDraggingNumber = currentDraggingNumber
-                        mPhysicsTimer.setTime(0, time.toInt(), 0)
+                        physicsTimer.setTime(0, time.toInt(), 0)
 
                         if(CurrentDraggingButton == null) {
                             CurrentDraggingButton = button
@@ -380,8 +385,8 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
                 numpadVisibility(true)
                 stopTimerButtonVisibility(false)
                 settingButtonVisibility(true)
-                mPhysicsTimer.stop()
-                TimeWatchingService.stopAlert();
+                physicsTimer.stop()
+                TimeWatchingService.stopAlarm();
             }
         }
     }
