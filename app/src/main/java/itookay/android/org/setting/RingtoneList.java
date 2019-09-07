@@ -65,7 +65,8 @@ public class RingtoneList {
     public static Uri getUri(Context context, int index) {
         RingtoneManager     ringtoneMgr = new RingtoneManager(context);
         Cursor              cursor = ringtoneMgr.getCursor();
-        cursor.moveToPosition(index);
+        //サウンドリストのindex=0にはサウンド「なし」が含まれている。Cursorには-1して渡す。
+        cursor.moveToPosition(--index);
         return ringtoneMgr.getRingtoneUri(cursor.getPosition());
     }
 
@@ -102,6 +103,11 @@ public class RingtoneList {
     }
 
     public static boolean isPlaying() {
-        return mMediaPlayer.isPlaying();
+        if(mMediaPlayer != null) {
+            return mMediaPlayer.isPlaying();
+        }
+        else {
+            return false;
+        }
     }
 }

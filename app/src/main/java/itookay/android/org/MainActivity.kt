@@ -316,8 +316,8 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
                 FirstSelectedNumber = getSelectedButtonNumber(button)
                 ActionDownPoint = PointF(event.rawX, event.rawY)
 
-                physicsTimer.setTime(0, FirstSelectedNumber, 0)
-//                physicsTimer.setTime(0, 0, 2)
+//                physicsTimer.setTime(0, FirstSelectedNumber, 0)
+                physicsTimer.setTime(0, 0, 2)
 
                 button.performClick()
                 button.isPressed = true

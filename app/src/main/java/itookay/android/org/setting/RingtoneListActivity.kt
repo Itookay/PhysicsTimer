@@ -11,6 +11,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import itookay.android.org.R
+import kotlinx.android.synthetic.main.ringtone_list.*
 
 class RingtoneListActivity : AppCompatActivity(), AdapterView.OnItemClickListener {
 
@@ -34,22 +35,16 @@ class RingtoneListActivity : AppCompatActivity(), AdapterView.OnItemClickListene
     }
 
     override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        var index = 0
-        if(position == 0) {
-            return
-        }
-        else {
-            index = position - 1
-        }
-
         //他のサウンドを再生中なら停止
         if(RingtoneList.isPlaying()) {
             RingtoneList.stop();
         }
 
-        Settings.saveRingtoneIndex(applicationContext, index)
+        Settings.saveRingtoneIndex(applicationContext, position)
 
-        RingtoneList.start(applicationContext, index, false)
+        if(position != 0) {
+            RingtoneList.start(applicationContext, position, false)
+        }
     }
 
     /**
@@ -58,6 +53,10 @@ class RingtoneListActivity : AppCompatActivity(), AdapterView.OnItemClickListene
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
+                if(RingtoneList.isPlaying()) {
+                    RingtoneList.stop()
+                }
+
                 this.finish()
                 return true
             }

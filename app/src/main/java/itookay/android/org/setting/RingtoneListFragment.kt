@@ -25,22 +25,14 @@ class RingtoneListFragment : ListFragment(), AdapterView.OnItemClickListener {
     }
 
     override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        var index = 0
-        if(position == 0) {
-            return
-        }
-        else {
-            index = position - 1
-        }
-
         //他のサウンドを再生中なら停止
         if(RingtoneList.isPlaying()) {
             RingtoneList.stop()
         }
 
-        Settings.saveRingtoneIndex(context, index)
+        Settings.saveRingtoneIndex(context, position)
 
-        RingtoneList.start(context, index, false)
+        RingtoneList.start(context, position, false)
     }
 
     override fun onDestroy() {

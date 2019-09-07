@@ -220,6 +220,7 @@ public class PhysicsTimer implements TimeChangedListener {
     public void resume() {
         TimeWatchingService.setOnTimeChangedListener(this);
         TimeWatchingService.setCallbackAvailability(true);
+        TimeWatchingService.showHeadUpNotification(false);
         mMainSurface.resumeDrawing();
     }
 
@@ -228,6 +229,7 @@ public class PhysicsTimer implements TimeChangedListener {
      */
     public void pause() {
         TimeWatchingService.setCallbackAvailability(false);
+        TimeWatchingService.showHeadUpNotification(true);
         mMainSurface.pauseDrawing();
     }
 

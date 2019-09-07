@@ -31,7 +31,7 @@ public class TimeWatchingService extends Service {
     /** 59分 */
     protected final int		_59_MINUTE = 59;
     /** タイマー終了通知 */
-    public static final int            TIMER_FINISHED = -1;
+    public static final int TIMER_FINISHED = -1;
 
     /** 通知する対象 */
     protected static TimeChangedListener		mObserver = null;
@@ -44,9 +44,9 @@ public class TimeWatchingService extends Service {
     /** 総秒数 */
     private int	            mActualSeconds = -1;
     /** コールバック有効 */
-    private static boolean         mCallbackAvailability = true;
+    private static boolean  mCallbackAvailability = true;
     /** サービスの停止 */
-    private static boolean         mStopService = false;
+    private static boolean  mStopService = false;
     /** ForegroundServiceで起動するか */
     private boolean         mBindService = true;
 
@@ -54,13 +54,16 @@ public class TimeWatchingService extends Service {
     private String          mProcessingChannelId = "";
     private String          mEndChannelId = "";
     /** 通知ID */
-    private static final int       PROCESSING_NOTIFICATION_ID = 1001;
-    private static final int       END_NOTIFICATION_ID = 1002;
+    private static final int    PROCESSING_NOTIFICATION_ID = 1001;
+    private static final int    END_NOTIFICATION_ID = 1002;
 
     /** 誤差修正用DateTime：秒 */
     private int             mSecondInStart = 0;
     /** 誤差修正用DateTime：ミリ秒 */
     private int             mMicroSecondInStart = 0;
+
+    /** 終了通知にヘッドアップ表示が必要か */
+    private static boolean  mShowHeadUpNotification = false;
 
     /** デバッグ用 */
     private static LocalDateTime mStartTime = null;
@@ -151,6 +154,13 @@ public class TimeWatchingService extends Service {
     }
 
     /**
+     *      タイマー終了時にヘッドアップ通知を表示する
+     */
+    public static void showHeadUpNotification(boolean showHeadUp) {
+        mShowHeadUpNotification = showHeadUp;
+    }
+
+    /**
      *      (タイマー起動中なら)タイマーの停止
      */
     public static void stopTimer() {
@@ -224,19 +234,19 @@ public class TimeWatchingService extends Service {
                 return;
             }
 
+            //タイマーの終了
             if(!forward()) {
                 removeCallback();
                 //secondにTIMER_FINISHEDを渡して終了を通知
                 mObserver.onTimeChanged(0, 0, TIMER_FINISHED);
 
+                //サウンドとバイブレーション
                 startAlarm();
-
-                NotificationManager     notificationMgr = mContext.getSystemService(NotificationManager.class);
-                /* タイマー終了の通知 */
-                String  title = mContext.getString(R.string.notification_timer_end_title);
-                Notification    notification = setNotification(mEndChannelId, title, "");
-                notificationMgr.notify(END_NOTIFICATION_ID, notification);
-                /* タイマー動作中の通知を削除 */
+                //ヘッドアップ通知を表示
+                if(mShowHeadUpNotification) {
+                    showEndingNotification();
+                }
+                //タイマー動作中の通知を削除
                 cancelNotification();
             }
             else {
@@ -311,6 +321,17 @@ public class TimeWatchingService extends Service {
     */
 
     /**
+     *      タイマー終了時のNotificationを表示
+     */
+    private void showEndingNotification() {
+        NotificationManager     notificationMgr = mContext.getSystemService(NotificationManager.class);
+        /* タイマー終了の通知 */
+        String  title = mContext.getString(R.string.notification_timer_end_title);
+        Notification    notification = setNotification(mEndChannelId, title, "");
+        notificationMgr.notify(END_NOTIFICATION_ID, notification);
+    }
+
+    /**
      *      コールバックとサービスの停止
      */
     private void removeCallback() {
@@ -363,7 +384,9 @@ public class TimeWatchingService extends Service {
         int     vibrationIndex = Settings.getSavedVibrationIndex(mContext);
 
         try {
-            RingtoneList.start(mContext, soundIndex, true);
+            if(soundIndex != 0) {
+                RingtoneList.start(mContext, soundIndex, true);
+            }
         }
         catch(Exception e) {
         }
