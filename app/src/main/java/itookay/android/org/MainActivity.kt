@@ -10,6 +10,7 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.util.Log
 import android.widget.Button
 import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -19,12 +20,14 @@ import androidx.constraintlayout.widget.Guideline
 import itookay.android.org.contents.*
 import itookay.android.org.setting.MainSettingActivity
 import itookay.android.org.setting.Settings
+import itookay.android.org.debug.*
+import itookay.android.org.setting.VibrationList
 
 
-class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, SensorEventListener {
+class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, SensorEventListener, View.OnLongClickListener {
 
     /** ドラッグしたと判定する距離 */
-    private val DRAGABLE_DISTANCE = 20f
+    private val DRAGABLE_DISTANCE = 50f
     /** 無効な時間 */
     private val INVALID_TIME = 0
 
@@ -55,10 +58,16 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
     /** センサーマネージャ */
     private lateinit var SensorMgr : SensorManager
 
+    /** デバッグモード */
+    private var isDebugMode = false
+
     /*
      *      onCreate
      */
     override fun onCreate(savedInstanceState: Bundle?) {
+        Debug.startLog();
+        Debug.calledLog();
+
         super.onCreate(savedInstanceState)
         window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -87,6 +96,8 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
 
         /* ForegroundServiceが起動中 --------------- */
         if(PhysicsTimer.getState() == PhysicsTimer.STATE_PROCESSING) {
+            Debug.timerStateLog()
+
             numpadVisibility(false)
             settingButtonVisibility(false)
             stopTimerButtonVisibility(true)
@@ -96,6 +107,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
     }
 
     fun initNumpadButtonList() {
+        Debug.calledLog();
         NumpadButtonList = listOf(
             findViewById(R.id.btNum0),
             findViewById(R.id.btNum1),
@@ -117,18 +129,22 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
      *      コントロールボタン初期化
      */
     fun initControlButton() {
+        Debug.calledLog();
         btStopTimer = findViewById(R.id.btStopTimer)
         btStopTimer.setOnClickListener(this)
         btSetting = findViewById(R.id.btSetting)
         btSetting.setOnClickListener(this)
+        btSetting.setOnLongClickListener(this)
     }
 
     fun initSurfaceView() {
+        Debug.calledLog()
         svMain = findViewById(R.id.svMain)
         svMain.setOnTouchListener(this)
     }
 
     private fun getDisplayScale() {
+        Debug.calledLog()
         val windowManager = applicationContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val display = windowManager.defaultDisplay
         val size = Point()
@@ -141,6 +157,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
      *      バックグラウンド移行の直前
      */
     override fun onPause() {
+        Debug.calledLog()
         super.onPause()
 
         SensorMgr.unregisterListener(this)
@@ -151,6 +168,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
      *      バックグラウンドからの復帰
      */
     override fun onResume() {
+        Debug.calledLog()
         super.onResume()
 
         SensorMgr = getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -171,6 +189,8 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
 
         //タイマー終了後、サウンドとバイブレーションで通知中の場合
         if(PhysicsTimer.getState() == PhysicsTimer.STATE_FINISHED) {
+            Debug.timerStateLog()
+
             TimeWatchingService.stopAlarm()
             TimeWatchingService.cancelNotification()
             physicsTimer.stop()
@@ -231,6 +251,8 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
     }
 
     private fun setNumpadConstraint(orientation:Int) {
+        Debug.calledLog()
+
         val constraintLayout = findViewById<ConstraintLayout>(R.id.MainConstraintLayout)
         val constraintSet = ConstraintSet()
         val upperGuideline = findViewById<Guideline>(R.id.numpadGuidelineUpper)
@@ -272,6 +294,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
         initNumpadButtonList()
 
         if(PhysicsTimer.getState() == PhysicsTimer.STATE_PROCESSING) {
+            Debug.timerStateLog()
             numpadVisibility(false);
         }
     }
@@ -280,6 +303,8 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
      *      選択されたボタンから数字を取得
      */
     private fun getSelectedButtonNumber(view: View?) : Int {
+        Debug.calledLog()
+
         var     index = 0;
         for(button in NumpadButtonList) {
             if(button.id == view?.id) {
@@ -295,34 +320,45 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
      *      タッチイベント
      */
     override fun onTouch(view: View?, event: MotionEvent?): Boolean {
+        Debug.calledLog()
+
         if(PhysicsTimer.getState() == PhysicsTimer.STATE_FINISHED) {
+            Debug.timerStateLog()
+
             physicsTimer.stop()
             numpadVisibility(true)
             settingButtonVisibility(true)
             return true;
         }
         if(PhysicsTimer.getState() == PhysicsTimer.STATE_PROCESSING) {
+            Debug.timerStateLog()
             return false
         }
 
         /** ドラッグ中のボタンはviewに渡されないらしい */
         val button = getTouchPointButton(event?.rawX!!, event.rawY)
-        if(button == null) {
-            return false;
-        }
+        button ?: return false
 
         when(event.action) {
             MotionEvent.ACTION_DOWN -> {
+                Debug.log("ACTION_DOWN")
+
                 FirstSelectedNumber = getSelectedButtonNumber(button)
                 ActionDownPoint = PointF(event.rawX, event.rawY)
 
-//                physicsTimer.setTime(0, FirstSelectedNumber, 0)
-                physicsTimer.setTime(0, 0, 2)
+                var second = 0
+                if(isDebugMode) {
+                    second = 2
+                    FirstSelectedNumber = 0
+                }
+                physicsTimer.setTime(0, FirstSelectedNumber, second)
 
                 button.performClick()
                 button.isPressed = true
             }
             MotionEvent.ACTION_UP -> {
+                Debug.log("ACTION_UP")
+
                 physicsTimer.start()
 
                 //Numpadを非表示
@@ -336,6 +372,8 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
                 clearButtonState()
             }
             MotionEvent.ACTION_MOVE -> {
+                Debug.log("ACTION_MOVE")
+
                 IsDragged = isDragging(event.rawX, event.rawY)
                 if(IsDragged == false) {
                     return true
@@ -378,10 +416,12 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
     override fun onClick(view: View?) {
         when(view) {
             btSetting -> {
+                Debug.log2("btSetting pressed.")
                 val intent = Intent(this, MainSettingActivity::class.java)
                 startActivity(intent)
             }
             btStopTimer -> {
+                Debug.log2("btStopTimer pressed")
                 numpadVisibility(true)
                 stopTimerButtonVisibility(false)
                 settingButtonVisibility(true)
@@ -395,6 +435,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
      *          Numpadの表示・非表示
      */
     fun numpadVisibility(visibility: Boolean) {
+        Debug.calledLog()
         if(visibility) {
             NumPad?.visibility = View.VISIBLE
         }
@@ -407,6 +448,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
      *        設定ボタンの表示・非表示
      */
     fun settingButtonVisibility(visibility: Boolean) {
+        Debug.calledLog()
         if(visibility) {
             btSetting.visibility = View.VISIBLE
         }
@@ -419,6 +461,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
      *        タイマーストップボタンの表示・非表示
      */
     fun stopTimerButtonVisibility(visibility: Boolean) {
+        Debug.calledLog()
         if(visibility) {
             btStopTimer.visibility = View.VISIBLE
         }
@@ -431,6 +474,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
      *      ボタンの選択状態を初期化
      */
     private fun clearButtonState() {
+        Debug.calledLog()
         FirstSelectedNumber = INVALID_TIME
         IsDragged = false
         ActionDownPoint = PointF()
@@ -456,6 +500,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
      *      タッチされたポイントにあるボタンを取得
      */
     private fun getTouchPointButton(_x:Float, _y:Float) : Button? {
+        Debug.calledLog()
         for(button in NumpadButtonList) {
             val location = IntArray(2)
             button.getLocationInWindow(location)
@@ -470,5 +515,17 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
         }
 
         return null
+    }
+
+    /**
+     *      ボタンロングクリック
+     */
+    override fun onLongClick(view: View?): Boolean {
+        if(view === btSetting) {
+            isDebugMode = !isDebugMode
+            VibrationList.vibrate(applicationContext, 4, VibrationList.NOT_REPEAT)
+        }
+
+        return true
     }
 }
