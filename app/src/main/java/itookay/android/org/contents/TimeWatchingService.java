@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 
 import itookay.android.org.MainActivity;
 import itookay.android.org.R;
+import itookay.android.org.debug.Debug;
 import itookay.android.org.setting.RingtoneList;
 import itookay.android.org.setting.Settings;
 import itookay.android.org.setting.VibrationList;
@@ -84,6 +85,8 @@ public class TimeWatchingService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Debug.calledLog();
+
         ServiceInfo    info = (ServiceInfo)intent.getSerializableExtra(PhysicsTimer.INTENT_KEY_TIME_WATCHING_SERVICE);
         setTime(info.Time);
 
@@ -213,12 +216,16 @@ public class TimeWatchingService extends Service {
      * 		スタート時間をセット
      */
     public void setTime(Time time) {
+        Debug.calledLog();
+
         mMinute = time.getMinute();
         mSecond = time.getSecond();
 
         if(mMinute < 0) mMinute = 0;
         if(mSecond < 0) mSecond = 0;
         mActualSeconds = mMinute * 60 + mSecond;
+
+        Debug.log(time.getHour() + ":" + mMinute + ":" + mSecond);
     }
 
     /**
@@ -335,12 +342,24 @@ public class TimeWatchingService extends Service {
      *      コールバックとサービスの停止
      */
     private void removeCallback() {
-        if(mRunnable != null) {
-            if(mBindService) {
-                stopForeground(true);
-            }
-            mHandler.removeCallbacks(mRunnable);
-            PhysicsTimer.setState(PhysicsTimer.STATE_FINISHED);
+        if(mRunnable == null) {
+            return;
+        }
+
+        /* コールバックの除去 */
+        if(mBindService) {
+            stopForeground(true);
+        }
+        mHandler.removeCallbacks(mRunnable);
+
+        /* Timerステータス変更 */
+        if(PhysicsTimer.getState() == PhysicsTimer.STATE_FINISHED) {
+            //カウントが終わりタイマーが正常終了した
+            //ステータスは変更しない
+        }
+        else if(PhysicsTimer.getState() == PhysicsTimer.STATE_PROCESSING) {
+            //タイマー動作中からストップボタンが押された
+            PhysicsTimer.setState(PhysicsTimer.STATE_IDLING);
         }
     }
 

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.view.SurfaceView;
 
+import itookay.android.org.debug.Debug;
 import itookay.android.org.style.StyleBase;
 import itookay.android.org.font.FontBase;
 import org.jbox2d.common.Vec2;
@@ -115,11 +116,15 @@ public class PhysicsTimer implements TimeChangedListener {
     }
 
     public static int getState() {
+        Debug.calledLog(2);
+        Debug.timerStateLog(mState, true);
         return mState;
     }
 
     public static void setState(int state) {
         mState = state;
+        Debug.calledLog(2);
+        Debug.timerStateLog(mState, false);
     }
 
     public int getOrientation() {
@@ -150,6 +155,9 @@ public class PhysicsTimer implements TimeChangedListener {
      *      スタート時間をセット
      */
     public void setTime(int hour, int minute, int second) {
+        Debug.calledLog();
+        Debug.log(hour + ":" + minute + ":" + second);
+
         try {
             mTime = new Time(hour, minute, second);
             /* グラフィカル領域にタイマー表示 */
@@ -166,7 +174,9 @@ public class PhysicsTimer implements TimeChangedListener {
      *      サービスを使うかどうかはbindServiceによる
      */
     public void start() {
-        mState = STATE_PROCESSING;
+        Debug.calledLog();
+
+        setState(STATE_PROCESSING);
 
         if(mBindService) {
             startWithForegroundService();
@@ -180,6 +190,8 @@ public class PhysicsTimer implements TimeChangedListener {
      *      タイマーをForegroundServiceで起動
      */
     private void startWithForegroundService() {
+        Debug.calledLog();
+
         Intent  service = new Intent(mAppContext, TimeWatchingService.class);
         service.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
@@ -210,8 +222,7 @@ public class PhysicsTimer implements TimeChangedListener {
         mDial.clearTime(false);
         mTime = new Time();
 
-        //
-        mState = STATE_IDLING;
+        setState(STATE_IDLING);
     }
 
     /**
@@ -240,7 +251,7 @@ public class PhysicsTimer implements TimeChangedListener {
     public void onTimeChanged(int hour, int minute, int second) {
         try {
             if(second == TimeWatchingService.TIMER_FINISHED) {
-                mState = STATE_FINISHED;
+                setState(STATE_FINISHED);
             }
             else {
                 mDial.setTime(new Time(hour, minute, second));

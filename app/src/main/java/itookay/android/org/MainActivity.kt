@@ -96,8 +96,6 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
 
         /* ForegroundServiceが起動中 --------------- */
         if(PhysicsTimer.getState() == PhysicsTimer.STATE_PROCESSING) {
-            Debug.timerStateLog()
-
             numpadVisibility(false)
             settingButtonVisibility(false)
             stopTimerButtonVisibility(true)
@@ -189,8 +187,6 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
 
         //タイマー終了後、サウンドとバイブレーションで通知中の場合
         if(PhysicsTimer.getState() == PhysicsTimer.STATE_FINISHED) {
-            Debug.timerStateLog()
-
             TimeWatchingService.stopAlarm()
             TimeWatchingService.cancelNotification()
             physicsTimer.stop()
@@ -294,7 +290,6 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
         initNumpadButtonList()
 
         if(PhysicsTimer.getState() == PhysicsTimer.STATE_PROCESSING) {
-            Debug.timerStateLog()
             numpadVisibility(false);
         }
     }
@@ -323,21 +318,21 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
         Debug.calledLog()
 
         if(PhysicsTimer.getState() == PhysicsTimer.STATE_FINISHED) {
-            Debug.timerStateLog()
-
             physicsTimer.stop()
             numpadVisibility(true)
             settingButtonVisibility(true)
             return true;
         }
         if(PhysicsTimer.getState() == PhysicsTimer.STATE_PROCESSING) {
-            Debug.timerStateLog()
             return false
         }
 
         /** ドラッグ中のボタンはviewに渡されないらしい */
         val button = getTouchPointButton(event?.rawX!!, event.rawY)
-        button ?: return false
+        if(button == null) {
+            Debug.log2("Button is null")
+            return false
+        }
 
         when(event.action) {
             MotionEvent.ACTION_DOWN -> {
@@ -346,11 +341,13 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
                 FirstSelectedNumber = getSelectedButtonNumber(button)
                 ActionDownPoint = PointF(event.rawX, event.rawY)
 
+                /* ----- デバッグモード ----- */
                 var second = 0
                 if(isDebugMode) {
                     second = 2
                     FirstSelectedNumber = 0
                 }
+                /* ------------------------ */
                 physicsTimer.setTime(0, FirstSelectedNumber, second)
 
                 button.performClick()
@@ -393,6 +390,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
                     if(currentDraggingNumber != PreviousDraggingNumber) {
                         time = FirstSelectedNumber.toString() + currentDraggingNumber.toString()
                         PreviousDraggingNumber = currentDraggingNumber
+
                         physicsTimer.setTime(0, time.toInt(), 0)
 
                         if(CurrentDraggingButton == null) {
@@ -422,9 +420,11 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
             }
             btStopTimer -> {
                 Debug.log2("btStopTimer pressed")
+
                 numpadVisibility(true)
                 stopTimerButtonVisibility(false)
                 settingButtonVisibility(true)
+
                 physicsTimer.stop()
                 TimeWatchingService.stopAlarm();
             }

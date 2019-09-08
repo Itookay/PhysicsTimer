@@ -37,6 +37,19 @@ public class Debug {
     }
 
     /**
+     *      階層を指定して呼び出し元のメソッド名をログ
+     * @param level 0:Debug.calledLog(int)
+     *              1:呼び出したメソッド名
+     *              2:呼び出したメソッドを呼んだメソッド
+     *              3:(以降同様)
+     */
+    public static void calledLog(int level) {
+        StackTraceElement[]     ste = new Throwable().getStackTrace();
+        String text = ste[level].getClassName() + "." + ste[level].getMethodName() + "() called.";
+        log(text);
+    }
+
+    /**
      *      アプリケーションの開始を知らせるログ
      */
     public static void startLog() {
@@ -46,9 +59,9 @@ public class Debug {
 
     /**
      *      PhysicsTimer.getState()の値をログ
+     * @param state PhysicsTimer.getState()の値
      */
-    public static void timerStateLog() {
-        int         state = PhysicsTimer.getState();
+    public static void timerStateLog(int state, boolean isGetter) {
         String      stateString = "";
         switch(state) {
             case PhysicsTimer.STATE_PROCESSING:
@@ -64,8 +77,14 @@ public class Debug {
                 stateString = "invalid state";
         }
 
-        StackTraceElement[]     ste = new Throwable().getStackTrace();
-        String      text = ste[1].getClassName() + "." + ste[1].getMethodName() + " : PhysicsTimer.getState() = " + stateString;
+        String      text = "";
+        if(isGetter) {
+            text = "PhysicsTimer.getState() = " + stateString;
+        }
+        else {
+            text = "PhysicsTimer.setState() = " + stateString;
+        }
+
         log(text);
     }
 }
