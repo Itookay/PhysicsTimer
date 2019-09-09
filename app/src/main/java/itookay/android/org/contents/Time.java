@@ -7,7 +7,7 @@ import java.io.Serializable;
  * 			表示する時間を保持
  *
  */
-class Time implements Serializable {
+public class Time implements Serializable {
 
     /** 時間のクリア */
     static int       CLEAR = -1;
@@ -16,29 +16,28 @@ class Time implements Serializable {
     private int		mMinute = CLEAR;
     private int		mSecond = CLEAR;
 
-    Time() {
+    public Time() {
     }
 
-    Time( int hour, int minute, int second ) {
+    public Time(int hour, int minute, int second) {
         mHour = hour;
         mMinute = minute;
         mSecond = second;
     }
 
-    int getHour() {
+    public int getHour() {
         return mHour;
     }
 
-    int getMinute() {
+    public int getMinute() {
         return mMinute;
     }
 
-    int getSecond() {
+    public int getSecond() {
         return mSecond;
     }
 
-    void set( Time time ) {
-
+    public void set(Time time) {
         mHour = time.getHour();
         mMinute = time.getMinute();
         mSecond = time.getSecond();

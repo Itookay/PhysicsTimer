@@ -10,7 +10,6 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.util.Log
 import android.widget.Button
 import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -29,12 +28,12 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
     /** ドラッグしたと判定する距離 */
     private val DRAGABLE_DISTANCE = 50f
     /** 無効な時間 */
-    private val INVALID_TIME = 0
+    private val INVALID_NUMBER = -1
 
     /**  */
     private lateinit var physicsTimer : PhysicsTimer
-    /** NumPadボタンリスト */
-    private lateinit var NumpadButtonList : List<Button>
+    /** numericPadボタンリスト */
+    private lateinit var numericPadButtonList : List<Button>
     /** 設定ボタン */
     private lateinit var btSetting : Button
     /** タイマーストップ表示ボタン */
@@ -42,21 +41,21 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
     /** サーフェースビュー */
     private lateinit var svMain : SurfaceView
     /**  */
-    private var NumPad : LinearLayout? = null
+    private var numericPadLayout : LinearLayout? = null
 
     /** 直前にドラッグしていた番号 */
-    private var PreviousDraggingNumber : Int = INVALID_TIME
+    private var previousDraggingNumber : Int = INVALID_NUMBER
     /** 最初に選択された番号 */
-    private var FirstSelectedNumber : Int = INVALID_TIME
+    private var firstSelectedNumber : Int = INVALID_NUMBER
     /** 現在ドラッグしているボタン */
-    private var CurrentDraggingButton : Button? = null
+    private var currentDraggingButton : Button? = null
     /** 2つ目のボタンまでにドラッグされたか */
-    private var IsDragged = false
+    private var isDragged = false
     /** 最初にタップされたポイント */
-    private var ActionDownPoint : PointF = PointF()
+    private var actionDownPoint : PointF = PointF()
 
     /** センサーマネージャ */
-    private lateinit var SensorMgr : SensorManager
+    private lateinit var sensorMgr : SensorManager
 
     /** デバッグモード */
     private var isDebugMode = false
@@ -75,8 +74,8 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
 
         setContentView(R.layout.main_activity)
 
-        /* Numpadの追加 ----------------- */
-          // Numpadの初期化は(センサー値によって)端末の方向が判明した時に行う
+        /* numericPadの追加 ----------------- */
+          // NumericPadの初期化は(センサー値によって)端末の方向が判明した時に行う
         /* ビューの初期化 ---------------- */
         initControlButton()
         initSurfaceView()
@@ -96,7 +95,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
 
         /* ForegroundServiceが起動中 --------------- */
         if(PhysicsTimer.getState() == PhysicsTimer.STATE_PROCESSING) {
-            numpadVisibility(false)
+            numericPadVisibility(false)
             settingButtonVisibility(false)
             stopTimerButtonVisibility(true)
             physicsTimer.resume()
@@ -104,9 +103,9 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
         /* ---------------------------------------- */
     }
 
-    fun initNumpadButtonList() {
+    fun initNumericPadButtonList() {
         Debug.calledLog();
-        NumpadButtonList = listOf(
+        numericPadButtonList = listOf(
             findViewById(R.id.btNum0),
             findViewById(R.id.btNum1),
             findViewById(R.id.btNum2),
@@ -118,7 +117,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
             findViewById(R.id.btNum8),
             findViewById(R.id.btNum9))
 
-        for(button in NumpadButtonList) {
+        for(button in numericPadButtonList) {
             button.setOnTouchListener(this)
         }
     }
@@ -158,7 +157,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
         Debug.calledLog()
         super.onPause()
 
-        SensorMgr.unregisterListener(this)
+        sensorMgr.unregisterListener(this)
         physicsTimer.pause()
     }
 
@@ -169,10 +168,10 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
         Debug.calledLog()
         super.onResume()
 
-        SensorMgr = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        val     sensors:List<Sensor> = SensorMgr.getSensorList(Sensor.TYPE_ACCELEROMETER)
+        sensorMgr = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        val     sensors:List<Sensor> = sensorMgr.getSensorList(Sensor.TYPE_ACCELEROMETER)
         for(sensor in sensors) {
-            SensorMgr.registerListener(this, sensor, SensorManager.SENSOR_DELAY_UI)
+            sensorMgr.registerListener(this, sensor, SensorManager.SENSOR_DELAY_UI)
         }
 
         val font = Settings.getSavedFont(applicationContext)
@@ -206,7 +205,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
             val orientation = getOrientation(x, y)
             if(orientation != physicsTimer.orientation) {
                 physicsTimer.orientation = orientation
-                setNumpadConstraint(orientation)
+                setNumericPadConstraint(orientation)
             }
         }
     }
@@ -246,69 +245,70 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
         return orientation
     }
 
-    private fun setNumpadConstraint(orientation:Int) {
+    private fun setNumericPadConstraint(orientation:Int) {
         Debug.calledLog()
 
         val constraintLayout = findViewById<ConstraintLayout>(R.id.MainConstraintLayout)
         val constraintSet = ConstraintSet()
-        val upperGuideline = findViewById<Guideline>(R.id.numpadGuidelineUpper)
-        val bottomGuideline = findViewById<Guideline>(R.id.numpadGuidelineBottom)
+        val upperGuideline = findViewById<Guideline>(R.id.numericPadGuidelineUpper)
+        val bottomGuideline = findViewById<Guideline>(R.id.numericPadGuidelineBottom)
 
         constraintSet.clone(constraintLayout)
-        if(NumPad != null) {
-            constraintLayout.removeViewInLayout(NumPad)
+        if(numericPadLayout != null) {
+            constraintLayout.removeViewInLayout(numericPadLayout)
         }
 
         when(orientation) {
             PhysicsTimer.PORTRAIT -> {
-                NumPad = layoutInflater.inflate(R.layout.numpad, null) as LinearLayout
-                constraintLayout.addView(NumPad,1)
-                constraintSet.connect((NumPad as LinearLayout).id, ConstraintSet.TOP, bottomGuideline.id, ConstraintSet.TOP)
-                constraintSet.connect((NumPad as LinearLayout).id, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT)
-                constraintSet.connect((NumPad as LinearLayout).id, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT)
-                constraintSet.connect((NumPad as LinearLayout).id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+                numericPadLayout = layoutInflater.inflate(R.layout.numeric_pad, null) as LinearLayout
+                constraintLayout.addView(numericPadLayout,1)
+                constraintSet.connect((numericPadLayout as LinearLayout).id, ConstraintSet.TOP, bottomGuideline.id, ConstraintSet.TOP)
+                constraintSet.connect((numericPadLayout as LinearLayout).id, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT)
+                constraintSet.connect((numericPadLayout as LinearLayout).id, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT)
+                constraintSet.connect((numericPadLayout as LinearLayout).id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
             }
             PhysicsTimer.RIGHT_LANDSCAPE -> {
-                NumPad = layoutInflater.inflate(R.layout.numpad_land_right, null) as LinearLayout
-                constraintLayout.addView(NumPad, 1)
-                constraintSet.connect((NumPad as LinearLayout).id, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
-                constraintSet.connect((NumPad as LinearLayout).id, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT)
-                constraintSet.connect((NumPad as LinearLayout).id, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT)
-                constraintSet.connect((NumPad as LinearLayout).id, ConstraintSet.BOTTOM, upperGuideline.id, ConstraintSet.BOTTOM)
+                numericPadLayout = layoutInflater.inflate(R.layout.numeric_pad_land_right, null) as LinearLayout
+                constraintLayout.addView(numericPadLayout, 1)
+                constraintSet.connect((numericPadLayout as LinearLayout).id, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
+                constraintSet.connect((numericPadLayout as LinearLayout).id, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT)
+                constraintSet.connect((numericPadLayout as LinearLayout).id, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT)
+                constraintSet.connect((numericPadLayout as LinearLayout).id, ConstraintSet.BOTTOM, upperGuideline.id, ConstraintSet.BOTTOM)
             }
             PhysicsTimer.LEFT_LANDSCAPE -> {
-                NumPad = layoutInflater.inflate(R.layout.numpad_land_left, null) as LinearLayout
-                constraintLayout.addView(NumPad ,1)
-                constraintSet.connect((NumPad as LinearLayout).id, ConstraintSet.TOP, bottomGuideline.id, ConstraintSet.TOP)
-                constraintSet.connect((NumPad as LinearLayout).id, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT)
-                constraintSet.connect((NumPad as LinearLayout).id, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT)
-                constraintSet.connect((NumPad as LinearLayout).id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+                numericPadLayout = layoutInflater.inflate(R.layout.numeric_pad_land_left, null) as LinearLayout
+                constraintLayout.addView(numericPadLayout ,1)
+                constraintSet.connect((numericPadLayout as LinearLayout).id, ConstraintSet.TOP, bottomGuideline.id, ConstraintSet.TOP)
+                constraintSet.connect((numericPadLayout as LinearLayout).id, ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT)
+                constraintSet.connect((numericPadLayout as LinearLayout).id, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT)
+                constraintSet.connect((numericPadLayout as LinearLayout).id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
             }
         }
 
         constraintSet.applyTo(constraintLayout)
-        initNumpadButtonList()
+        initNumericPadButtonList()
 
         if(PhysicsTimer.getState() == PhysicsTimer.STATE_PROCESSING) {
-            numpadVisibility(false);
+            numericPadVisibility(false);
         }
     }
 
     /*
      *      選択されたボタンから数字を取得
+     *      ボタンが存在すればその数字を、なければINVALID_NUMBER_BUTTONを返す
      */
     private fun getSelectedButtonNumber(view: View?) : Int {
         Debug.calledLog()
 
         var     index = 0;
-        for(button in NumpadButtonList) {
+        for(button in numericPadButtonList) {
             if(button.id == view?.id) {
                 return index;
             }
             index++;
         }
 
-        return -1
+        return INVALID_NUMBER
     }
 
     /*
@@ -319,36 +319,40 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
 
         if(PhysicsTimer.getState() == PhysicsTimer.STATE_FINISHED) {
             physicsTimer.stop()
-            numpadVisibility(true)
+            numericPadVisibility(true)
             settingButtonVisibility(true)
             return true;
         }
         if(PhysicsTimer.getState() == PhysicsTimer.STATE_PROCESSING) {
-            return false
+            return true
         }
 
-        /** ドラッグ中のボタンはviewに渡されないらしい */
+        //座標からボタンを取得
         val button = getTouchPointButton(event?.rawX!!, event.rawY)
-        if(button == null) {
-            Debug.log2("Button is null")
-            return false
-        }
 
+        var second = 0
+        var minute = 0
         when(event.action) {
             MotionEvent.ACTION_DOWN -> {
                 Debug.log("ACTION_DOWN")
 
-                FirstSelectedNumber = getSelectedButtonNumber(button)
-                ActionDownPoint = PointF(event.rawX, event.rawY)
+                if(button == null) {
+                    return true
+                }
+
+                firstSelectedNumber = getSelectedButtonNumber(button)
+                actionDownPoint = PointF(event.rawX, event.rawY)
 
                 /* ----- デバッグモード ----- */
-                var second = 0
                 if(isDebugMode) {
                     second = 2
-                    FirstSelectedNumber = 0
+                    minute = 0
+                }
+                else {
+                    minute = firstSelectedNumber
                 }
                 /* ------------------------ */
-                physicsTimer.setTime(0, FirstSelectedNumber, second)
+                physicsTimer.setTime(0, minute, second)
 
                 button.performClick()
                 button.isPressed = true
@@ -356,10 +360,22 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
             MotionEvent.ACTION_UP -> {
                 Debug.log("ACTION_UP")
 
+                //ボタン領域外
+                if(button == null) {
+                    clearTime()
+                    return true
+                }
+                /* 時間が00:00 */
+                val time = physicsTimer.time
+                if(time.minute == 0 && time.second == 0) {
+                    clearTime()
+                    return true
+                }
+
                 physicsTimer.start()
 
-                //Numpadを非表示
-                numpadVisibility(false)
+                //NumericPadを非表示
+                numericPadVisibility(false)
                 //タイマーストップボタンを表示
                 stopTimerButtonVisibility(true)
                 //設定ボタンを非表示
@@ -371,35 +387,57 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
             MotionEvent.ACTION_MOVE -> {
                 Debug.log("ACTION_MOVE")
 
-                IsDragged = isDragging(event.rawX, event.rawY)
-                if(IsDragged == false) {
+                if(button == null) {
                     return true
                 }
 
-                var time = ""
+                isDragged = isDragging(event.rawX, event.rawY)
+                if(isDragged == false) {
+                    return true
+                }
+
+                var timeString = ""
                 button.isPressed = true
                 val currentDraggingNumber = getSelectedButtonNumber(button)
+
                 //1桁目と同じボタンをドラッグ
-                if(currentDraggingNumber == FirstSelectedNumber) {
-                    time = FirstSelectedNumber.toString() + FirstSelectedNumber.toString()
-                    PreviousDraggingNumber = currentDraggingNumber
-                    physicsTimer.setTime(0, time.toInt(), 0)
+                if(currentDraggingNumber == firstSelectedNumber) {
+                    timeString = firstSelectedNumber.toString() + firstSelectedNumber.toString()
+                    previousDraggingNumber = currentDraggingNumber
+
+                    /* ----- デバッグモード ----- */
+                    if(isDebugMode) {
+                        second = 2
+                        minute = 0
+                    }
+                    else {
+                        minute = timeString.toInt()
+                    }
+                    /* ------------------------ */
+                    physicsTimer.setTime(0, minute, second)
                 }
                 //2桁目以降をドラッグ
-                else {
-                    if(currentDraggingNumber != PreviousDraggingNumber) {
-                        time = FirstSelectedNumber.toString() + currentDraggingNumber.toString()
-                        PreviousDraggingNumber = currentDraggingNumber
+                else if(currentDraggingNumber != previousDraggingNumber) {
+                    timeString = firstSelectedNumber.toString() + currentDraggingNumber.toString()
+                    previousDraggingNumber = currentDraggingNumber
 
-                        physicsTimer.setTime(0, time.toInt(), 0)
+                    /* ----- デバッグモード ----- */
+                    if(isDebugMode) {
+                        second = 2
+                        minute = 0
+                    }
+                    else {
+                        minute = timeString.toInt()
+                    }
+                    /* ------------------------ */
+                    physicsTimer.setTime(0, minute, second)
 
-                        if(CurrentDraggingButton == null) {
-                            CurrentDraggingButton = button
-                        }
-                        else {
-                            CurrentDraggingButton!!.isPressed = false
-                            CurrentDraggingButton = button
-                        }
+                    if(currentDraggingButton == null) {
+                        currentDraggingButton = button
+                    }
+                    else {
+                        currentDraggingButton!!.isPressed = false
+                        currentDraggingButton = button
                     }
                 }
             }
@@ -421,7 +459,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
             btStopTimer -> {
                 Debug.log2("btStopTimer pressed")
 
-                numpadVisibility(true)
+                numericPadVisibility(true)
                 stopTimerButtonVisibility(false)
                 settingButtonVisibility(true)
 
@@ -432,15 +470,15 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
     }
 
     /*
-     *          Numpadの表示・非表示
+     *          numericPadの表示・非表示
      */
-    fun numpadVisibility(visibility: Boolean) {
+    fun numericPadVisibility(visibility: Boolean) {
         Debug.calledLog()
         if(visibility) {
-            NumPad?.visibility = View.VISIBLE
+            numericPadLayout?.visibility = View.VISIBLE
         }
         else {
-            NumPad?.visibility = View.INVISIBLE
+            numericPadLayout?.visibility = View.INVISIBLE
         }
     }
 
@@ -475,12 +513,12 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
      */
     private fun clearButtonState() {
         Debug.calledLog()
-        FirstSelectedNumber = INVALID_TIME
-        IsDragged = false
-        ActionDownPoint = PointF()
+        firstSelectedNumber = INVALID_NUMBER
+        isDragged = false
+        actionDownPoint = PointF()
 
         //全ての選択状態を解除
-        for(button in NumpadButtonList) {
+        for(button in numericPadButtonList) {
             button.isPressed = false
         }
     }
@@ -489,8 +527,8 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
      *      最初にタップした位置からドラッグされているか
      */
     private fun isDragging(x:Float, y:Float) : Boolean {
-        val distanceX = (ActionDownPoint.x - x).toDouble()
-        val distanceY = (ActionDownPoint.y - y).toDouble()
+        val distanceX = (actionDownPoint.x - x).toDouble()
+        val distanceY = (actionDownPoint.y - y).toDouble()
 
         val distance = Math.sqrt(Math.pow(distanceX, 2.0) + Math.pow(distanceY, 2.0))
         return (distance >= DRAGABLE_DISTANCE)
@@ -501,7 +539,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
      */
     private fun getTouchPointButton(_x:Float, _y:Float) : Button? {
         Debug.calledLog()
-        for(button in NumpadButtonList) {
+        for(button in numericPadButtonList) {
             val location = IntArray(2)
             button.getLocationInWindow(location)
 
@@ -524,8 +562,17 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
         if(view === btSetting) {
             isDebugMode = !isDebugMode
             VibrationList.vibrate(applicationContext, 4, VibrationList.NOT_REPEAT)
+            btSetting.performLongClick()
         }
 
         return true
+    }
+
+    /**
+     *      時間をクリア
+     */
+    private fun clearTime() {
+        physicsTimer.invalidateDrawing()
+        clearButtonState()
     }
 }

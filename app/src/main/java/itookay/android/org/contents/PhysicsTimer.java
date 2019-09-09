@@ -169,6 +169,10 @@ public class PhysicsTimer implements TimeChangedListener {
         }
     }
 
+    public Time getTime() {
+        return mTime;
+    }
+
     /**
      *      タイマースタート<br>
      *      サービスを使うかどうかはbindServiceによる
