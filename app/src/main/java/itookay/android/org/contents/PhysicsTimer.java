@@ -21,6 +21,8 @@ class ServiceInfo implements Serializable {
 
 public class PhysicsTimer implements TimeChangedListener {
 
+    /** 端末向き：センサー値が方向検出範囲外 */
+    public static final int     ORIENTATION_RANGE_OUT = -1;
     /** 端末向き：端末上が上 */
     public static final int     PORTRAIT = 50;
     /** 端末向き：端末左が上 */

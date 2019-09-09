@@ -203,6 +203,10 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
             physicsTimer.setGravity(x, y)
 
             val orientation = getOrientation(x, y)
+            //センサー値が検出範囲外
+            if(orientation == PhysicsTimer.ORIENTATION_RANGE_OUT) {
+                return
+            }
             if(orientation != physicsTimer.orientation) {
                 physicsTimer.orientation = orientation
                 setNumericPadConstraint(orientation)
@@ -217,12 +221,14 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
      *      端末向きを検出してDialの向きを変える
      */
     private fun getOrientation(X:Float, Y:Float) : Int {
-        val gravity = ControlWorld.GRAVITY / 2f;
-        var orientation = PhysicsTimer.PORTRAIT
+        Debug.log("Gravity ${X}, ${Y}")
+
+        val gravity = ControlWorld.GRAVITY / 8f;
+        var orientation = PhysicsTimer.ORIENTATION_RANGE_OUT
 
         if(-gravity < X && X < gravity){
             //通常の向き
-            if(Y < 0) {
+            if(Y < -gravity) {
                 orientation = PhysicsTimer.PORTRAIT
             }
             //端末上側が下を向いている
