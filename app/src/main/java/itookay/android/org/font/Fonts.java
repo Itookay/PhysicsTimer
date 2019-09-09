@@ -14,7 +14,7 @@ import itookay.android.org.R;
  */
 public class Fonts {
 
-    private static final int       DEFAULT_INDEX = 0;
+    private static final int       DEFAULT_INDEX = 4;
 
     private static List<FontBase> fontList() {
         return Arrays.asList(

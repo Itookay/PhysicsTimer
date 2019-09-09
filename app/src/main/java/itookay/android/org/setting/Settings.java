@@ -77,7 +77,7 @@ public class Settings {
      */
     public static StyleBase getStyle(Context context) {
         SharedPreferences   pref = getSharedPreference(context);
-        String              StyleName = pref.getString(PREFERENCE_KEY_STYLE, "");
+        String              StyleName = pref.getString(PREFERENCE_KEY_STYLE, new TwoRows().NAME);
 
         for(StyleBase style : mStyleList) {
             if(StyleName.equals(style.NAME)) {

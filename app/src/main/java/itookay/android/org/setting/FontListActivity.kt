@@ -20,7 +20,7 @@ class FontListActivity : AppCompatActivity() {
         setContentView(R.layout.font_list_activity)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val listView = findViewById<ListView>(R.id.fontListView)
+        val listView:ListView = findViewById(R.id.fontListView)
         mAdapter = FontListAdapter(this, resources)
         listView.adapter = mAdapter
         listView.choiceMode = ListView.CHOICE_MODE_SINGLE
