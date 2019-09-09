@@ -63,8 +63,8 @@ public class Wide extends FontBase {
         FOUR = four.clone();
 
         int[]	five =
-                {	0, 1, 1, 1, 1, 0,
-                    1, 0, 0, 0, 0, 1,
+                {	0, 1, 1, 1, 1, 1,
+                    1, 0, 0, 0, 0, 0,
                     1, 0, 0, 0, 0, 0,
                     0, 1, 1, 1, 1, 0,
                     0, 0, 0, 0, 0, 1,

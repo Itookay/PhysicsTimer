@@ -64,7 +64,7 @@ public class WideCorner extends FontBase {
 
         int[]	five =
                 {	1, 1, 1, 1, 1, 1,
-                    1, 0, 0, 0, 0, 1,
+                    1, 0, 0, 0, 0, 0,
                     1, 0, 0, 0, 0, 0,
                     1, 1, 1, 1, 1, 1,
                     0, 0, 0, 0, 0, 1,
