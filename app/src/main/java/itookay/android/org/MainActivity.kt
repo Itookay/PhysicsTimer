@@ -565,10 +565,10 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
      *      ボタンロングクリック
      */
     override fun onLongClick(view: View?): Boolean {
+        //デバッグモードへの移行
         if(view === btSetting) {
             isDebugMode = !isDebugMode
             VibrationList.vibrate(applicationContext, 4, VibrationList.NOT_REPEAT)
-            btSetting.performLongClick()
         }
 
         return true
