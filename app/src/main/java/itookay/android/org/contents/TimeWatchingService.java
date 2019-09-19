@@ -167,9 +167,7 @@ public class TimeWatchingService extends Service {
      *      (タイマー起動中なら)タイマーの停止
      */
     public static void stopTimer() {
-        if(PhysicsTimer.getState() == PhysicsTimer.STATE_PROCESSING) {
-            mStopService = true;
-        }
+        mStopService = true;
     }
 
     /**
