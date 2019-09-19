@@ -11,6 +11,7 @@ public class NormalRound extends FontBase {
         SEPARATE_COLUMN_COUNT = 1;
         ROW_COUNT = 5;
         ARRAY_SIZE = COLUMN_COUNT * ROW_COUNT;
+        COLOGNE_COLUMN_COUNT = 1;
 
         int[]	zero =
             {	0, 1, 1, 0,

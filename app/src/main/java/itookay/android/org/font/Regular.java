@@ -11,6 +11,7 @@ public class Regular extends FontBase {
         SEPARATE_COLUMN_COUNT = 1;
         ROW_COUNT = 7;
         ARRAY_SIZE = COLUMN_COUNT * ROW_COUNT;
+        COLOGNE_COLUMN_COUNT = 1;
 
         int[]	zero =
                 {	1, 1, 1, 1,

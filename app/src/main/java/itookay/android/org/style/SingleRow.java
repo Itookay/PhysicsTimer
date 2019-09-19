@@ -116,4 +116,9 @@ public class SingleRow extends StyleBase {
             panel.OffsetPosition(dx, dy);
         }
     }
+
+    @Override
+    public float getDialHeight(DialPanel minute, DialPanel cologne, DialPanel second) {
+        return minute.getHeightWithSpace() + cologne.getHeightWithSpace() + second.getHeightWithSpace();
+    }
 }

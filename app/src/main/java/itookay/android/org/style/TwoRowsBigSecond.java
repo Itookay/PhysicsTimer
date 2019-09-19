@@ -111,4 +111,9 @@ public class TwoRowsBigSecond extends StyleBase {
         minute.OffsetPosition(dx, dy);
         second.OffsetPosition(dx, dy);
     }
+
+    @Override
+    public float getDialHeight(DialPanel minute, DialPanel cologne, DialPanel second) {
+        return minute.getHeightWithSpace() + second.getHeightWithSpace();
+    }
 }

@@ -87,16 +87,35 @@ public class Dial {
     }
 
     /**
-     *          タイマーの幅を取得
+     *      分・秒・コロンの各DialPanelを取得
+     * @param format DialPanel.MINUTE, SECOND, COLOGNE
+     * @return formatで指定した属性のDialPanel
      */
-    public float getTimerWidthWithSpace() {
-        float       timerWidth = 0;
-        //パネルの横幅を取得
-        for (DialPanel dial : mDialPanelList) {
-            timerWidth += dial.getWidthWithSpace();
+    public DialPanel getPanel(int format) {
+        for(DialPanel panel : mDialPanelList) {
+            if(panel.getFormat() == format) {
+                return panel;
+            }
         }
 
-        return timerWidth;
+        return null;
+    }
+
+    /**
+     *      Dialの幅(スペース付き)を取得
+     */
+    public float getWidthWithSpace() {
+        return 0;
+    }
+
+    /**
+     *      Dialの高さ(スペース付き)を取得
+     */
+    public float getHeightWithSpace() {
+        DialPanel   second = getPanel(DialPanel.SECOND);
+        DialPanel   cologne = getPanel(DialPanel.COLOGNE);
+        DialPanel   minute = getPanel(DialPanel.MINUTE);
+        return mStyle.getDialHeight(minute, cologne, second);
     }
 
     /**

@@ -32,6 +32,7 @@ public abstract class FontBase implements Serializable {
 	int		SEPARATE_COLUMN_COUNT = -1;
 	int		ROW_COUNT = -1;
 	int		ARRAY_SIZE = COLUMN_COUNT * ROW_COUNT;
+	int		COLOGNE_COLUMN_COUNT = -1;
 
 	/** 時と分の区切り */
 	public int[]		COLOGNE = null;
@@ -62,17 +63,31 @@ public abstract class FontBase implements Serializable {
 	}
 
 	/**
-	 * 		数字1文字分のカラム数を返す
+	 * 		数字1文字分のColumn数を返す
 	 */
 	public int getOneNumberColumnCount() {
 		return COLUMN_COUNT;
 	}
 
 	/**
-	 * 		数字2文字分のカラム数を返す
+	 * 		数字2文字分のColumn数を返す
 	 */
 	public int getTwoNumbersColumnsCount() {
 		return COLUMN_COUNT * 2;
+	}
+
+	/**
+	 * 		Row数を返す
+	 */
+	public int getRowCount() {
+		return ROW_COUNT;
+	}
+
+	/**
+	 * 		 コロンのColumn数を返す
+	 */
+	public int getCologneColumnCount() {
+		return COLOGNE_COLUMN_COUNT;
 	}
 
 	public int getDialPanelColumnCount(int format) {

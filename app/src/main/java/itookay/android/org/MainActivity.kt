@@ -215,13 +215,14 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+        //なにもしない
     }
 
     /**
      *      端末向きを検出してDialの向きを変える
      */
     private fun getOrientation(X:Float, Y:Float) : Int {
-        Debug.log("Gravity ${X}, ${Y}")
+//        Debug.log("Gravity ${X}, ${Y}")
 
         val gravity = ControlWorld.GRAVITY / 8f;
         var orientation = PhysicsTimer.ORIENTATION_RANGE_OUT

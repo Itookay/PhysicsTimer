@@ -59,8 +59,6 @@ public class PhysicsTimer implements TimeChangedListener {
     private StyleBase       mStyle = null;
     /** 端末向き */
     private int             mOrientation = 0;
-    /** タイマーの初期化が全て終了 */
-    //private boolean         mIsReadyToStart = false;
     /** タイマーをサービスで起動 */
     private boolean         mBindService = true;
     /** タイマータイム */
@@ -304,11 +302,32 @@ public class PhysicsTimer implements TimeChangedListener {
     }
 
     /**
+     *      現在のフォントでDial高さが画面幅よりも大きければtrue<br>
+     *      (端末横向きにしてタイマーの数字が入りきるか)
+     * @return trueなら入りきらない
+     */
+    public boolean isDialHeightBiggerThanDisplayWidth() {
+        float   displayWidth = Scale.getDisplayWidthMeter();
+        float   dialHeight = mDial.getHeightWithSpace();
+
+        if(displayWidth < dialHeight) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    /**
      *      端末向きをセット
      * @param orientation PhysicsTimer.PORTRAIT, LEFT_LANDSCAPE, RIGHT_LANDSCAPE, UPSIDE_DOWN
      */
     public void setOrientation(int orientation) {
         if(mOrientation == orientation) {
+            return;
+        }
+        if(isDialHeightBiggerThanDisplayWidth()) {
+            mOrientation = orientation;
             return;
         }
 

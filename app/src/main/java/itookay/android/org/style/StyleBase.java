@@ -38,11 +38,17 @@ public abstract class StyleBase {
     protected abstract void     customArrangement(ArrayList<DialPanel> dialPanels);
     /** Dialを画面の中央に配置 */
     public abstract void        alignCenter(ArrayList<DialPanel> dialPanels);
+    /** Dial高さを取得 */
+    public abstract float       getDialHeight(DialPanel minute, DialPanel cologne, DialPanel second);
+//    /** 行方向の小さいタイルの数を取得 */
+//    public abstract int         getSmallTileRowCount(FontBase font);
+//    /** 行方向のふつうタイルの数を取得 */
+//    public abstract int         getNormalTileRowCount(FontBase font);
+//    /** 列方向のタイル数を取得 */
+//    public abstract int         getTileColumnCount(FontBase font);
 
     /** 端末向き */
     protected int       mOrientation = PhysicsTimer.PORTRAIT;
-    /** スケール */
-    //protected Scale     mScale = null;
 
     public StyleBase() {
         defineStyle();
@@ -105,8 +111,6 @@ public abstract class StyleBase {
         r.y = (float)(dx*Math.sin(w/180*pi) + dy*Math.cos(w/180*pi) + c.y);
         return r;
     }
-
-
 
     /**
      *      ディスプレイに対するDial幅との比を取得

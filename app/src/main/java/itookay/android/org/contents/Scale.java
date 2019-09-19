@@ -81,8 +81,8 @@ public class Scale {
             mDisplayHeightMeter = defaultScaleInMeter;
         }
         else {
-            mDisplayHeightMeter = defaultScaleInMeter / ratio;
-            mDisplayWidthMeter = defaultScaleInMeter;
+//            mDisplayHeightMeter = defaultScaleInMeter / ratio;
+//            mDisplayWidthMeter = defaultScaleInMeter;
         }
 
         mRatio = mDisplayHeightPixel / mDisplayHeightMeter;
