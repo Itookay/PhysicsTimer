@@ -69,7 +69,9 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
 
         super.onCreate(savedInstanceState)
         window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        if(Settings.getFlagKeepScreenOn(applicationContext)) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
         requestWindowFeature(Window.FEATURE_NO_TITLE)
 
         setContentView(R.layout.main_activity)
@@ -83,7 +85,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
         getDisplayScale()
         TimeWatchingService.setContext(applicationContext);
 
-        val font = Settings.getSavedFont(applicationContext)
+        val font = Settings.getFont(applicationContext)
         val style = Settings.getStyle(applicationContext)
 
         physicsTimer = PhysicsTimer(this)
@@ -174,7 +176,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
             sensorMgr.registerListener(this, sensor, SensorManager.SENSOR_DELAY_UI)
         }
 
-        val font = Settings.getSavedFont(applicationContext)
+        val font = Settings.getFont(applicationContext)
         val style = Settings.getStyle(applicationContext)
         physicsTimer.setFont(font)
         physicsTimer.setStyle(style)

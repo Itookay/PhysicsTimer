@@ -11,7 +11,6 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import itookay.android.org.R
-import kotlinx.android.synthetic.main.ringtone_list.*
 
 class RingtoneListActivity : AppCompatActivity(), AdapterView.OnItemClickListener {
 
@@ -30,7 +29,7 @@ class RingtoneListActivity : AppCompatActivity(), AdapterView.OnItemClickListene
         listView.adapter = ArrayAdapter<String>(applicationContext, android.R.layout.simple_list_item_single_choice, RingtoneList.getRingtoneList(applicationContext))
         listView.choiceMode = ListView.CHOICE_MODE_SINGLE
         listView.onItemClickListener = this
-        val index = Settings.getSavedRingtoneIndex(applicationContext)
+        val index = Settings.getRingtoneIndex(applicationContext)
         listView.setItemChecked(index, true)
     }
 

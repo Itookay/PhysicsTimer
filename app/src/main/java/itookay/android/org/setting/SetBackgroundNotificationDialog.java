@@ -36,7 +36,7 @@ public class SetBackgroundNotificationDialog implements DialogInterface.OnClickL
         mSwitch2 = view.findViewById(R.id.swBackgroundAction2);
         mSwitch3 = view.findViewById(R.id.swBackgroundAction3);
 
-        boolean[]       values = Settings.getSavedBackgroundNotificationAction(mContext);
+        boolean[]       values = Settings.getBackgroundNotificationAction(mContext);
         mSwitch1.setChecked(values[FOREGROUND_ALERT_INDEX]);
         mSwitch2.setChecked(values[SOUND_ALERT_INDEX]);
         mSwitch3.setChecked(values[VIBRATION_ALERT_INDEX]);

@@ -70,7 +70,7 @@ public class FontListAdapter extends BaseAdapter {
 
         mRadioButtons[position] = radioButton;
         //Preferenceから復元
-        if(position == Settings.getSavedFontIndex(mContext)) {
+        if(position == Settings.getFontIndex(mContext)) {
             mRadioButtons[position].setChecked(true);
         }
 

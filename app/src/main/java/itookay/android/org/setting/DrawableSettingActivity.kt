@@ -42,11 +42,11 @@ abstract class DrawableSettingActivity : AppCompatActivity(), View.OnClickListen
         initButton()
 
         /* 設定のロード */
-        val font = Settings.getSavedFont(applicationContext)
+        val font = Settings.getFont(applicationContext)
         val style = Settings.getStyle(applicationContext)
 
-        FontListIndex = Settings.getSavedFontIndex(applicationContext)
-        StyleListIndex = Settings.getSavedStyleIndex(applicationContext)
+        FontListIndex = Settings.getFontIndex(applicationContext)
+        StyleListIndex = Settings.getStyleIndex(applicationContext)
 
         setButtonState()
 

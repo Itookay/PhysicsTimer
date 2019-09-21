@@ -16,7 +16,7 @@ class VibrationListFragment : ListFragment(), AdapterView.OnItemClickListener  {
         listAdapter = ArrayAdapter<String>(context, R.layout.simple_list_item_single_choice, VibrationList.getVibrationNameList(context))
         listView.choiceMode = ListView.CHOICE_MODE_SINGLE
         listView.onItemClickListener = this
-        val index = Settings.getSavedVibrationIndex(context)
+        val index = Settings.getVibrationIndex(context)
         listView.setItemChecked(index, true)
     }
 

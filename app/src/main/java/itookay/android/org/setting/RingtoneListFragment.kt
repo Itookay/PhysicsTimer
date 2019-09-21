@@ -1,6 +1,5 @@
 package itookay.android.org.setting
 
-import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.View
@@ -20,7 +19,7 @@ class RingtoneListFragment : ListFragment(), AdapterView.OnItemClickListener {
         listAdapter = ArrayAdapter<String>(context, android.R.layout.simple_list_item_single_choice, RingtoneList.getRingtoneList(context))
         listView.choiceMode = ListView.CHOICE_MODE_SINGLE
         listView.onItemClickListener = this
-        val index = Settings.getSavedRingtoneIndex(context)
+        val index = Settings.getRingtoneIndex(context)
         listView.setItemChecked(index, true)
     }
 

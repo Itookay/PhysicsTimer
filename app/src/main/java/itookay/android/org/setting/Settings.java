@@ -2,6 +2,8 @@ package itookay.android.org.setting;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+
+import itookay.android.org.R;
 import itookay.android.org.font.FontBase;
 import itookay.android.org.font.Fonts;
 import itookay.android.org.style.SingleRow;
@@ -45,7 +47,7 @@ public class Settings {
     /**
      *      フォントを取得
      */
-    public static FontBase getSavedFont(Context context) {
+    public static FontBase getFont(Context context) {
         SharedPreferences   pref = getSharedPreference(context);
         String              fontName = pref.getString(PREFERENCE_KEY_FONT, "");
 
@@ -60,9 +62,9 @@ public class Settings {
     /**
      *      フォントのリスト上でのインデックスを取得
      */
-    public static int getSavedFontIndex(Context context) {
+    public static int getFontIndex(Context context) {
         int         index = 0;
-        String      name = getSavedFont(context).NAME;
+        String      name = getFont(context).NAME;
         for(FontBase font : Fonts.getList()) {
             if(font.NAME.equals(name)) {
                 return index;
@@ -90,7 +92,7 @@ public class Settings {
     /**
      *      サウンドを取得
      */
-    public static int getSavedRingtoneIndex(Context context) {
+    public static int getRingtoneIndex(Context context) {
         SharedPreferences   pref = getSharedPreference(context);
         return pref.getInt(PREFERENCE_KEY_RINGTONE, RingtoneList.getDefault());
     }
@@ -98,7 +100,7 @@ public class Settings {
     /**
      *      アラーム動作時間を取得
      */
-    public static int getSavedAlarmTime(Context context) {
+    public static int getAlarmTime(Context context) {
         SharedPreferences   pref = getSharedPreference(context);
         return pref.getInt(PREFERENCE_KEY_ALARM_TIME, 1);
     }
@@ -118,7 +120,7 @@ public class Settings {
     /**
      *      スタイルのリスト上でのインデックスを取得
      */
-    public static int getSavedStyleIndex(Context context) {
+    public static int getStyleIndex(Context context) {
         int     index = 0;
         for(StyleBase style : mStyleList) {
             if(style.NAME.equals(getStyle(context).NAME)) {
@@ -132,7 +134,7 @@ public class Settings {
     /**
      *      バイブレーションを取得
      */
-    public static int getSavedVibrationIndex(Context context) {
+    public static int getVibrationIndex(Context context) {
         SharedPreferences   pref = getSharedPreference(context);
         return pref.getInt(PREFERENCE_KEY_VIBRATION, 1);
     }
@@ -141,7 +143,7 @@ public class Settings {
      *      バックグラウンド時の通知方法を取得
      * @return ダイアログのチェックボックスの上から順番にint配列で返す。
      */
-    public static boolean[] getSavedBackgroundNotificationAction(Context context) {
+    public static boolean[] getBackgroundNotificationAction(Context context) {
         SharedPreferences   pref = getSharedPreference(context);
         boolean     action1 = pref.getBoolean(PREFERENCE_KEY_NOTIFICATION_FOREGROUND, false);
         boolean     action2 = pref.getBoolean(PREFERENCE_KEY_NOTIFICATION_SOUND, false);
@@ -149,6 +151,12 @@ public class Settings {
         boolean[]   action = {action1, action2, action3};
 
         return action;
+    }
+
+    public static boolean getFlagKeepScreenOn(Context context) {
+        SharedPreferences   pref = getSharedPreference(context);
+        String              key = context.getString(R.string.preference_key_keep_screen_on);
+        return pref.getBoolean(key, true);
     }
 
     /**

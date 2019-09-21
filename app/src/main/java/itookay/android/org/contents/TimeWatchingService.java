@@ -201,8 +201,8 @@ public class TimeWatchingService extends Service {
      *      アラーム開始
      */
     private void startAlarm() {
-        int     soundIndex = Settings.getSavedRingtoneIndex(mContext);
-        int     vibrationIndex = Settings.getSavedVibrationIndex(mContext);
+        int     soundIndex = Settings.getRingtoneIndex(mContext);
+        int     vibrationIndex = Settings.getVibrationIndex(mContext);
 
         try {
             if(soundIndex != 0) {
@@ -221,7 +221,7 @@ public class TimeWatchingService extends Service {
             }
         };
         Timer   timer = new Timer();
-        long    delay = 1000 * (long)Settings.getSavedAlarmTime(mContext);
+        long    delay = 1000 * (long)Settings.getAlarmTime(mContext);
         timer.schedule(task, delay);
     }
 

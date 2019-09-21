@@ -25,7 +25,7 @@ class VibrationListActivity : AppCompatActivity(), AdapterView.OnItemClickListen
         listView.adapter = ArrayAdapter<String>(applicationContext, android.R.layout.simple_list_item_single_choice, VibrationList.getVibrationNameList(applicationContext))
         listView.choiceMode = ListView.CHOICE_MODE_SINGLE
         listView.onItemClickListener = this
-        val index = Settings.getSavedVibrationIndex(applicationContext)
+        val index = Settings.getVibrationIndex(applicationContext)
         listView.setItemChecked(index, true)
     }
 

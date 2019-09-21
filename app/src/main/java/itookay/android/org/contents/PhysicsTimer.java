@@ -337,13 +337,22 @@ public class PhysicsTimer implements TimeChangedListener {
      * @param orientation PhysicsTimer.PORTRAIT, LEFT_LANDSCAPE, RIGHT_LANDSCAPE, UPSIDE_DOWN
      */
     public void setOrientation(int orientation) {
+        /* 次の場合は方向転換しない ---------- */
+        //同じ方向
         if(mOrientation == orientation) {
             return;
         }
+        //Dialサイズがディスプレイより大きい
         if(isDialHeightBiggerThanDisplayWidth()) {
             mOrientation = orientation;
             return;
         }
+        //アラーム中
+        if(PhysicsTimer.getState() == PhysicsTimer.STATE_ALARMING) {
+            mOrientation = orientation;
+            return;
+        }
+        /* -------------------------------- */
 
         float       deg = 0;
         switch(orientation) {

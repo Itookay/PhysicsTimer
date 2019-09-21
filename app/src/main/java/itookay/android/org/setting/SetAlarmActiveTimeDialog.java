@@ -1,6 +1,5 @@
 package itookay.android.org.setting;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -25,7 +24,7 @@ public class SetAlarmActiveTimeDialog implements DialogInterface.OnClickListener
     public void show() {
         LayoutInflater      inflater = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.alarm_active_time_dialog, null);
-        int     value = Settings.getSavedAlarmTime(mContext);
+        int     value = Settings.getAlarmTime(mContext);
 
         mNumberPicker = view.findViewById(R.id.npSecond);
         mNumberPicker.setMaxValue(MAX_ALERT_MIN);
