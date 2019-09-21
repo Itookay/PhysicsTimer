@@ -77,7 +77,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
         setContentView(R.layout.main_activity)
 
         /* numericPadの追加 ----------------- */
-          // NumericPadの初期化は(センサー値によって)端末の方向が判明した時に行う
+        setNumericPadConstraint(PhysicsTimer.PORTRAIT)
         /* ビューの初期化 ---------------- */
         initControlButton()
         initSurfaceView()
