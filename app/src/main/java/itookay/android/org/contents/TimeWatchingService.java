@@ -10,6 +10,8 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 import java.time.LocalDateTime;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import itookay.android.org.MainActivity;
 import itookay.android.org.R;
@@ -164,13 +166,6 @@ public class TimeWatchingService extends Service {
     }
 
     /**
-     *      (タイマー起動中なら)タイマーの停止
-     */
-    public static void stopTimer() {
-        mStopService = true;
-    }
-
-    /**
      * 			タイマースタート
      */
     public void startTimer(boolean bindService) {
@@ -192,6 +187,51 @@ public class TimeWatchingService extends Service {
             mRunnable.run();
             PhysicsTimer.setState(PhysicsTimer.STATE_PROCESSING);
         }
+    }
+
+    /**
+     *      起動中のタイマー停止
+     */
+    public static void stopTimer() {
+        Debug.calledLog();
+        mStopService = true;
+    }
+
+    /**
+     *      アラーム開始
+     */
+    private void startAlarm() {
+        int     soundIndex = Settings.getSavedRingtoneIndex(mContext);
+        int     vibrationIndex = Settings.getSavedVibrationIndex(mContext);
+
+        try {
+            if(soundIndex != 0) {
+                RingtoneList.start(mContext, soundIndex, true);
+            }
+            VibrationList.vibrate(mContext, vibrationIndex, VibrationList.REPEAT);
+        }
+        catch(Exception e) {
+        }
+
+        /* 指定時間でのタイマー終了処理 */
+        TimerTask   task = new TimerTask() {
+            @Override
+            public void run() {
+                stopAlarm();
+            }
+        };
+        Timer   timer = new Timer();
+        long    delay = 1000 * (long)Settings.getSavedAlarmTime(mContext);
+        timer.schedule(task, delay);
+    }
+
+    /**
+     *      アラームを停止
+     */
+    public static void stopAlarm() {
+        RingtoneList.stop();
+        VibrationList.stop();
+        cancelNotification();
     }
 
     /**
@@ -351,7 +391,7 @@ public class TimeWatchingService extends Service {
         mHandler.removeCallbacks(mRunnable);
 
         /* Timerステータス変更 */
-        if(PhysicsTimer.getState() == PhysicsTimer.STATE_FINISHED) {
+        if(PhysicsTimer.getState() == PhysicsTimer.STATE_ALARMING) {
             //カウントが終わりタイマーが正常終了した
             //ステータスは変更しない
         }
@@ -391,32 +431,6 @@ public class TimeWatchingService extends Service {
             }
         }
         return true;
-    }
-
-    /**
-     *      サウンドとバイブレーションでアラート
-     */
-    private void startAlarm() {
-        int     soundIndex = Settings.getSavedRingtoneIndex(mContext);
-        int     vibrationIndex = Settings.getSavedVibrationIndex(mContext);
-
-        try {
-            if(soundIndex != 0) {
-                RingtoneList.start(mContext, soundIndex, true);
-            }
-        }
-        catch(Exception e) {
-        }
-
-        VibrationList.vibrate(mContext, vibrationIndex, VibrationList.REPEAT);
-    }
-
-    /**
-     *      アラームを停止
-     */
-    public static void stopAlarm() {
-        RingtoneList.stop();
-        VibrationList.stop();
     }
 
     public static void cancelNotification() {

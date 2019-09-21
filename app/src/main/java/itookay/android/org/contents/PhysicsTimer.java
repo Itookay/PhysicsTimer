@@ -34,8 +34,8 @@ public class PhysicsTimer implements TimeChangedListener {
 
     /** タイマーが稼働中 */
     public static final int     STATE_PROCESSING = 1001;
-    /** タイマーが終了してNumpad画面に戻るのを待っている */
-    public static final int     STATE_FINISHED = 1002;
+    /** タイマーが終了してアラームが鳴っている */
+    public static final int     STATE_ALARMING = 1002;
     /** Numpadを表示して待機中 */
     public static final int     STATE_IDLING = 1003;
 
@@ -218,10 +218,24 @@ public class PhysicsTimer implements TimeChangedListener {
     }
 
     /**
-     *          タイマーを強制終了
+     *      タイマーを停止
      */
     public void stop() {
         TimeWatchingService.stopTimer();
+
+        mControlWorld.clearTime();
+        mDial.clearTime(false);
+        mTime = new Time();
+
+        setState(STATE_IDLING);
+    }
+
+    /**
+     *      アラームを停止
+     */
+    public void stopAlarm() {
+        TimeWatchingService.stopAlarm();
+
         mControlWorld.clearTime();
         mDial.clearTime(false);
         mTime = new Time();
@@ -255,7 +269,7 @@ public class PhysicsTimer implements TimeChangedListener {
     public void onTimeChanged(int hour, int minute, int second) {
         try {
             if(second == TimeWatchingService.TIMER_FINISHED) {
-                setState(STATE_FINISHED);
+                setState(STATE_ALARMING);
             }
             else {
                 mDial.setTime(new Time(hour, minute, second));

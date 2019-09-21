@@ -70,8 +70,8 @@ public class Debug {
             case PhysicsTimer.STATE_IDLING:
                 stateString = "STATE_IDLING";
                 break;
-            case PhysicsTimer.STATE_FINISHED:
-                stateString = "STATE_FINISHED";
+            case PhysicsTimer.STATE_ALARMING:
+                stateString = "STATE_ALARMING";
                 break;
             default:
                 stateString = "invalid state";

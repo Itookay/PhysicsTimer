@@ -184,11 +184,9 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
         //タイマーの再開
         physicsTimer.resume()
 
-        //タイマー終了後、サウンドとバイブレーションで通知中の場合
-        if(PhysicsTimer.getState() == PhysicsTimer.STATE_FINISHED) {
-            TimeWatchingService.stopAlarm()
-            TimeWatchingService.cancelNotification()
-            physicsTimer.stop()
+        //タイマーが終了してアラーム中
+        if(PhysicsTimer.getState() == PhysicsTimer.STATE_ALARMING) {
+            physicsTimer.stopAlarm()
         }
     }
 
@@ -324,7 +322,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
     override fun onTouch(view: View?, event: MotionEvent?): Boolean {
         Debug.calledLog()
 
-        if(PhysicsTimer.getState() == PhysicsTimer.STATE_FINISHED) {
+        if(PhysicsTimer.getState() == PhysicsTimer.STATE_ALARMING) {
             physicsTimer.stop()
             numericPadVisibility(true)
             settingButtonVisibility(true)
@@ -458,20 +456,31 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
      */
     override fun onClick(view: View?) {
         when(view) {
+            //設定ボタン
             btSetting -> {
                 Debug.log2("btSetting pressed.")
                 val intent = Intent(this, MainSettingActivity::class.java)
                 startActivity(intent)
             }
+            //タイマーストップボタン
             btStopTimer -> {
                 Debug.log2("btStopTimer pressed")
 
+                /* ボタン表示処理 */
                 numericPadVisibility(true)
                 stopTimerButtonVisibility(false)
                 settingButtonVisibility(true)
 
-                physicsTimer.stop()
-                TimeWatchingService.stopAlarm();
+                //タイマー動作中
+                if(PhysicsTimer.getState() == PhysicsTimer.STATE_PROCESSING) {
+                    physicsTimer.stop()
+                    return
+                }
+                //タイマー終了してアラーム中
+                if(PhysicsTimer.getState() == PhysicsTimer.STATE_ALARMING) {
+                    physicsTimer.stopAlarm();
+                    return
+                }
             }
         }
     }
