@@ -335,24 +335,29 @@ public class PhysicsTimer implements TimeChangedListener {
     /**
      *      端末向きをセット
      * @param orientation PhysicsTimer.PORTRAIT, LEFT_LANDSCAPE, RIGHT_LANDSCAPE, UPSIDE_DOWN
+     * @param rotateNow trueだとすぐに方向転換。falseだとorientationの値を保持するだけ
      */
-    public void setOrientation(int orientation) {
-        /* 次の場合は方向転換しない ---------- */
-        //同じ方向
-        if(mOrientation == orientation) {
-            return;
-        }
-        //Dialサイズがディスプレイより大きい
-        if(isDialHeightBiggerThanDisplayWidth()) {
+    public void setOrientation(int orientation, boolean rotateNow) {
+//        /* 次の場合は方向転換しない ---------- */
+        if(!rotateNow) {
             mOrientation = orientation;
             return;
         }
-        //アラーム中
-        if(PhysicsTimer.getState() == PhysicsTimer.STATE_ALARMING) {
-            mOrientation = orientation;
-            return;
-        }
-        /* -------------------------------- */
+//        //同じ方向
+//        if(mOrientation == orientation) {
+//            return;
+//        }
+//        //Dialサイズがディスプレイより大きい
+//        if(isDialHeightBiggerThanDisplayWidth()) {
+//            mOrientation = orientation;
+//            return;
+//        }
+//        //アラーム中
+//        if(PhysicsTimer.getState() == PhysicsTimer.STATE_ALARMING) {
+//            mOrientation = orientation;
+//            return;
+//        }
+//        /* -------------------------------- */
 
         float       deg = 0;
         switch(orientation) {

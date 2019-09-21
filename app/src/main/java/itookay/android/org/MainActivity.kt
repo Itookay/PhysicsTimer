@@ -196,22 +196,38 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
      *      センサー値の変化
      */
     override fun onSensorChanged(event:SensorEvent) {
-        if(event.sensor.type == Sensor.TYPE_ACCELEROMETER) {
-            val     x:Float = -event.values[0]
-            val     y:Float = -event.values[1]
-
-            physicsTimer.setGravity(x, y)
-
-            val orientation = getOrientation(x, y)
-            //センサー値が検出範囲外
-            if(orientation == PhysicsTimer.ORIENTATION_RANGE_OUT) {
-                return
-            }
-            if(orientation != physicsTimer.orientation) {
-                physicsTimer.orientation = orientation
-                setNumericPadConstraint(orientation)
-            }
+        if(event.sensor.type != Sensor.TYPE_ACCELEROMETER) {
+            return
         }
+
+        val     x:Float = -event.values[0]
+        val     y:Float = -event.values[1]
+        val orientation = getOrientation(x, y)
+        physicsTimer.setGravity(x, y)
+
+        /* 次の場合は方向転換しない ---------- */
+        //同じ方向
+        if (physicsTimer.orientation == orientation) {
+            return
+        }
+        //Dialサイズがディスプレイより大きい
+        if (physicsTimer.isDialHeightBiggerThanDisplayWidth) {
+            physicsTimer.setOrientation(orientation, false)
+            return
+        }
+        //アラーム中
+        if (PhysicsTimer.getState() == PhysicsTimer.STATE_ALARMING) {
+            physicsTimer.setOrientation(orientation, false)
+            return
+        }
+        //センサー値が検出範囲外
+        if(orientation == PhysicsTimer.ORIENTATION_RANGE_OUT) {
+            return
+        }
+        /* -------------------------------- */
+
+        physicsTimer.setOrientation(orientation, true)
+        setNumericPadConstraint(orientation)
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
