@@ -116,15 +116,17 @@ public class PhysicsTimer implements TimeChangedListener {
     }
 
     public static int getState() {
-        Debug.calledLog(2);
-        Debug.timerStateLog(mState, true);
+//        Debug.calledLog(2);
+//        Debug.timerStateLog(mState, true);
+
         return mState;
     }
 
     public static void setState(int state) {
         mState = state;
-        Debug.calledLog(2);
-        Debug.timerStateLog(mState, false);
+
+//        Debug.calledLog(2);
+//        Debug.timerStateLog(mState, false);
     }
 
     public int getOrientation() {
@@ -338,26 +340,15 @@ public class PhysicsTimer implements TimeChangedListener {
      * @param rotateNow trueだとすぐに方向転換。falseだとorientationの値を保持するだけ
      */
     public void setOrientation(int orientation, boolean rotateNow) {
-//        /* 次の場合は方向転換しない ---------- */
+        Debug.calledLog();
+        Debug.log("Next orientation = " + Debug.getOrientationString(orientation));
+        Debug.log("Previous orientation = " + Debug.getOrientationString(mOrientation));
+        Debug.log("rotateNow = " + rotateNow);
+
         if(!rotateNow) {
             mOrientation = orientation;
             return;
         }
-//        //同じ方向
-//        if(mOrientation == orientation) {
-//            return;
-//        }
-//        //Dialサイズがディスプレイより大きい
-//        if(isDialHeightBiggerThanDisplayWidth()) {
-//            mOrientation = orientation;
-//            return;
-//        }
-//        //アラーム中
-//        if(PhysicsTimer.getState() == PhysicsTimer.STATE_ALARMING) {
-//            mOrientation = orientation;
-//            return;
-//        }
-//        /* -------------------------------- */
 
         float       deg = 0;
         switch(orientation) {

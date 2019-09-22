@@ -60,6 +60,7 @@ public class Debug {
     /**
      *      PhysicsTimer.getState()の値をログ
      * @param state PhysicsTimer.getState()の値
+     * @param isGetter trueでgetState()とログに記述
      */
     public static void timerStateLog(int state, boolean isGetter) {
         String      stateString = "";
@@ -86,5 +87,30 @@ public class Debug {
         }
 
         log(text);
+    }
+
+    /**
+     *      渡されたオリエンテーションの値をログ
+     */
+    public static String getOrientationString(int orientation) {
+        String      orientationString = "";
+        switch(orientation) {
+            case PhysicsTimer.PORTRAIT:
+                orientationString = "PORTRAIT";
+                break;
+            case PhysicsTimer.LEFT_LANDSCAPE:
+                orientationString = "LEFT LANDSCAPE";
+                break;
+            case PhysicsTimer.RIGHT_LANDSCAPE:
+                orientationString = "RIGHT LANDSCAPE";
+                break;
+            case PhysicsTimer.UPSIDE_DOWN:
+                orientationString = "UPSIDE_DOWN";
+                break;
+            case PhysicsTimer.ORIENTATION_RANGE_OUT:
+                orientationString = "ORIENTATION RANGE OUT";
+                break;
+        }
+        return orientationString;
     }
 }

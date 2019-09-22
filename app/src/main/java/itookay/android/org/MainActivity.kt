@@ -205,26 +205,25 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
         val orientation = getOrientation(x, y)
         physicsTimer.setGravity(x, y)
 
-        /* 次の場合は方向転換しない ---------- */
+        /* 次の場合は方向転換しない
+           回転後のオリエンテーションも保持しない ---------- */
         //同じ方向
         if (physicsTimer.orientation == orientation) {
             return
         }
         //Dialサイズがディスプレイより大きい
         if (physicsTimer.isDialHeightBiggerThanDisplayWidth) {
-            physicsTimer.setOrientation(orientation, false)
             return
         }
         //アラーム中
         if (PhysicsTimer.getState() == PhysicsTimer.STATE_ALARMING) {
-            physicsTimer.setOrientation(orientation, false)
             return
         }
         //センサー値が検出範囲外
         if(orientation == PhysicsTimer.ORIENTATION_RANGE_OUT) {
             return
         }
-        /* -------------------------------- */
+        /* ------------------------------------------- */
 
         physicsTimer.setOrientation(orientation, true)
         setNumericPadConstraint(orientation)
