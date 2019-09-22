@@ -1,12 +1,31 @@
 package itookay.android.org.debug;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import itookay.android.org.contents.PhysicsTimer;
+import itookay.android.org.contents.TimeWatchingService;
+import itookay.android.org.style.TwoRows;
 
 public class Debug {
 
-    private static String        TAG = "PhysicsTimer";
+    /** Logcatタグ名 */
+    private static String   TAG = "PhysicsTimer";
+    /** SharedPreferenceファイル名 */
+    private static String    PREFERENCE_FILE_NAME = "physics_timer.debug.preference";
+    /** Preferenceキー */
+    private static String    PREFERENCE_KEY_DEBUG_MODE_FLAG = "preference_key_debug_mode";
+    /** Preferenceキー */
+    private static String    PREFERENCE_KEY_FINISH_TWO_SECOND_FLAG = "preference_key_finish_two_second";
+    /** Preferenceキー */
+    private static String    PREFERENCE_KEY_SHOW_PASSED_TIME_FLAG = "preference_key_show_passed_time";
 
     /**
      *      内容をLogcatに出力
@@ -113,4 +132,98 @@ public class Debug {
         }
         return orientationString;
     }
+
+    /**
+     *      デバッグモード：メインダイアログの表示
+     */
+    public void showMainDialog(final Context context) {
+        String[]        items = {
+                "2秒でアラーム",
+                "java.timeで経過時間を表示"
+        };
+        boolean[]       defaultCheckedItems = {
+                getFinishTwoSecondFlag(context),
+                getShowPassedTimeFlag(context)
+        };
+
+        new AlertDialog.Builder(context)
+            .setCancelable(false)
+            .setTitle("デバッグモード")
+            .setMultiChoiceItems(items, defaultCheckedItems, new DialogInterface.OnMultiChoiceClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                    //ダイアログ表示で強制的にデバッグモード
+                    saveDebugModeFlag(context, true);
+
+                    switch(which) {
+                        case 0:
+                            saveFinishTwoSecondFlag(context, isChecked);
+                            break;
+                        case 1:
+                            saveShowPassedTimeFlag(context, isChecked);
+                    }
+                }
+            })
+            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            })
+            .show();
+    }
+
+    /**
+     *      経過時間ダイアログの表示
+     */
+    public void showPassedTimeDialog(Context context) {
+        String mes = TimeWatchingService.showPassedTime();
+
+        new AlertDialog.Builder(context)
+            .setCancelable(false)
+            .setTitle("java.time.LocalDateTimeでの経過時間")
+            .setMessage(mes)
+            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            })
+            .show();
+    }
+
+    public static void saveDebugModeFlag(Context context, boolean state) {
+        SharedPreferences   pref = getSharedPreference(context);
+        pref.edit().putBoolean(PREFERENCE_KEY_DEBUG_MODE_FLAG, state).apply();
+    }
+
+    public static boolean getDebugModeFlag(Context context) {
+        SharedPreferences   pref = getSharedPreference(context);
+        return pref.getBoolean(PREFERENCE_KEY_DEBUG_MODE_FLAG, false);
+
+    }
+
+    private static void saveFinishTwoSecondFlag(Context context, boolean state) {
+        SharedPreferences   pref = getSharedPreference(context);
+        pref.edit().putBoolean(PREFERENCE_KEY_FINISH_TWO_SECOND_FLAG, state).apply();
+    }
+
+    public static boolean getFinishTwoSecondFlag(Context context) {
+        SharedPreferences   pref = getSharedPreference(context);
+        return pref.getBoolean(PREFERENCE_KEY_FINISH_TWO_SECOND_FLAG, false);
+    }
+
+    private static void saveShowPassedTimeFlag(Context context, boolean state) {
+        SharedPreferences   pref = getSharedPreference(context);
+        pref.edit().putBoolean(PREFERENCE_KEY_SHOW_PASSED_TIME_FLAG, state).apply();
+    }
+
+    public static boolean getShowPassedTimeFlag(Context context) {
+        SharedPreferences   pref = getSharedPreference(context);
+        return pref.getBoolean(PREFERENCE_KEY_SHOW_PASSED_TIME_FLAG, false);
+    }
+
+    private static SharedPreferences getSharedPreference(Context context) {
+        return context.getSharedPreferences(PREFERENCE_FILE_NAME, Context.MODE_PRIVATE);
+    }
+
 }

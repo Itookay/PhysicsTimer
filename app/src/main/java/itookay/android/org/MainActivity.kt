@@ -12,6 +12,7 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.constraintlayout.widget.Guideline
@@ -21,6 +22,8 @@ import itookay.android.org.setting.MainSettingActivity
 import itookay.android.org.setting.Settings
 import itookay.android.org.debug.*
 import itookay.android.org.setting.VibrationList
+import kotlinx.android.synthetic.main.main_activity.*
+import org.w3c.dom.Text
 
 
 class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, SensorEventListener, View.OnLongClickListener {
@@ -42,6 +45,8 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
     private lateinit var svMain : SurfaceView
     /**  */
     private var numericPadLayout : LinearLayout? = null
+    /** デバッグモード表示ラベル */
+    private lateinit var tvDebugMode : TextView
 
     /** 直前にドラッグしていた番号 */
     private var previousDraggingNumber : Int = INVALID_NUMBER
@@ -56,9 +61,6 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
 
     /** センサーマネージャ */
     private lateinit var sensorMgr : SensorManager
-
-    /** デバッグモード */
-    private var isDebugMode = false
 
     /*
      *      onCreate
@@ -81,6 +83,8 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
         /* ビューの初期化 ---------------- */
         initControlButton()
         initSurfaceView()
+        /* デバッグモードラベル ----------- */
+        tvDebugMode = findViewById(R.id.tvDebugMode)
         /* ----------------------------- */
         getDisplayScale()
         TimeWatchingService.setContext(applicationContext);
@@ -366,7 +370,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
                 actionDownPoint = PointF(event.rawX, event.rawY)
 
                 /* ----- デバッグモード ----- */
-                if(isDebugMode) {
+                if(Debug.getFinishTwoSecondFlag(this)) {
                     second = 2
                     minute = 0
                 }
@@ -428,7 +432,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
                     previousDraggingNumber = currentDraggingNumber
 
                     /* ----- デバッグモード ----- */
-                    if(isDebugMode) {
+                    if(Debug.getFinishTwoSecondFlag(this)) {
                         second = 2
                         minute = 0
                     }
@@ -444,7 +448,7 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
                     previousDraggingNumber = currentDraggingNumber
 
                     /* ----- デバッグモード ----- */
-                    if(isDebugMode) {
+                    if(Debug.getFinishTwoSecondFlag(this)) {
                         second = 2
                         minute = 0
                     }
@@ -592,10 +596,19 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener, Sen
      *      ボタンロングクリック
      */
     override fun onLongClick(view: View?): Boolean {
-        //デバッグモードへの移行
         if(view === btSetting) {
-            isDebugMode = !isDebugMode
-            VibrationList.vibrate(applicationContext, 4, VibrationList.NOT_REPEAT)
+            //デバッグモードへの移行
+            if(!Debug.getDebugModeFlag(this)) {
+                Debug().showMainDialog(this);
+                Debug.saveDebugModeFlag(this, true)
+                tvDebugMode.visibility = View.VISIBLE
+            }
+            //デバッグモードの解除
+            else {
+//                VibrationList.vibrate(applicationContext, 4, VibrationList.NOT_REPEAT)
+                Debug.saveDebugModeFlag(this, false)
+                tvDebugMode.visibility = View.INVISIBLE
+            }
         }
 
         return true

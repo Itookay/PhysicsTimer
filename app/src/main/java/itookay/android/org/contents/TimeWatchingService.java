@@ -346,7 +346,6 @@ public class TimeWatchingService extends Service {
     /**
      *      デバッグ用
      */
-    /*
     public static String showPassedTime() {
         int startHour = mStartTime.getHour();
         int startMinute = mStartTime.getMinute();
@@ -363,7 +362,6 @@ public class TimeWatchingService extends Service {
 
         return start + now;
     }
-    */
 
     /**
      *      タイマー終了時のNotificationを表示
